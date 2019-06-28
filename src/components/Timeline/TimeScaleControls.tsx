@@ -22,10 +22,9 @@ export default () => {
             </Button>
             <Popover anchorEl={anchor} visible={popoverVisible}
                 onClose={onPopoverClose}>
-                <Slider />
-                {/* <Box pa="md">
-
-                </Box> */}
+                <Box pa="md">
+                    <Slider />
+                </Box>
             </Popover>
         </React.Fragment>
     );

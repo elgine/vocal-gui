@@ -88,19 +88,19 @@ export default () => {
             <TimelinePanel />
             <ControlBar items={controlBarButtons}
                 renderItem={({ key, icon, title }: ControlBarButton) => (
-                    // <Tooltip key={key} title={title}
-                    //     anchorPos={{ horizontal: 'center', vertical: 'top' }}
-                    //     transformPos={{ horizontal: 'center', vertical: 'bottom' }} >
-                    // {
-                    key === 'scale-timeline' ? (
-                        <TimeScaleControls />
-                    ) : (
-                        <Button flat onClick={(e: React.MouseEvent) => onControlButtonClick(e, key)}>
-                            {icon}
-                        </Button>
-                    )
-                    // }
-                    // </Tooltip>
+                    <Tooltip key={key} title={title}
+                        anchorPos={{ horizontal: 'center', vertical: 'top' }}
+                        transformPos={{ horizontal: 'center', vertical: 'bottom' }} >
+                        {
+                            key === 'scale-timeline' ? (
+                                <TimeScaleControls />
+                            ) : (
+                                <Button flat onClick={(e: React.MouseEvent) => onControlButtonClick(e, key)}>
+                                    {icon}
+                                </Button>
+                            )
+                        }
+                    </Tooltip>
                 )} renderMoreItem={({ key, icon, title }: ControlBarButton) => (
                     <ListItemHeader key={key} onClick={(e: React.MouseEvent) => onControlButtonClick(e, key)}>
                         {icon}&nbsp;{title}

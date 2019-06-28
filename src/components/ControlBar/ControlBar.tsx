@@ -40,7 +40,12 @@ const controlBarStyles = (theme: Theme): any => {
     };
 };
 
-export interface ControlBarProps<T> extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface ControlBarItem{
+    title: string;
+    key: string;
+}
+
+export interface ControlBarProps<T extends ControlBarItem> extends Omit<React.HTMLAttributes<{}>, 'css'>{
     gutter?: ComponentSize;
     spacing?: ComponentSize;
     items: {left: T[]; more: T[]; right: T[]};
@@ -48,7 +53,7 @@ export interface ControlBarProps<T> extends Omit<React.HTMLAttributes<{}>, 'css'
     renderMoreItem: (item: any) => React.ReactNode;
 }
 
-function ControlBar<T>({ gutter, spacing, className, items, renderItem, renderMoreItem, ...others }: ControlBarProps<T>) {
+function ControlBar<T extends ControlBarItem>({ gutter, spacing, className, items, renderItem, renderMoreItem, ...others }: ControlBarProps<T>) {
     let combinedClassName = combineClassNames(
         `gutter-${gutter || 'md'}`,
         `spacing-${spacing || 'md'}`,
@@ -127,7 +132,7 @@ function ControlBar<T>({ gutter, spacing, className, items, renderItem, renderMo
                                 <List ref={moreMenuRef} className="more-menu">
                                     {
                                         moreItems.map((item, index) => (
-                                            <ListItem key={index}>
+                                            <ListItem key={item.key}>
                                                 {
                                                     renderMoreItem(item)
                                                 }

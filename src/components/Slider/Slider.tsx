@@ -128,17 +128,19 @@ export default ({ value, vertical, disabled, block, min, max, onChange, ...other
             combineClassNames(
                 disabled ? 'slider-disabled' : '',
                 vertical ? 'slider-vertical' : '',
-                block? 'slider-block': ''
+                block ? 'slider-block' : ''
             )
         } ref={containerRef} css={sliderStyles} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} {...others}>
             <div className="slider-highlight" style={highlightStyle}></div>
-            <div ref={thumbRef} className="slider-thumb" style={thumbStyle} onMouseDown={movementHook.onMouseDown}></div>
+
             <Tooltip visible={showTooltip}
                 anchorEl={thumbRef.current}
                 anchorPos={{ vertical: 'top', horizontal: 'center' }}
                 transformPos={{ vertical: 'bottom', horizontal: 'center' }}
-                title={value ? (value).toFixed(2) : undefined}
-            />
+                title={v !== undefined ? (v === 0 ? '0.00' : (v).toFixed(2)) : undefined}
+            >
+                <div ref={thumbRef} className="slider-thumb" style={thumbStyle} onMouseDown={movementHook.onMouseDown}></div>
+            </Tooltip>
         </div>
     );
 };
