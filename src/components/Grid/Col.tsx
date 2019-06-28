@@ -1,8 +1,10 @@
 import React from 'react';
 /** @jsx jsx */
-import { jsx } from '@emotion/core';
+import { jsx, ClassNames } from '@emotion/core';
+import { withTheme } from 'emotion-theming';
 import combineClassNames from '../../utils/combineClassNames';
 import { clamp } from 'lodash';
+import Box, { BoxProps } from './Box';
 
 const GRID_COUNT = 12;
 
@@ -111,7 +113,8 @@ const colStyles = (theme: Theme): any => {
     return styles;
 };
 
-export interface ColProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface ColProps extends BoxProps{
+    theme: Theme;
     pull?: number|ResponsiveProperty<number>;
     push?: number|ResponsiveProperty<number>;
     span?: number|ResponsiveProperty<number>;
@@ -130,19 +133,26 @@ const genPropertyResponsiveClassName = (key: string, val?: number|ResponsiveProp
     return def ? `col-${key}-${clamp(12, 1, GRID_COUNT)}-sm col-${key}-${clamp(12, 1, GRID_COUNT)}-md col-${key}-${clamp(12, 1, GRID_COUNT)}-lg` : '';
 };
 
-export default ({ children, pull, push, span, verticalAlign, horizontalAlign, className, ...others }: React.PropsWithChildren<ColProps>) => {
+export default withTheme(({ children, pull, push, span, verticalAlign, horizontalAlign, className, theme, ...others }: React.PropsWithChildren<ColProps>) => {
     return (
-        <div css={colStyles} className={
-            combineClassNames(
-                verticalAlign || '',
-                horizontalAlign || '',
-                genPropertyResponsiveClassName('pull', pull),
-                genPropertyResponsiveClassName('push', push),
-                genPropertyResponsiveClassName('span', span, true),
-                className
-            )
-        } {...others}>
-            {children}
-        </div>
+        <ClassNames>
+            {
+                ({ css, cx }) => (
+                    <Box className={
+                        combineClassNames(
+                            css(colStyles(theme)),
+                            verticalAlign || '',
+                            horizontalAlign || '',
+                            genPropertyResponsiveClassName('pull', pull),
+                            genPropertyResponsiveClassName('push', push),
+                            genPropertyResponsiveClassName('span', span, true),
+                            className
+                        )
+                    } {...others}>
+                        {children}
+                    </Box>
+                )
+            }
+        </ClassNames>
     );
-};
+});

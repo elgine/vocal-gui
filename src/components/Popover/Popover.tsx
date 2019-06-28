@@ -2,28 +2,20 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
+import { withTheme } from 'emotion-theming';
 import { CSSTransition } from 'react-transition-group';
 import useResize from '../../hooks/useResize';
 import useClickOutside from '../../hooks/useClickOutside';
 
 const popoverContainerStyles = (theme: Theme): any => {
-    const radius = `${theme.components.common.borderRadius['md']}px`;
     return {
         position: 'absolute',
         display: 'inline-block',
         '.popover': {
-            borderRadius: radius,
+            borderRadius: `${theme.components.common.borderRadius['md']}px`,
             backgroundColor: theme.palette.background.surface,
             boxShadow: theme.depth.level[2],
-            zIndex: theme.depth.zIndex['popover'],
-            '&>*:first-of-type': {
-                borderTopLeftRadius: radius,
-                borderTopRightRadius: radius
-            },
-            '&>*:last-child': {
-                borderBottomLeftRadius: radius,
-                borderBottomRightRadius: radius
-            }
+            zIndex: theme.depth.zIndex['popover']
         }
     };
 };
@@ -35,6 +27,7 @@ export interface PopoverPosition{
 
 export interface PopoverProps extends BaseComponentProps{
     visible?: boolean;
+    theme: Theme;
     anchorEl?: HTMLElement|null;
     anchorPos?: PopoverPosition;
     transformPos?: PopoverPosition;
@@ -61,9 +54,9 @@ const applyVerticalTransformPos = (pos: number, targetBounds: ClientRect, transf
     return pos;
 };
 
-export default ({
+export default withTheme(({
     visible, anchorEl, anchorPos, transformPos,
-    onClose, transitionClassNames, children, ...others
+    onClose, transitionClassNames, children, theme, ...others
 }: React.PropsWithChildren<PopoverProps>) => {
     const [show, setShow] = useState(false);
     const [transitionActive, setTransitionActive] = useState(false);
@@ -90,7 +83,7 @@ export default ({
 
     const wrapperRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
-    useClickOutside(wrapperRef.current, onClickOutSide, 'mousedown');
+    useClickOutside(wrapperRef.current, onClickOutSide);
     const [pos, setPos] = useState({ left: 0, top: 0 });
     const pageSize = useResize(null);
     useEffect(() => {
@@ -129,9 +122,10 @@ export default ({
             } else if (bounds.top - wBounds.height < 0) {
                 newPos.top = bounds.bottom;
             }
-            if (newPos.left !== pos.left && newPos.top !== pos.top) { setPos(newPos) }
+
+            setPos(newPos);
         }
-    }, [popoverRef.current, anchorEl, ap, tp, pos, transitionActive, pageSize.width, pageSize.height]);
+    }, [popoverRef.current, anchorEl, ap, tp, transitionActive, pageSize.width, pageSize.height]);
 
     let popoverContainerStyle: React.CSSProperties = {
         display: show ? 'block' : 'none',
@@ -139,7 +133,7 @@ export default ({
         top: `${pos.top}px`
     };
 
-    return createPortal(<div ref={wrapperRef} css={popoverContainerStyles} style={popoverContainerStyle}>
+    return createPortal(<div ref={wrapperRef} css={{ ...popoverContainerStyles(theme) }} style={popoverContainerStyle}>
         <CSSTransition timeout={300} unmountOnExit classNames={transitionClassNames || 'scale'} in={transitionActive}
             onExited={() => setTransitionEnded(true)}>
             <div ref={popoverRef} className="popover" {...others}>
@@ -147,4 +141,4 @@ export default ({
             </div>
         </CSSTransition>
     </div>, document.body);
-};
+});

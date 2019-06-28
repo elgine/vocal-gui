@@ -9,7 +9,7 @@ export default {
             contrastText: '#c0c0c0'
         },
         border: {
-            divider: '#161616',
+            divider: '#121212',
             border: '#464646'
         },
         background: {
@@ -161,8 +161,7 @@ export default {
             thumbSize: 16
         },
         tooltip: {
-            backgroundColor: '#000',
-            borderColor: '#373737'
+            backgroundColor: '#212121'
         },
         input: {
             placeholderColor: '#666'

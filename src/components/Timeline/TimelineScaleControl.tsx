@@ -3,7 +3,7 @@ import { merge } from 'lodash';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import Button from '../Button';
-import { FiGitCommit as ScaleTimelineIcon, FiPlus, FiMinus } from 'react-icons/fi';
+import { MdLinearScale, MdAdd, MdRemove } from 'react-icons/md';
 import Popover from '../Popover';
 import Slider from '../Slider';
 import verticalAlign from '../mixins/verticalAlign';
@@ -39,7 +39,7 @@ export default ({ min, max, value, step, onValueChange }: TimelineScaleControlPr
     return (
         <React.Fragment>
             <Button onClick={onScaleClick} size="sm" flat>
-                <ScaleTimelineIcon />
+                <MdLinearScale />
             </Button>
             <Popover anchorPos={{ horizontal: 'right', vertical: 'top' }}
                 transformPos={{ horizontal: 'right', vertical: 'bottom' }}
@@ -47,11 +47,11 @@ export default ({ min, max, value, step, onValueChange }: TimelineScaleControlPr
                 onClose={() => setAnchorEl(null)}>
                 <div css={timelineScaleControlStyles}>
                     <Button flat size="sm" onClick={onScaleMinusClick}>
-                        <FiMinus />
+                        <MdRemove />
                     </Button>
                     <Slider min={mi} max={ma} value={value} onChange={onValueChange} />
                     <Button flat size="sm" onClick={onScalePlusClick}>
-                        <FiPlus />
+                        <MdAdd />
                     </Button>
                 </div>
             </Popover>

@@ -9,11 +9,12 @@ const pointerStyles = (theme: Theme): any => {
     const bg = pointer.color;
     const bgStart = pointer.colorStart;
     const bgEnd = pointer.colorEnd;
+    const tangent = Math.SQRT2 * pointer.headerSize;
     return {
         position: 'absolute',
         bottom: 0,
         width: '1px',
-        top: Math.SQRT2 * pointer.headerSize,
+        top: `${tangent}px`,
         left: 0,
         backgroundColor: bg,
         '&:hover, &:active': {
@@ -23,8 +24,8 @@ const pointerStyles = (theme: Theme): any => {
             backgroundColor: 'inherit',
             content: '""',
             position: 'absolute',
-            left: `-${pointer.headerSize}px`,
-            top: 0,
+            left: `-${pointer.headerSize * 0.5}px`,
+            top: `-${pointer.headerSize}px`,
             width: `${pointer.headerSize}px`,
             height: `${pointer.headerSize}px`,
             transform: 'rotate(45deg)'

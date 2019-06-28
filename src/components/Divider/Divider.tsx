@@ -9,22 +9,39 @@ const dividerStyles = (theme: Theme) => {
         '&:not(.divider-vertical)': {
             width: '100%',
             height: '1px',
-            margin: `${theme.spacing.md}px 0`
+            '&.margin-size-sm': {
+                margin: `${theme.spacing.sm}px 0`
+            },
+            '&.margin-size-md': {
+                margin: `${theme.spacing.sm}px 0`
+            },
+            '&.margin-size-lg': {
+                margin: `${theme.spacing.sm}px 0`
+            }
         },
         '&.divider-vertical': {
             width: '1px',
             height: '100%',
-            margin: `0 ${theme.spacing.md}px`
+            '&.margin-size-sm': {
+                margin: `0 ${theme.spacing.sm}px`
+            },
+            '&.margin-size-md': {
+                margin: `0 ${theme.spacing.sm}px`
+            },
+            '&.margin-size-lg': {
+                margin: `0 ${theme.spacing.sm}px`
+            }
         }
     };
 };
 
 export interface DividerProps extends BaseComponentProps{
     vertical?: boolean;
+    margin?: ComponentSize;
 }
 
-export default ({ vertical, className, ...others }: DividerProps) => {
+export default ({ vertical, className, margin, ...others }: DividerProps) => {
     return (
-        <div className={combineClassNames(vertical ? 'divider-vertical' : '', className)} css={dividerStyles} {...others}></div>
+        <div className={combineClassNames(`margin-size-${margin || 'md'}`, vertical ? 'divider-vertical' : '', className)} css={dividerStyles} {...others}></div>
     );
 };

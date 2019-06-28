@@ -1,7 +1,9 @@
 import React from 'react';
 /** @jsx jsx */
-import { jsx } from '@emotion/core';
+import { jsx, ClassNames } from '@emotion/core';
+import { withTheme } from 'emotion-theming';
 import combineClassNames from '../../utils/combineClassNames';
+import Box, { BoxProps } from './Box';
 
 const rowStyles = (theme: Theme): any => {
     const spacing = theme.spacing;
@@ -84,23 +86,31 @@ const rowStyles = (theme: Theme): any => {
     };
 };
 
-export interface RowProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface RowProps extends BoxProps{
+    theme: Theme;
     flex?: boolean;
     verticalAlign?: 'top' | 'middle' | 'bottom';
     horizontalAlign?: 'left' | 'center' | 'right';
     gutter?: ComponentSize;
 }
 
-export default ({ flex, verticalAlign, horizontalAlign, gutter, children, className, ...others }: React.PropsWithChildren<RowProps>) => {
+export default withTheme(({ flex, verticalAlign, horizontalAlign, gutter, children, className, theme, ...others }: React.PropsWithChildren<RowProps>) => {
     return (
-        <div css={rowStyles} className={combineClassNames(
-            verticalAlign || 'middle',
-            horizontalAlign || 'left',
-            gutter ? `gutter-${gutter}` : '',
-            flex ? 'flex' : '',
-            className
-        )} {...others}>
-            {children}
-        </div>
+        <ClassNames>
+            {
+                ({ css }) => (
+                    <Box className={combineClassNames(
+                        css(rowStyles(theme)),
+                        verticalAlign || 'middle',
+                        horizontalAlign || 'left',
+                        gutter ? `gutter-${gutter}` : '',
+                        flex ? 'flex' : '',
+                        className
+                    )} {...others}>
+                        {children}
+                    </Box>
+                )
+            }
+        </ClassNames>
     );
-};
+});

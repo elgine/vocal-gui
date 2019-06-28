@@ -14,9 +14,12 @@ const DELTA_PLACEHOLDER_LEFT = 5;
 
 const controlBarStyles = (theme: Theme): any => {
     return {
+        width: '100%',
         boxSizing: 'border-box',
-        ...verticalAlign(),
-        '.left, .right': {
+        display: 'flex',
+        alignItems: 'center',
+        '.controlbar-left, .controlbar-right': {
+            whiteSpace: 'nowrap',
             ...verticalAlign()
         },
         '.controlbar-placeholder': {
@@ -52,6 +55,8 @@ function ControlBar<T>({ gutter, spacing, className, items, renderItem, renderMo
         className
     );
 
+    const is = items || { left: [], more: [], right: [] };
+
     const moreMenuRef = useRef<HTMLUListElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const moreRef = useRef<HTMLButtonElement>(null);
@@ -61,9 +66,15 @@ function ControlBar<T>({ gutter, spacing, className, items, renderItem, renderMo
         setShowMoreMenu(!showMoreMenu);
     };
 
-    const [leftItems, setLeftItems] = useState<T[]>([]);
-    const [rightItems, setRightItems] = useState<T[]>([]);
-    const [moreItems, setMoreItems] = useState<T[]>([]);
+    const [leftItems, setLeftItems] = useState<T[]>(is.left);
+    const [rightItems, setRightItems] = useState<T[]>(is.right);
+    const [moreItems, setMoreItems] = useState<T[]>(is.more);
+
+    useEffect(() => {
+        setLeftItems(is.left);
+        setRightItems(is.right);
+        setMoreItems(is.more);
+    }, [is]);
 
     const pageSize = useResize(containerRef.current);
     useEffect(() => {
@@ -72,8 +83,8 @@ function ControlBar<T>({ gutter, spacing, className, items, renderItem, renderMo
             let placeholder = containerRef.current.getElementsByClassName('controlbar-placeholder')[0] as HTMLElement;
             if (left && placeholder) {
                 const moreChildren = moreMenuRef.current.children;
-                const moreMinChildCount = items.more.length;
-                const leftMinChildCount = items.left.length;
+                const moreMinChildCount = is.more.length;
+                const leftMinChildCount = is.left.length;
                 const newMoreItems = [...moreItems];
                 const newLeftItems = [...leftItems];
                 // Pick one from left side to more menu
@@ -95,7 +106,7 @@ function ControlBar<T>({ gutter, spacing, className, items, renderItem, renderMo
                 }
             }
         }
-    }, [items, containerRef.current, moreMenuRef.current, pageSize.width, pageSize.height]);
+    }, [is.more, is.left, leftItems, moreItems, containerRef.current, moreMenuRef.current, pageSize.width, pageSize.height]);
 
     return (
         <div ref={containerRef} css={controlBarStyles} className={combinedClassName} {...others}>

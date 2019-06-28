@@ -84,7 +84,6 @@ interface SliderProperties{
 
 interface TooltipProperties{
     backgroundColor: string;
-    borderColor: string;
 }
 
 interface InputProperties{

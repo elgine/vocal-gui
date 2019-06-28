@@ -10,7 +10,6 @@ import Tooltip from '../components/Tooltip';
 const playerControlBarStyles = (theme: Theme): any => {
     return {
         display: 'flex',
-        backgroundColor: theme.palette.background.surface,
         '.left, .center, .right': {
             flexShrink: 0,
             ...verticalAlign()
@@ -28,7 +27,7 @@ const playerControlBarStyles = (theme: Theme): any => {
     };
 };
 
-const ICON_SIZE = 20;
+const ICON_SIZE = 16;
 
 export default ({ ...others }: React.HTMLAttributes<{}>) => {
     return (
@@ -36,6 +35,7 @@ export default ({ ...others }: React.HTMLAttributes<{}>) => {
             <div className="left">
                 <Volume anchorPos={{ horizontal: 'center', vertical: 'top' }}
                     transformPos={{ horizontal: 'center', vertical: 'bottom' }}
+                    vertical
                     iconSize={ICON_SIZE}
                 />
             </div>

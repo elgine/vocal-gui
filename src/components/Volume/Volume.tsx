@@ -16,6 +16,7 @@ import {
 export interface VolumeProps extends Omit<ButtonProps, 'onChange'>{
     anchorPos?: PopoverPosition;
     transformPos?: PopoverPosition;
+    vertical?: boolean;
     min?: number;
     max?: number;
     value?: number;
@@ -29,7 +30,7 @@ const volumePopoverStyles = (theme: Theme) => {
     };
 };
 
-export default ({ anchorPos, transformPos, iconSize, min, max, value, onChange, ...others }: VolumeProps) => {
+export default ({ vertical, anchorPos, transformPos, iconSize, min, max, value, onChange, ...others }: VolumeProps) => {
     const mi = min || 0;
     const ma = max || 100;
     const v = value || 100;
@@ -59,7 +60,7 @@ export default ({ anchorPos, transformPos, iconSize, min, max, value, onChange, 
             <Popover onClose={() => setPopoverVisible(false)} visible={popoverVisible}
                 anchorEl={anchor} anchorPos={anchorPos} transformPos={transformPos}>
                 <div css={volumePopoverStyles}>
-                    <Slider min={mi} max={ma} value={v} onChange={onChange} />
+                    <Slider vertical={vertical} min={mi} max={ma} value={v} onChange={onChange} />
                 </div>
             </Popover>
         </React.Fragment>
