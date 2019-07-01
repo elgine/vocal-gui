@@ -61,7 +61,7 @@ const generateGlobalTooltipPopover = ({ onClose, ...props }: any, uid: string) =
 };
 
 export default ({ title, desc, children, ...others }: TooltipProps) => {
-    const anchorEl = useRef<HTMLDivElement>(null);
+    const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [showTooltip, setShowTooltip] = useState(false);
     const uid = useRef(uuid());
     const onOpen = useCallback(() => setShowTooltip(true), []);
@@ -69,7 +69,7 @@ export default ({ title, desc, children, ...others }: TooltipProps) => {
     useEffect(() => {
         generateGlobalTooltipPopover({
             visible: showTooltip,
-            anchorEl: anchorEl.current ? anchorEl.current.parentElement : null,
+            anchorEl: anchorEl,
             children: (
                 <div css={tooltipStyles}>
                     <div>{title}</div>
@@ -81,23 +81,25 @@ export default ({ title, desc, children, ...others }: TooltipProps) => {
     }, [showTooltip, anchorEl, uid.current, onOpen, title, desc, others]);
 
     if (!children) return null;
-    const { onMouseEnter, onClick, onMouseLeave, ...otherProps } = children.props;
+    const { onMouseEnter, onClick, onMouseLeave } = children.props;
     const onMouseEnterWrapped = (e: React.MouseEvent) => {
+        setAnchorEl(e.target as HTMLElement);
         onOpen();
         onMouseEnter && onMouseEnter(e);
     };
     const onMouseLeaveWrapped = (e: React.MouseEvent) => {
+        setAnchorEl(null);
         onClose();
         onMouseLeave && onMouseLeave(e);
     };
     const onClickWrapped = (e: React.MouseEvent) => {
+        setAnchorEl(null);
         onClose();
         onClick && onClick(e);
     };
-    children.props['onMouseEnter'] = onMouseEnterWrapped;
-    children.props['onMouseLeave'] = onMouseLeaveWrapped;
-    children.props['onClick'] = onClickWrapped;
-    return (
-        children
-    );
+    return React.cloneElement(children, {
+        onMouseEnter: onMouseEnterWrapped,
+        onMouseLeave: onMouseLeaveWrapped,
+        onClick: onClickWrapped
+    });
 };

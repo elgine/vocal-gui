@@ -19,8 +19,8 @@ export default {
             contrastText: '#c0c0c0'
         },
         action: {
-            hover: -0.08,
-            active: 0.12,
+            hover: -0.21,
+            active: 0.21,
             selected: 0.14,
             borderColorSelected: '#d3a82a',
             disabledOpacity: 0.7

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import Trigger from 'rc-trigger';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { withTheme } from 'emotion-theming';

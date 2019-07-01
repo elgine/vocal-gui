@@ -132,9 +132,7 @@ export default ({ value, vertical, disabled, block, min, max, onChange, ...other
             )
         } ref={containerRef} css={sliderStyles} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} {...others}>
             <div className="slider-highlight" style={highlightStyle}></div>
-
             <Tooltip visible={showTooltip}
-                anchorEl={thumbRef.current}
                 anchorPos={{ vertical: 'top', horizontal: 'center' }}
                 transformPos={{ vertical: 'bottom', horizontal: 'center' }}
                 title={v !== undefined ? (v === 0 ? '0.00' : (v).toFixed(2)) : undefined}

@@ -1,27 +1,33 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Popover from '../Popover';
-import Button from '../Button';
 import { MdLinearScale } from 'react-icons/md';
 import Box from '../Grid/Box';
 import Slider from '../Slider';
+import { PopoverProps } from '../Popover/Popover';
+import TooltipButton, { TooltipButtonProps } from '../Button/TooltipButton';
 
-export default () => {
+export interface TimeScaleControlsProps extends TooltipButtonProps{
+    popoverProps?: PopoverProps;
+}
+
+export default ({ tooltip, popoverProps, onClick, ...others }: TimeScaleControlsProps) => {
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
     const [popoverVisible, setPopoverVisible] = useState(false);
     const onBtnClick = (e: React.MouseEvent<HTMLElement>) => {
         setAnchor(e.target as HTMLElement);
         setPopoverVisible(!popoverVisible);
+        onClick && onClick(e);
     };
     const onPopoverClose = () => {
         setPopoverVisible(false);
     };
     return (
         <React.Fragment>
-            <Button flat onClick={onBtnClick}>
+            <TooltipButton tooltip={tooltip} {...others} onClick={onBtnClick}>
                 <MdLinearScale />
-            </Button>
+            </TooltipButton>
             <Popover anchorEl={anchor} visible={popoverVisible}
-                onClose={onPopoverClose}>
+                onClose={onPopoverClose} {...popoverProps}>
                 <Box pa="md">
                     <Slider />
                 </Box>

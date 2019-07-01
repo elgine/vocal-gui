@@ -30,7 +30,7 @@ const volumePopoverStyles = (theme: Theme) => {
     };
 };
 
-export default ({ vertical, anchorPos, transformPos, iconSize, min, max, value, onChange, ...others }: VolumeProps) => {
+export default React.forwardRef(({ vertical, anchorPos, transformPos, iconSize, min, max, value, onChange, ...others }: VolumeProps, ref: React.Ref<any>) => {
     const mi = min || 0;
     const ma = max || 100;
     const v = value || 100;
@@ -44,7 +44,7 @@ export default ({ vertical, anchorPos, transformPos, iconSize, min, max, value, 
     };
     return (
         <React.Fragment>
-            <Button onClick={onVolumeBtnClick} flat {...others}>
+            <Button ref={ref} onClick={onVolumeBtnClick} flat {...others}>
                 {
                     v === 0 ? (
                         <FiVolumeX size={iconSize} />
@@ -65,4 +65,4 @@ export default ({ vertical, anchorPos, transformPos, iconSize, min, max, value, 
             </Popover>
         </React.Fragment>
     );
-};
+});
