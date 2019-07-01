@@ -3,6 +3,7 @@ import React from 'react';
 import { jsx } from '@emotion/core';
 import combineClassNames from '../../utils/combineClassNames';
 import { shade, fade } from '../utils/color';
+import verticalAlign from '../mixins/verticalAlign';
 
 export type ButtonShape = 'circular' | 'rounded';
 
@@ -104,6 +105,7 @@ const genButtonStyle = (theme: Theme): any => {
         background: 'transparent',
         textTransform: 'uppercase',
         transition: `0.2s ${theme.transitions['easeOutSine']} all`,
+        ...verticalAlign(),
         ...theme.typography.button,
         '&.button-disabled': {
             opacity: palette.action.disabledOpacity

@@ -23,7 +23,7 @@ const listItemStyles = (theme: Theme): any => {
     };
 };
 
-export interface ListItemProps extends Omit<React.LiHTMLAttributes<{}>, 'css'>{
+export interface ListItemProps extends React.LiHTMLAttributes<{}>{
     size?: ComponentSize;
     selected?: boolean;
 }

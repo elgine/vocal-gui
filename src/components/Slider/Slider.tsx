@@ -50,7 +50,7 @@ const sliderStyles = (theme: Theme): any => {
     };
 };
 
-export interface SliderProps extends Omit<Omit<React.HTMLAttributes<{}>, 'css'>, 'onChange'>{
+export interface SliderProps extends Omit<React.HTMLAttributes<{}>, 'onChange'>{
     vertical?: boolean;
     value?: number;
     min?: number;

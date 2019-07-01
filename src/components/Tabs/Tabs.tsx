@@ -54,7 +54,7 @@ const tabsStyles = (theme: Theme): any => {
     };
 };
 
-export interface TabsProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface TabsProps extends React.HTMLAttributes<{}>{
     vertical?: boolean;
     selected?: string;
     defaultSelected?: string;

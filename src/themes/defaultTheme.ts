@@ -5,12 +5,12 @@ export default {
             contrastText: '#fff'
         },
         default: {
-            color: '#666',
+            color: '#444',
             contrastText: '#c0c0c0'
         },
         border: {
-            divider: '#121212',
-            border: '#464646'
+            divider: '#0a0a0a',
+            border: '#333'
         },
         background: {
             surface: '#333333',
@@ -25,7 +25,10 @@ export default {
             borderColorSelected: '#d3a82a',
             disabledOpacity: 0.7
         },
-        mask: 'rgba(0, 0, 0, 0.4)'
+        mask: {
+            light: 'rgba(255, 255, 255, 0.4)',
+            dark: 'rgba(0, 0, 0, 0.4)'
+        }
     },
     typography: {
         fontFamily: '"Roboto", sans-serif',
@@ -119,9 +122,9 @@ export default {
     components: {
         common: {
             padding: {
-                sm: 12,
-                md: 14,
-                lg: 16
+                sm: 10,
+                md: 12,
+                lg: 14
             },
             height: {
                 sm: 28,

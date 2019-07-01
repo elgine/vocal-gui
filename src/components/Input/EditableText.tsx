@@ -37,7 +37,7 @@ const editableTextStyles = (theme: Theme): any => {
             cursor: 'default',
             input: {
                 transition: `0.2s ${theme.transitions.easeOutSine} all`,
-                backgroundColor: theme.palette.mask,
+                backgroundColor: theme.palette.mask.dark,
                 borderColor: theme.palette.primary.color
             }
         },
@@ -62,7 +62,7 @@ const editableTextStyles = (theme: Theme): any => {
     };
 };
 
-export interface EditableTextProps extends Omit<React.HTMLAttributes<{}>, 'css' | 'disabled' | 'onChange'>{
+export interface EditableTextProps extends Omit<React.HTMLAttributes<{}>, 'disabled' | 'onChange'>{
     disabled?: boolean;
     value?: string;
     size?: ComponentSize;

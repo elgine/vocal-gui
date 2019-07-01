@@ -19,7 +19,7 @@ const cardStyles = (theme: Theme): any => {
     };
 };
 
-export interface CardProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface CardProps extends React.HTMLAttributes<{}>{
     disabled?: boolean;
     selected?: boolean;
 }

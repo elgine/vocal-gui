@@ -45,7 +45,7 @@ const pointerStyles = (theme: Theme): any => {
     };
 };
 
-export interface PointerProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface PointerProps extends React.HTMLAttributes<{}>{
     start?: boolean;
     end?: boolean;
 }

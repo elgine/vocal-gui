@@ -13,6 +13,9 @@ import Popover from '../components/Popover';
 import Slider from '../components/Slider';
 import Box from '../components/Grid/Box';
 import TimeScaleControls from '../components/Timeline/TimeScaleControls';
+import Header from './Header';
+
+const HEADER_HEIGHT = 64;
 
 interface ControlBarButton{
     icon: React.ReactNode;
@@ -65,7 +68,10 @@ const controlBarButtons = {
 
 const editorStyles = (theme: Theme): any => {
     return {
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        '.header': {
+            height: `${HEADER_HEIGHT}px`
+        }
     };
 };
 
@@ -85,7 +91,8 @@ export default () => {
 
     return (
         <div css={editorStyles}>
-            <TimelinePanel />
+            <Header className="header" />
+            <Divider />
             <ControlBar items={controlBarButtons}
                 renderItem={({ key, icon, title }: ControlBarButton) => (
                     <Tooltip key={key} title={title}
@@ -107,7 +114,7 @@ export default () => {
                     </ListItemHeader>
                 )}
             />
-            <Divider margin="sm" />
+            <TimelinePanel />
             <PlayerControlBar />
         </div>
     );

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import useClickOutside from '../../hooks/useClickOutside';
 
-export interface ClickOutsideProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface ClickOutsideProps extends React.HTMLAttributes<{}>{
     event?: 'click'|'mouseup'|'mousedown';
     onClickOutside?: (e: MouseEvent) => void;
 }

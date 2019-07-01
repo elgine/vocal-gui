@@ -19,7 +19,7 @@ const cardTitleStyles = (theme: Theme): any => {
     };
 };
 
-export interface CardTitleProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface CardTitleProps extends React.HTMLAttributes<{}>{
     title?: string;
     nowrap?: boolean;
 }

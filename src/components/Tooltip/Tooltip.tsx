@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, ReactElement } from 'react';
 import ReactDOM from 'react-dom';
 import uuid from 'uuid/v4';
 /** @jsx jsx */
@@ -19,9 +19,10 @@ const tooltipStyles = (theme: Theme): any => {
     };
 };
 
-export interface TooltipProps extends Omit<PopoverProps, 'theme'>{
+export interface TooltipProps extends Omit<PopoverProps, 'theme' | 'anchorEl'>{
     title?: string;
     desc?: string;
+    children?: ReactElement;
 }
 
 const DELTA_DURATION_DESTROY_TOOLTIP = 200;
@@ -59,8 +60,8 @@ const generateGlobalTooltipPopover = ({ onClose, ...props }: any, uid: string) =
     );
 };
 
-export default ({ title, desc, children, ...others }: React.PropsWithChildren<TooltipProps>) => {
-    const wrapperRef = useRef<HTMLDivElement>(null);
+export default ({ title, desc, children, ...others }: TooltipProps) => {
+    const anchorEl = useRef<HTMLDivElement>(null);
     const [showTooltip, setShowTooltip] = useState(false);
     const uid = useRef(uuid());
     const onOpen = useCallback(() => setShowTooltip(true), []);
@@ -68,7 +69,7 @@ export default ({ title, desc, children, ...others }: React.PropsWithChildren<To
     useEffect(() => {
         generateGlobalTooltipPopover({
             visible: showTooltip,
-            anchorEl: wrapperRef.current,
+            anchorEl: anchorEl.current ? anchorEl.current.parentElement : null,
             children: (
                 <div css={tooltipStyles}>
                     <div>{title}</div>
@@ -77,10 +78,26 @@ export default ({ title, desc, children, ...others }: React.PropsWithChildren<To
             ),
             ...others
         }, uid.current);
-    }, [showTooltip, wrapperRef.current, uid.current, onOpen, title, desc, others]);
+    }, [showTooltip, anchorEl, uid.current, onOpen, title, desc, others]);
+
+    if (!children) return null;
+    const { onMouseEnter, onClick, onMouseLeave, ...otherProps } = children.props;
+    const onMouseEnterWrapped = (e: React.MouseEvent) => {
+        onOpen();
+        onMouseEnter && onMouseEnter(e);
+    };
+    const onMouseLeaveWrapped = (e: React.MouseEvent) => {
+        onClose();
+        onMouseLeave && onMouseLeave(e);
+    };
+    const onClickWrapped = (e: React.MouseEvent) => {
+        onClose();
+        onClick && onClick(e);
+    };
+    children.props['onMouseEnter'] = onMouseEnterWrapped;
+    children.props['onMouseLeave'] = onMouseLeaveWrapped;
+    children.props['onClick'] = onClickWrapped;
     return (
-        <div onMouseEnter={onOpen} onMouseLeave={onClose} onClick={onClose} ref={wrapperRef}>
-            {children}
-        </div>
+        children
     );
 };

@@ -43,7 +43,7 @@ export default React.forwardRef(({ collection, dataset, children, onSelectedChan
     return (
         <div ref={containerDOM} style={{ position: 'relative' }} {...others} onMouseDown={onMouseDownWrapper}>
             {children}
-            <div draggable={false} css={frameSelectionStyles} onDragStart={()=>false} style={selectionStyle}></div>
+            <div draggable={false} css={frameSelectionStyles} onDragStart={() => false} style={selectionStyle}></div>
         </div>
     );
 });

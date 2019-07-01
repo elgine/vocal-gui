@@ -71,7 +71,7 @@ const boxStyles = (theme: Theme) => {
     };
 };
 
-export interface BoxProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface BoxProps extends React.HTMLAttributes<{}>{
     pt?: ComponentSize;
     pb?: ComponentSize;
     pl?: ComponentSize;

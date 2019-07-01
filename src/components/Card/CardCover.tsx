@@ -32,7 +32,7 @@ const cardCoverStyles = (theme: Theme): any => {
     };
 };
 
-export interface CardCoverProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface CardCoverProps extends React.HTMLAttributes<{}>{
     src?: string;
     loading?: boolean;
 }

@@ -158,7 +158,10 @@ interface Palette{
     background: TypedBackground;
     border: TypedBorder;
     action: TypedAction;
-    mask: string;
+    mask: {
+        light: string;
+        dark: string;
+    };
 }
 
 interface Theme{

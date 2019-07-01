@@ -25,7 +25,7 @@ const tabHeaderStyles = (theme: Theme): any => {
     };
 };
 
-export interface TabHeaderProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface TabHeaderProps extends React.HTMLAttributes<{}>{
     selected?: boolean;
     vertical?: boolean;
 }

@@ -59,7 +59,7 @@ const genLayoutStyle = (theme: Theme): any => {
     };
 };
 
-export interface LayoutProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface LayoutProps extends React.HTMLAttributes<{}>{
 
 }
 

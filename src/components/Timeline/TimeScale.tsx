@@ -83,7 +83,7 @@ const render = (
     return lastDur;
 };
 
-export interface TimeScaleProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface TimeScaleProps extends React.HTMLAttributes<{}>{
     duration?: number;
     units?: number[];
     height?: number;

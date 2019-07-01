@@ -29,7 +29,7 @@ const modalStyles = (theme: Theme): any => {
             height: '100%',
             top: 0,
             left: 0,
-            backgroundColor: theme.palette.mask,
+            backgroundColor: theme.palette.mask.dark,
         },
         '.modal-content': {
             maxWidth: '100%',
@@ -75,7 +75,7 @@ const modalStyles = (theme: Theme): any => {
     };
 };
 
-export interface ModalProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface ModalProps extends React.HTMLAttributes<{}>{
     width?: number;
     visible?: boolean;
     headerTitle?: string;

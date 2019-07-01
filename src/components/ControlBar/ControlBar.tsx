@@ -45,7 +45,7 @@ export interface ControlBarItem{
     key: string;
 }
 
-export interface ControlBarProps<T extends ControlBarItem> extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface ControlBarProps<T extends ControlBarItem> extends React.HTMLAttributes<{}>{
     gutter?: ComponentSize;
     spacing?: ComponentSize;
     items: {left: T[]; more: T[]; right: T[]};

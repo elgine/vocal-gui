@@ -19,7 +19,7 @@ const drawerStyles = (theme: Theme): any => {
             top: 0,
             width: '100%',
             height: '100%',
-            backgroundColor: theme.palette.mask
+            backgroundColor: theme.palette.mask.dark
         },
         '.drawer-content': {
             position: 'absolute',
@@ -28,7 +28,7 @@ const drawerStyles = (theme: Theme): any => {
     };
 };
 
-export interface DrawerProps extends Omit<React.HTMLAttributes<{}>, 'css'>{
+export interface DrawerProps extends React.HTMLAttributes<{}>{
     visible?: boolean;
     mask?: boolean;
     direction?: 'left'|'right'|'top'|'bottom';

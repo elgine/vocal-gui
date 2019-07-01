@@ -28,7 +28,7 @@ const uploadZoneStyles = (theme: Theme): any => {
     };
 };
 
-export interface UploadZoneProps extends Omit<React.HTMLAttributes<{}>, 'css' | 'onClick' | 'title'>{
+export interface UploadZoneProps extends Omit<React.HTMLAttributes<{}>, 'onClick' | 'title'>{
     desc?: React.ReactNode;
     accept?: string;
     onUpload?: (v: FileList) => void;
