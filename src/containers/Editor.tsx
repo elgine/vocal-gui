@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { MdContentCut, MdDelete, MdUndo, MdRedo, MdZoomIn, MdZoomOut, MdFileDownload } from 'react-icons/md';
-import Button from '../components/Button';
+import { MdContentCut, MdDelete, MdUndo, MdRedo, MdZoomIn, MdZoomOut, MdSkipPrevious, MdSkipNext } from 'react-icons/md';
+import Button, { PlayButton } from '../components/Button';
 import TimelinePanel from './TimelinePanel';
-import PlayerControlBar from './PlayerControlBar';
 import Divider from '../components/Divider';
 import Header from './Header';
 import { ControlBar } from '../components/ControlBar';
 import TimeScaleControls from '../components/Timeline/TimeScaleControls';
-import { PopoverPosition } from '../components/Popover/Popover';
-import Tooltip from '../components/Tooltip';
-import { TooltipProps } from '../components/Tooltip/Tooltip';
-import { ButtonProps } from '../components/Button/Button';
 import TooltipButton from '../components/Button/TooltipButton';
+import Volume from '../components/Volume';
+import RepeatButton from '../components/Button/RepeatButton';
 
 const HEADER_HEIGHT = 64;
 
@@ -63,7 +60,28 @@ export default () => {
                 }
             />
             <TimelinePanel />
-            <PlayerControlBar />
+            <ControlBar
+                leftChildren={
+                    <Volume anchorPos={{ horizontal: 'center', vertical: 'top' }}
+                        transformPos={{ horizontal: 'center', vertical: 'bottom' }}
+                        vertical
+                    />
+                }
+                centerChildren={
+                    <React.Fragment>
+                        <TooltipButton flat tooltip="Skip previous">
+                            <MdSkipPrevious />
+                        </TooltipButton>
+                        <PlayButton size="lg" flat />
+                        <TooltipButton flat tooltip="Skip next">
+                            <MdSkipNext />
+                        </TooltipButton>
+                    </React.Fragment>
+                }
+                rightChildren={
+                    <RepeatButton flat />
+                }
+            />
         </div>
     );
 };

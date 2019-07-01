@@ -17,10 +17,10 @@ export interface TooltipButtonProps extends Omit<ButtonProps, 'title'>{
     tooltip?: string;
 }
 
-export default ({ tooltip, ...others }: TooltipButtonProps) => {
+export default React.forwardRef(({ tooltip, ...others }: TooltipButtonProps, ref: React.Ref<any>) => {
     return (
         <Tooltip title={tooltip} anchorPos={TOOLTIP_ANCHOR_POS} transformPos={TOOLTIP_TRANSFORM_POS}>
-            <Button {...others} />
+            <Button ref={ref} {...others} />
         </Tooltip>
     );
-};
+});

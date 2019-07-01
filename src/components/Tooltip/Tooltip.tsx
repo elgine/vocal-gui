@@ -64,7 +64,7 @@ export default ({ title, desc, children, ...others }: TooltipProps) => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [showTooltip, setShowTooltip] = useState(false);
     const uid = useRef(uuid());
-    const onOpen = useCallback(() => setShowTooltip(true), []);
+    const onOpen = useCallback(() => title && setShowTooltip(true), [title]);
     const onClose = useCallback(() => setShowTooltip(false), []);
     useEffect(() => {
         generateGlobalTooltipPopover({

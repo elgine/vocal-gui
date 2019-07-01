@@ -5,6 +5,7 @@ import { MdMenu, MdLaunch, MdSettings, MdHelpOutline } from 'react-icons/md';
 import Button from '../components/Button';
 import { TitleLoader } from '../components/Loader';
 import gutter from '../components/mixins/gutter';
+import TooltipButton from '../components/Button/TooltipButton';
 
 const headerStyles = (theme: Theme) => {
     return {
@@ -31,15 +32,15 @@ export default ({ onMenuClick, ...others }: HeaderProps) => {
             </Button> */}
             <TitleLoader style={{ height: '36px' }} />
             <div className="header-placeholder"></div>
-            <Button flat>
+            <TooltipButton flat tooltip="Help">
                 <MdHelpOutline />
-            </Button>
-            <Button flat>
+            </TooltipButton>
+            <TooltipButton flat tooltip="Settings">
                 <MdSettings />
-            </Button>
-            <Button>
+            </TooltipButton>
+            <TooltipButton>
                 <MdLaunch />&nbsp;<span>Export</span>
-            </Button>
+            </TooltipButton>
         </div>
     );
 };

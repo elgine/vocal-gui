@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import Popover from '../Popover';
-import Button from '../Button';
 import { ButtonProps } from '../Button/Button';
 import { PopoverPosition } from '../Popover/Popover';
 import Slider from '../Slider';
@@ -12,6 +11,7 @@ import {
     FiVolume1,
     FiVolume2
 } from 'react-icons/fi';
+import TooltipButton from '../Button/TooltipButton';
 
 export interface VolumeProps extends Omit<ButtonProps, 'onChange'>{
     anchorPos?: PopoverPosition;
@@ -44,7 +44,7 @@ export default React.forwardRef(({ vertical, anchorPos, transformPos, iconSize, 
     };
     return (
         <React.Fragment>
-            <Button ref={ref} onClick={onVolumeBtnClick} flat {...others}>
+            <TooltipButton tooltip="Set volume" ref={ref} onClick={onVolumeBtnClick} flat {...others}>
                 {
                     v === 0 ? (
                         <FiVolumeX size={iconSize} />
@@ -56,7 +56,7 @@ export default React.forwardRef(({ vertical, anchorPos, transformPos, iconSize, 
                         )
                     )
                 }
-            </Button>
+            </TooltipButton>
             <Popover onClose={() => setPopoverVisible(false)} visible={popoverVisible}
                 anchorEl={anchor} anchorPos={anchorPos} transformPos={transformPos}>
                 <div css={volumePopoverStyles}>

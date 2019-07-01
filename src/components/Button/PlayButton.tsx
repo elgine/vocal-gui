@@ -5,6 +5,7 @@ import {
 } from 'react-icons/md';
 import Button, { ButtonProps } from './Button';
 import Tooltip from '../Tooltip';
+import TooltipButton from './TooltipButton';
 
 export interface PlayButtonProps extends Omit<ButtonProps, 'onChange'>{
     iconSize?: number;
@@ -18,14 +19,10 @@ export default ({ active, iconSize, onChange, onClick, ...others }: PlayButtonPr
         onClick && onClick(e);
     };
     return (
-        <Tooltip transformPos={{ horizontal: 'center', vertical: 'bottom' }}
-            anchorPos={{ horizontal: 'center', vertical: 'top' }}
-            title={active ? 'Stop' : 'Play'}>
-            <Button onClick={onBtnClick} {...others}>
-                {
-                    active ? <MdPause size={iconSize} /> : <MdPlayArrow size={iconSize} />
-                }
-            </Button>
-        </Tooltip>
+        <TooltipButton tooltip={active ? 'Stop' : 'Play'} onClick={onBtnClick} {...others}>
+            {
+                active ? <MdPause size={iconSize} /> : <MdPlayArrow size={iconSize} />
+            }
+        </TooltipButton>
     );
 };
