@@ -2,12 +2,12 @@ import React, { useRef } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import verticalAlign from '../mixins/verticalAlign';
-import { FiInfo } from 'react-icons/fi';
+import { MdFileUpload } from 'react-icons/md';
+import { fade } from '../utils/color';
 
 const uploadZoneStyles = (theme: Theme): any => {
     return {
         boxSizing: 'border-box',
-        border: `1px dashed ${theme.palette.border.border}`,
         textAlign: 'center',
         ...verticalAlign(),
         '&:after': {
@@ -18,23 +18,18 @@ const uploadZoneStyles = (theme: Theme): any => {
             left: 0,
             top: 0
         },
-        '.upload-illustration': {
-            color: theme.palette.border.border
-        },
         '&:hover, &.drag-over': {
-            borderColor: theme.palette.primary.color,
-            color: theme.palette.primary.color
+            backgroundColor: fade(theme.palette.primary.color, 0.2)
         }
     };
 };
 
 export interface UploadZoneProps extends Omit<React.HTMLAttributes<{}>, 'onClick' | 'title'>{
-    desc?: React.ReactNode;
     accept?: string;
     onUpload?: (v: FileList) => void;
 }
 
-export default ({ desc, accept, onUpload, onDragEnter, onDragOver, onDragLeave, onDrop, ...others }: UploadZoneProps) => {
+export default ({ accept, onUpload, onDragEnter, onDragOver, onDragLeave, onDrop, children, ...others }: React.PropsWithChildren<UploadZoneProps>) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.target.files && onUpload && onUpload(e.target.files);
@@ -74,16 +69,12 @@ export default ({ desc, accept, onUpload, onDragEnter, onDragOver, onDragLeave, 
             onDragLeave={onDragLeaveWrapped}
             onDrop={onDropWrapped}
             {...others}>
-            {
-                desc || (
-                    <React.Fragment>
-                        <FiInfo size="1.1rem" />
-                        &nbsp;
-                        <span>Drag files here</span>
-                    </React.Fragment>
-                )
-            }
-            <input hidden ref={inputRef} style={{ display: 'none' }} accept={accept} type="file" multiple onChange={onInputChange} />
+
+            <p><MdFileUpload size={48} /><br /><span>Click to select files or drag files here</span></p>
+            <input hidden ref={inputRef} style={{ display: 'none' }}
+                accept={accept} type="file" multiple
+                onChange={onInputChange}
+            />
         </div>
     );
 };

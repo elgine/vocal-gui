@@ -145,7 +145,7 @@ export default withTheme(({ children, pull, push, span, verticalAlign, horizonta
                             horizontalAlign || '',
                             genPropertyResponsiveClassName('pull', pull),
                             genPropertyResponsiveClassName('push', push),
-                            genPropertyResponsiveClassName('span', span, true),
+                            genPropertyResponsiveClassName('span', span),
                             className
                         )
                     } {...others}>

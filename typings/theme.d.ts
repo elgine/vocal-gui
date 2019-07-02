@@ -19,6 +19,7 @@ interface TypedAction{
     hover: number;
     active: number;
     selected: number;
+    caption: number;
     borderColorSelected: string;
     disabledOpacity: number;
 }

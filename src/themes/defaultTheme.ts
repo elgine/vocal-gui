@@ -16,12 +16,13 @@ export default {
             surface: '#333333',
             body: '#1f1f1f',
             panel: '#363636',
-            contrastText: '#c0c0c0'
+            contrastText: '#aaa'
         },
         action: {
-            hover: -0.21,
-            active: 0.21,
+            hover: -0.12,
+            active: 0.12,
             selected: 0.14,
+            caption: 0.12,
             borderColorSelected: '#d3a82a',
             disabledOpacity: 0.7
         },
@@ -154,14 +155,14 @@ export default {
             colorStart: '#98c92d',
             colorEnd: '#fc4242',
             headerSize: 8,
-            fadeHover: 0.4
+            fadeHover: 0.7
         },
         slider: {
             width: 160,
             height: 4,
             trackBackgroundColor: 'rgba(255, 255, 255, 0.05)',
             thumbBackgroundColor: '#fff',
-            thumbSize: 16
+            thumbSize: 12
         },
         tooltip: {
             backgroundColor: '#212121'

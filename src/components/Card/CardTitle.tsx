@@ -2,38 +2,53 @@ import React from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import combineClassNames from '../../utils/combineClassNames';
+import { shade } from '../utils/color';
+import gutter from '../mixins/gutter';
 
 const cardTitleStyles = (theme: Theme): any => {
+    const palette = theme.palette;
+    const { lineHeight, ...caption } = theme.typography.caption;
     return {
-        textAlign: 'center',
-        padding: `${theme.spacing.sm}px ${theme.spacing.md}px`,
-        fontSize: '0.8rem',
+        padding: `0 ${theme.spacing.md}px`,
+        '&.card-gutter-sm': gutter(theme.spacing.sm, true, true),
+        '&.card-gutter-md': gutter(theme.spacing.md, true, true),
+        '&.card-gutter-lg': gutter(theme.spacing.lg, true, true),
         '&.card-title-nowrap': {
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
             overflow: 'hidden'
         },
-        '.card-title-inner': {
-            textAlign: 'left'
+        '.card-desc': {
+            color: shade(palette.background.contrastText, palette.action.caption),
+            ...caption
         }
     };
 };
 
 export interface CardTitleProps extends React.HTMLAttributes<{}>{
     title?: string;
+    desc?: string;
     nowrap?: boolean;
+    gutter?: ComponentSize;
 }
 
-export default ({ title, nowrap, className, ...others }: CardTitleProps) => {
+export default ({ title, desc, nowrap, gutter, className, ...others }: CardTitleProps) => {
     return (
         <div css={cardTitleStyles} className={
-            combineClassNames(nowrap ? 'card-title-nowrap' : '', className)
+            combineClassNames(
+                nowrap ? 'card-title-nowrap' : '',
+                gutter ? `card-gutter-${gutter}` : '',
+                className
+            )
         } {...others}>
-            <span className="card-title-inner">
+            <div className="card-title-inner">
                 {
                     title
                 }
-            </span>
+            </div>
+            {
+                desc ? <div className="card-desc">{desc}</div> : undefined
+            }
         </div>
     );
 };

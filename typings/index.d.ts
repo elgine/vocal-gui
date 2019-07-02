@@ -15,6 +15,7 @@ interface Point{
 
 type ComponentSize = 'sm' | 'md' | 'lg';
 type ComponentColor = 'primary'|'default';
+type ComponentShape = 'circular' | 'rounded';
 
 interface BaseComponentProps{
     className?: string;

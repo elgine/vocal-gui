@@ -20,6 +20,12 @@ export default ({ active, iconSize, onChange, onClick, ...others }: RepeatButton
             {
                 active ? <MdRepeatOne size={iconSize} /> : <MdRepeat size={iconSize} />
             }
+            &nbsp;
+            <span>
+                {
+                    active ? 'Repeat' : 'No repeat'
+                }
+            </span>
         </TooltipButton>
     );
 };

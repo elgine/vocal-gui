@@ -9,13 +9,14 @@ const rowStyles = (theme: Theme): any => {
     const spacing = theme.spacing;
     return {
         position: 'relative',
-        display: 'block',
+        // display: 'block',
         boxSizing: 'border-box',
-        '&:after': {
-            content: '""',
-            clear: 'both',
-            visibility: 'hidden'
-        },
+        whiteSpace: 'nowrap',
+        // '&:after': {
+        //     content: '""',
+        //     clear: 'both',
+        //     visibility: 'hidden'
+        // },
         '&.flex': {
             display: 'flex',
             '&.left': {
@@ -38,6 +39,9 @@ const rowStyles = (theme: Theme): any => {
             }
         },
         '&:not(.flex)': {
+            '&>*': {
+                display: 'inline-block'
+            },
             '&:before': {
                 content: '""',
                 height: '100%',
@@ -70,17 +74,17 @@ const rowStyles = (theme: Theme): any => {
         },
         '&.gutter-sm': {
             '&>*': {
-                padding: `${spacing.sm * 0.5}px`
+                padding: `0 ${spacing.sm * 0.5}px`
             }
         },
         '&.gutter-md': {
             '&>*': {
-                padding: `${spacing.md * 0.5}px`
+                padding: `0 ${spacing.md * 0.5}px`
             }
         },
         '&.gutter-lg': {
             '&>*': {
-                padding: `${spacing.lg * 0.5}px`
+                padding: `0 ${spacing.lg * 0.5}px`
             }
         }
     };

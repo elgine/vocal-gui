@@ -10,42 +10,45 @@ import { clamp } from 'lodash';
 const sliderStyles = (theme: Theme): any => {
     const sliderProps = theme.components.slider;
     return {
-        position: 'relative',
         display: 'inline-block',
-        backgroundColor: sliderProps.trackBackgroundColor,
         borderRadius: `${sliderProps.height}px`,
-        '&.slider-disabled': {
-            opacity: theme.palette.action.disabledOpacity,
-            pointerEvents: 'none'
-        },
-        '&.slider-vertical': {
-            width: `${sliderProps.height}px`,
-            height: `${sliderProps.width}px`,
-            '&.slider-block': {
-                height: '100%'
+        '.slider': {
+            position: 'relative',
+            display: 'inline-block',
+            backgroundColor: sliderProps.trackBackgroundColor,
+            borderRadius: `${sliderProps.height}px`,
+            margin: `${sliderProps.thumbSize * 0.5}px`,
+            '&.slider-disabled': {
+                opacity: theme.palette.action.disabledOpacity,
+                pointerEvents: 'none'
+            },
+            '&.slider-vertical': {
+                width: `${sliderProps.height}px`,
+                '&.slider-block': {
+                    height: '100%'
+                }
+            },
+            '&:not(.slider-vertical)': {
+                height: `${sliderProps.height}px`,
+                '&.slider-block': {
+                    width: '100%'
+                }
+            },
+            '.slider-highlight': {
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                backgroundColor: theme.palette.primary.color
+            },
+            '.slider-thumb': {
+                position: 'absolute',
+                backgroundColor: sliderProps.thumbBackgroundColor,
+                borderRadius: '50%',
+                width: `${sliderProps.thumbSize}px`,
+                height: `${sliderProps.thumbSize}px`,
+                marginLeft: `-${sliderProps.thumbSize * 0.5}px`,
+                marginTop: `-${sliderProps.thumbSize * 0.5}px`
             }
-        },
-        '&:not(.slider-vertical)': {
-            width: `${sliderProps.width}px`,
-            height: `${sliderProps.height}px`,
-            '&.slider-block': {
-                width: '100%'
-            }
-        },
-        '.slider-highlight': {
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            backgroundColor: theme.palette.primary.color
-        },
-        '.slider-thumb': {
-            position: 'absolute',
-            backgroundColor: sliderProps.thumbBackgroundColor,
-            borderRadius: '50%',
-            width: `${sliderProps.thumbSize}px`,
-            height: `${sliderProps.thumbSize}px`,
-            marginLeft: `-${sliderProps.thumbSize * 0.5}px`,
-            marginTop: `-${sliderProps.thumbSize * 0.5}px`
         }
     };
 };
@@ -53,6 +56,7 @@ const sliderStyles = (theme: Theme): any => {
 export interface SliderProps extends Omit<React.HTMLAttributes<{}>, 'onChange'>{
     vertical?: boolean;
     value?: number;
+    width?: number;
     min?: number;
     max?: number;
     block?: boolean;
@@ -60,7 +64,8 @@ export interface SliderProps extends Omit<React.HTMLAttributes<{}>, 'onChange'>{
     onChange?: (v: number) => void;
 }
 
-export default ({ value, vertical, disabled, block, min, max, onChange, ...others }: SliderProps) => {
+export default ({ value, vertical, disabled, block, width, min, max, onChange, style, ...others }: SliderProps) => {
+    const w = width || 96;
     const v = value || 0;
     const mi = min || 0;
     const ma = max || 100;
@@ -122,23 +127,35 @@ export default ({ value, vertical, disabled, block, min, max, onChange, ...other
     const onMouseEnter = () => setShowTooltip(true);
     const onMouseLeave = () => !hasDown && setShowTooltip(false);
 
-    const thumbRef = useRef<HTMLDivElement>(null);
+    let combinedStyle: React.CSSProperties = {
+        ...style
+    };
+    if (!block) {
+        if (!vertical) {
+            combinedStyle.width = `${w}px`;
+        } else {
+            combinedStyle.height = `${w}px`;
+        }
+    }
     return (
-        <div className={
-            combineClassNames(
-                disabled ? 'slider-disabled' : '',
-                vertical ? 'slider-vertical' : '',
-                block ? 'slider-block' : ''
-            )
-        } ref={containerRef} css={sliderStyles} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} {...others}>
-            <div className="slider-highlight" style={highlightStyle}></div>
-            <Tooltip visible={showTooltip}
-                anchorPos={{ vertical: 'top', horizontal: 'center' }}
-                transformPos={{ vertical: 'bottom', horizontal: 'center' }}
-                title={v !== undefined ? (v === 0 ? '0.00' : (v).toFixed(2)) : undefined}
-            >
-                <div ref={thumbRef} className="slider-thumb" style={thumbStyle} onMouseDown={movementHook.onMouseDown}></div>
-            </Tooltip>
+        <div ref={containerRef} css={sliderStyles}>
+            <div className={
+                combineClassNames(
+                    'slider',
+                    disabled ? 'slider-disabled' : '',
+                    vertical ? 'slider-vertical' : '',
+                    block ? 'slider-block' : ''
+                )
+            } onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} style={combinedStyle} {...others}>
+                <div className="slider-highlight" style={highlightStyle}></div>
+                <Tooltip visible={showTooltip}
+                    anchorPos={{ vertical: 'top', horizontal: 'center' }}
+                    transformPos={{ vertical: 'bottom', horizontal: 'center' }}
+                    title={v !== undefined ? (v === 0 ? '0.00' : (v).toFixed(2)) : undefined}
+                >
+                    <div className="slider-thumb" style={thumbStyle} onMouseDown={movementHook.onMouseDown}></div>
+                </Tooltip>
+            </div>
         </div>
     );
 };

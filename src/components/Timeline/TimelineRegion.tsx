@@ -4,8 +4,15 @@ import { jsx } from '@emotion/core';
 import { MdDragHandle } from 'react-icons/md';
 import useMovement from '../../hooks/useMovement';
 import Tooltip from '../Tooltip';
+import { TooltipProps } from '../Tooltip/Tooltip';
+import { toTimeString } from '../../utils/time';
 
 const DRAG_REGION_WIDTH = 4;
+
+const TOOLTIP_POSITION: Pick<TooltipProps, 'anchorPos' | 'transformPos'> = {
+    anchorPos: { horizontal: 'center', vertical: 'top' },
+    transformPos: { horizontal: 'center', vertical: 'bottom' }
+};
 
 const timelineRegionStyles = (theme: Theme): any => {
     return {
@@ -82,12 +89,16 @@ export default ({ start, end, pixelsPerMSec, onRegionChange, style, ...others }:
     };
     return (
         <div css={timelineRegionStyles} style={combinedStyle} {...others}>
-            <div className="region-drag-start" style={dragStartStyle} onMouseDown={dragStartHook.onMouseDown}>
-                <MdDragHandle className="region-drag-icon" />
-            </div>
-            <div className="region-drag-end" style={dragEndStyle} onMouseDown={dragEndHook.onMouseDown}>
-                <MdDragHandle className="region-drag-icon" />
-            </div>
+            <Tooltip title={toTimeString(s)} {...TOOLTIP_POSITION}>
+                <div className="region-drag-start" style={dragStartStyle} onMouseDown={dragStartHook.onMouseDown}>
+                    <MdDragHandle className="region-drag-icon" />
+                </div>
+            </Tooltip>
+            <Tooltip title={toTimeString(e)} {...TOOLTIP_POSITION}>
+                <div className="region-drag-end" style={dragEndStyle} onMouseDown={dragEndHook.onMouseDown}>
+                    <MdDragHandle className="region-drag-icon" />
+                </div>
+            </Tooltip>
         </div>
     );
 };

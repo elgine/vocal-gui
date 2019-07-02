@@ -1,26 +1,19 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-/** @jsx jsx */
-import { jsx } from '@emotion/core';
 import TimeScale from '../components/Timeline/TimeScale';
 import Pointer from '../components/Timeline/Pointer';
 import { ACTION_SCALE_TIME } from '../store/timeline/types';
 import { ACTION_SEEK } from '../store/player/types';
 import Waveform from '../components/Timeline/Waveform';
 import TimelineRegion from '../components/Timeline/TimelineRegion';
-
-const timelinePanelStyles = (theme: Theme): any => {
-    return {
-        position: 'relative',
-        boxSizing: 'border-box',
-        background: `${theme.palette.mask.dark}`,
-        '.pointer': {
-            position: 'absolute'
-        }
-    };
-};
+import { Row } from '../components/Grid';
+import UploadZone from '../components/UploadZone';
+import { SUPPORT_MIME } from '../constant';
+import Tooltip from '../components/Tooltip';
+import { toTimeString } from '../utils/time';
 
 export interface TimelinePanelProps extends React.HTMLAttributes<{}>{
+    waveBuffer?: Float32Array;
     waveHeight?: number;
     timeScaleHeight?: number;
     duration?: number;
@@ -48,12 +41,12 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(({
-    waveHeight, currentTime, timeScaleHeight, duration, style,
-    pixelsPerMSec, scaleTime,
+    waveHeight, currentTime, timeScaleHeight, duration,
+    pixelsPerMSec, scaleTime, waveBuffer, style,
     onScroll, onSeek, onScaleTimeChange, ...others
 }: TimelinePanelProps) => {
     const wh = waveHeight || 256;
-    const tsh = timeScaleHeight || 32;
+    const tsh = timeScaleHeight || 48;
     const d = duration || 0;
     const ct = currentTime || 0;
     const ppms = pixelsPerMSec || 0.05;
@@ -71,10 +64,17 @@ export default connect(mapStateToProps, mapDispatchToProps)(({
         if (region.start !== undefined)setRegionStart(region.start);
         if (region.end !== undefined)setRegionEnd(region.end);
     };
-
-    const combinedStyle: React.CSSProperties = {
-        height: `${wh + tsh}px`,
+    const containerStyle: React.CSSProperties  = {
+        position: 'relative',
+        boxSizing: 'border-box',
+        overflowX: 'auto',
         ...style
+    };
+    const timeScaleStyle: React.CSSProperties = {
+        borderBottom: `1px solid #222`
+    };
+    const waveformContainerStyle: React.CSSProperties = {
+        height: `calc(100% - ${tsh}px)`
     };
     const regionStyle: React.CSSProperties = {
         left: `${scrollLeft}px`
@@ -83,11 +83,22 @@ export default connect(mapStateToProps, mapDispatchToProps)(({
         left: `${scrollLeft + ppms * ct}px`
     };
     return (
-        <div css={timelinePanelStyles} style={combinedStyle} onScroll={onPanelScroll} {...others}>
-            <TimeScale className="time-scale" height={tsh} />
-            <Waveform duration={d} height={wh} />
-            <TimelineRegion start={regionStart} end={regionEnd} pixelsPerMSec={ppms} style={regionStyle} onRegionChange={onRegionChange} />
-            <Pointer className="pointer" style={pointerStyle} />
+        <div onScroll={onPanelScroll} style={containerStyle} {...others}>
+            <TimeScale style={timeScaleStyle} height={tsh} />
+            <Row verticalAlign="middle" style={waveformContainerStyle}>
+                {
+                    waveBuffer ? <Waveform buffer={waveBuffer} duration={d} height={wh} /> : (
+                        <UploadZone accept={SUPPORT_MIME} style={{ width: '100%', height: '100%' }} />
+                    )
+                }
+            </Row>
+            <TimelineRegion start={regionStart} end={regionEnd} pixelsPerMSec={ppms}
+                style={regionStyle} onRegionChange={onRegionChange}
+            />
+            <Tooltip title={toTimeString(ct)} anchorPos={{ vertical: 'top', horizontal: 'center' }}
+                transformPos={{ vertical: 'bottom', horizontal: 'center' }}>
+                <Pointer style={pointerStyle} />
+            </Tooltip>
         </div>
     );
 });

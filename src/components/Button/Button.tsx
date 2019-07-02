@@ -5,18 +5,19 @@ import combineClassNames from '../../utils/combineClassNames';
 import { shade, fade } from '../utils/color';
 import verticalAlign from '../mixins/verticalAlign';
 
-export type ButtonShape = 'circular' | 'rounded';
-
 export interface ButtonProps extends React.ButtonHTMLAttributes<{}>{
     link?: boolean;
     href?: string;
     ghost?: boolean;
-    shape?: ButtonShape;
+    shape?: ComponentShape;
     color?: ComponentColor;
     size?: ComponentSize;
     flat?: boolean;
     Component?: React.RefForwardingComponent<any, any>;
 }
+
+const FADE_HOVER = 0.12;
+const FADE_ACTIVE = 0.16;
 
 const genButtonColorStyle = (palette: Palette, color: ComponentColor) => {
     return {
@@ -39,10 +40,10 @@ const genIconButtonColorStyle = (palette: Palette, color: ComponentColor) => {
         backgroundColor: 'transparent',
         '&:not(.button-disabled)': {
             '&:hover': {
-                backgroundColor: fade(palette.background.contrastText, 0.04)
+                backgroundColor: fade(palette.background.contrastText, FADE_HOVER)
             },
             '&:active': {
-                backgroundColor: fade(palette.background.contrastText, 0.08)
+                backgroundColor: fade(palette.background.contrastText, FADE_ACTIVE)
             }
         }
     };
@@ -69,17 +70,23 @@ const genButtonSizeStyle = (commonProperties: ComponentProperties, size: Compone
 };
 
 const genGhostButtonColorStyle = (palette: Palette, color: ComponentColor) => {
-    const colorHover = shade(palette[color].color, palette.action.hover);
-    const colorActive = shade(palette[color].color, palette.action.active);
+    const c = palette[color].color;
+    const bgColorHover = fade(c, FADE_HOVER);
+    const bgColorActive = fade(c, FADE_ACTIVE);
+    const colorHover = shade(c, palette.action.hover);
+    const colorActive = shade(c, palette.action.active);
     return {
         color: palette[color].color,
         borderColor: palette[color].color,
+        backgroundColor: 'transparent',
         '&:not(.button-disabled)': {
             '&:hover': {
                 color: colorHover,
-                borderColor: colorActive
+                borderColor: colorHover,
+                backgroundColor: bgColorHover
             },
             '&:active': {
+                backgroundColor: bgColorActive,
                 color: colorActive,
                 borderColor: colorActive
             }
@@ -103,7 +110,7 @@ const genButtonStyle = (theme: Theme): any => {
         border: '1px solid transparent',
         outline: 'none',
         background: 'transparent',
-        textTransform: 'uppercase',
+        textTransform: 'capitalize',
         transition: `0.2s ${theme.transitions['easeOutSine']} all`,
         ...verticalAlign(),
         ...theme.typography.button,
@@ -113,8 +120,10 @@ const genButtonStyle = (theme: Theme): any => {
         '&.button-size-sm': genButtonSizeStyle(commonProperties, 'sm'),
         '&.button-size-md': genButtonSizeStyle(commonProperties, 'md'),
         '&.button-size-lg': genButtonSizeStyle(commonProperties, 'lg'),
-        '&.button-color-default': genButtonColorStyle(palette, 'default'),
-        '&.button-color-primary': genButtonColorStyle(palette, 'primary'),
+        '&:not(.button-ghost)': {
+            '&.button-color-default': genButtonColorStyle(palette, 'default'),
+            '&.button-color-primary': genButtonColorStyle(palette, 'primary')
+        },
         '&.button-ghost': genGhostButtonStyle(palette),
         '&.button-flat': genIconButtonStyle(palette),
         '&.button-block': {

@@ -26,3 +26,7 @@ export const toTimeString = (msec: number) => {
     const arr = format(msec);
     return `${arr[0] >= 100 ? arr[0] : prefix(2, arr[0])}:${prefix(2, arr[1])}:${prefix(2, arr[2])}.${prefix(3, arr[3])}`;
 };
+
+export const compose = (...args: number[]) => {
+    return (args[0] * 3600 + args[1] * 60 + (args[2] || 0)) * 1000 + (args[3] || 0);
+};

@@ -42,6 +42,6 @@ export interface DividerProps extends BaseComponentProps{
 
 export default ({ vertical, className, margin, ...others }: DividerProps) => {
     return (
-        <div className={combineClassNames(`margin-size-${margin || 'md'}`, vertical ? 'divider-vertical' : '', className)} css={dividerStyles} {...others}></div>
+        <div className={combineClassNames(margin ? `margin-size-${margin || 'md'}` : '', vertical ? 'divider-vertical' : '', className)} css={dividerStyles} {...others}></div>
     );
 };
