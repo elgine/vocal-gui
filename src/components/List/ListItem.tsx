@@ -11,11 +11,17 @@ const listItemStyles = (theme: Theme): any => {
     const { common, listItem } = theme.components;
     return {
         boxSizing: 'border-box',
-        '&:hover': {
-            backgroundColor: listItem.backgroundColorHover
+        '&.list-disabled': {
+            pointerEvents: 'none',
+            opacity: theme.palette.action.disabledOpacity
         },
-        '&:active, &.list-selected': {
-            backgroundColor: listItem.backgroundColorActive
+        '&:not(.list-disabled)': {
+            '&:hover': {
+                backgroundColor: listItem.backgroundColorHover
+            },
+            '&:active, &.list-selected': {
+                backgroundColor: listItem.backgroundColorActive
+            }
         },
         '&.list-item-sm': listItemSizeStyle(common, 'sm'),
         '&.list-item-md': listItemSizeStyle(common, 'md'),
@@ -24,16 +30,19 @@ const listItemStyles = (theme: Theme): any => {
 };
 
 export interface ListItemProps extends React.LiHTMLAttributes<{}>{
+    value?: string;
     size?: ComponentSize;
+    disabled?: boolean;
     selected?: boolean;
 }
 
-export default ({ selected, size, children, className, ...others }: React.PropsWithChildren<ListItemProps>) => {
+export default ({ selected, disabled, size, children, className, ...others }: React.PropsWithChildren<ListItemProps>) => {
     return (
         <li css={listItemStyles}
             className={
                 combineClassNames(
                     `size-${size}`,
+                    disabled ? 'list-disabled' : '',
                     selected ? 'list-selected' : '',
                     className
                 )

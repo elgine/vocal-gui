@@ -27,7 +27,7 @@ const editableTextStyles = (theme: Theme): any => {
             background: 'transparent',
             boxSizing: 'border-box',
             textAlign: 'center',
-            color: theme.palette.background.contrastText,
+            color: theme.palette.typography.body,
             border: `1px solid transparent`
         },
         '.edit-icon': {

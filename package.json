@@ -60,6 +60,7 @@
     "lodash": "^4.17.11",
     "pixi.js": "^5.0.3",
     "popper.js": "^1.15.0",
+    "rc-select": "^9.1.5",
     "rc-trigger": "^2.6.4",
     "react": "^16.8.6",
     "react-content-loader": "^4.2.1",

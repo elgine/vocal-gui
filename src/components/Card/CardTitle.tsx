@@ -19,7 +19,7 @@ const cardTitleStyles = (theme: Theme): any => {
             overflow: 'hidden'
         },
         '.card-desc': {
-            color: shade(palette.background.contrastText, palette.action.caption),
+            color: theme.palette.typography.caption,
             ...caption
         }
     };

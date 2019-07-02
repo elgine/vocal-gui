@@ -1,4 +1,18 @@
 
+export const getAudioBufferFromUrl = (url: string): Promise<AudioBuffer> => {
+    return new Promise((resolve, reject) => {
+        let req = new XMLHttpRequest();
+        req.onload = () => {
+            let arrayBuffer = req.response as ArrayBuffer;
+            let ctx = new AudioContext();
+            ctx.decodeAudioData(arrayBuffer, resolve, reject);
+        };
+        req.onerror = reject;
+        req.responseType = 'arraybuffer';
+        req.open('GET', url);
+    });
+};
+
 export const getAudioBufferFromFile = (file: File | Blob): Promise<AudioBuffer> => {
     return new Promise((resolve, reject) => {
         if (!AudioContext) { reject(new Error('Do not support we audio api')) }
@@ -6,9 +20,7 @@ export const getAudioBufferFromFile = (file: File | Blob): Promise<AudioBuffer> 
             let ctx = new AudioContext();
             let reader = new FileReader();
             reader.onload = function(e) {
-                this.result instanceof ArrayBuffer && ctx.decodeAudioData(this.result, function(buf) {
-                    resolve(buf);
-                });
+                this.result instanceof ArrayBuffer && ctx.decodeAudioData(this.result, resolve, reject);
             };
             reader.onerror = (e) => reject(e);
             reader.readAsArrayBuffer(file);

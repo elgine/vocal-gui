@@ -22,13 +22,16 @@ export default {
             hover: -0.12,
             active: 0.12,
             selected: 0.14,
-            caption: 0.12,
             borderColorSelected: '#d3a82a',
             disabledOpacity: 0.7
         },
         mask: {
             light: 'rgba(255, 255, 255, 0.4)',
             dark: 'rgba(0, 0, 0, 0.4)'
+        },
+        typography: {
+            body: '#aaa',
+            caption: '#999'
         }
     },
     typography: {

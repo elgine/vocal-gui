@@ -28,7 +28,7 @@ const genLayoutStyle = (theme: Theme): any => {
         'body': {
             fontFamily: theme.typography.fontFamily,
             backgroundColor: theme.palette.background.body,
-            color: theme.palette.background.contrastText,
+            color: theme.palette.typography.body,
             ...body
         },
         'p': {

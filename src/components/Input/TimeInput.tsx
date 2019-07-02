@@ -17,7 +17,7 @@ export interface TimeInputProps extends BaseComponentProps{
 const timeInputStyles = (theme: Theme): any => {
     return {
         input: {
-            color: theme.palette.background.contrastText,
+            color: theme.palette.typography.body,
             textAlign: 'center',
             outline: 'none',
             border: 0,

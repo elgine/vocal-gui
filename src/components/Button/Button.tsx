@@ -40,10 +40,10 @@ const genIconButtonColorStyle = (palette: Palette, color: ComponentColor) => {
         backgroundColor: 'transparent',
         '&:not(.button-disabled)': {
             '&:hover': {
-                backgroundColor: fade(palette.background.contrastText, FADE_HOVER)
+                backgroundColor: fade(palette.typography.body, FADE_HOVER)
             },
             '&:active': {
-                backgroundColor: fade(palette.background.contrastText, FADE_ACTIVE)
+                backgroundColor: fade(palette.typography.body, FADE_ACTIVE)
             }
         }
     };

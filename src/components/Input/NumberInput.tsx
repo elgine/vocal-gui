@@ -35,7 +35,7 @@ const numberInputSizeStyle = (common: ComponentProperties, size: ComponentSize) 
 
 const numberInputStyles = (theme: Theme): any => {
     const borderColor = theme.palette.border.border;
-    const contrast = theme.palette.background.contrastText;
+    const contrast = theme.palette.typography.body;
     return {
         display: 'inline-block',
         position: 'relative',
@@ -85,7 +85,7 @@ const numberInputStyles = (theme: Theme): any => {
             boxSizing: 'border-box',
             border: `1px solid ${borderColor}`,
             background: 'none',
-            color: theme.palette.background.contrastText,
+            color: theme.palette.typography.body,
             transition: `200ms ${theme.transitions.easeInSine} border-color`,
             '&:hover, &:focus': {
                 borderColor: theme.palette.primary.color

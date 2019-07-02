@@ -1,16 +1,35 @@
 import React from 'react';
 /** @jsx jsx */
-import { jsx, css } from '@emotion/core';
+import { jsx, css, ClassNames } from '@emotion/core';
+import { withTheme } from 'emotion-theming';
+import ListItem from './ListItem';
 import verticalAlign from '../mixins/verticalAlign';
+import combineClassNames from '../../utils/combineClassNames';
 
-const listItemHeaderStyles = css({
-    ...verticalAlign()
-});
+const listItemHeaderStyles = (theme: Theme): any => {
+    return {
+        padding: `0 ${theme.components.common.padding}`,
+        color: theme.palette.typography.caption,
+        fontSize: '0.8rem',
+        ...verticalAlign()
+    };
+};
 
-export default React.forwardRef(({ children, ...others }: React.PropsWithChildren<React.HTMLAttributes<{}>>, ref: React.Ref<any>) => {
+export default withTheme(({ children, theme, className, ...others }: React.PropsWithChildren<React.HTMLAttributes<{}> & {theme: Theme}>) => {
     return (
-        <div ref={ref} css={listItemHeaderStyles} {...others}>
-            {children}
-        </div>
+        <ClassNames>
+            {
+                ({ css, cx }) => (
+                    <ListItem className={
+                        combineClassNames(
+                            css(listItemHeaderStyles(theme)),
+                            className
+                        )
+                    } {...others}>
+                        {children}
+                    </ListItem>
+                )
+            }
+        </ClassNames>
     );
 });

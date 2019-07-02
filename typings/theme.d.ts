@@ -15,11 +15,15 @@ interface TypedBackground{
     contrastText: string;
 }
 
+interface TypographyPalette{
+    body: string;
+    caption: string;
+}
+
 interface TypedAction{
     hover: number;
     active: number;
     selected: number;
-    caption: number;
     borderColorSelected: string;
     disabledOpacity: number;
 }
@@ -159,6 +163,7 @@ interface Palette{
     background: TypedBackground;
     border: TypedBorder;
     action: TypedAction;
+    typography: TypographyPalette;
     mask: {
         light: string;
         dark: string;

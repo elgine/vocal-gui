@@ -50,7 +50,7 @@ const inputStyles = (theme: Theme): any => {
             boxSizing: 'border-box',
             border: `1px solid ${borderColor}`,
             background: 'none',
-            color: theme.palette.background.contrastText,
+            color: theme.palette.typography.body,
             transition: `200ms ${theme.transitions.easeInSine} border-color`,
             '&:hover, &:focus': {
                 borderColor: theme.palette.primary.color
