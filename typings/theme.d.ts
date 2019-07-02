@@ -15,7 +15,7 @@ interface TypedBackground{
     contrastText: string;
 }
 
-interface TypographyPalette{
+interface TypographyColor{
     body: string;
     caption: string;
     placeholder: string;
@@ -167,7 +167,7 @@ interface Palette{
     background: TypedBackground;
     border: TypedBorder;
     action: TypedAction;
-    typography: TypographyPalette;
+    typography: TypographyColor;
     mask: {
         light: string;
         dark: string;

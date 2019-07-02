@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 /** @jsx jsx */
 import { jsx, keyframes } from '@emotion/core';
+import { MdArrowDropDown } from 'react-icons/md';
 import Popover from '../Popover';
 import { List } from '../List';
 import { ListProps } from '../List/List';
@@ -10,12 +11,17 @@ import { shade } from '../utils/color';
 
 export { ListItem as Option, ListItemHeader as OptionGroupHeader } from '../List';
 
+const SUBFIX_SIZE = 20;
+
 const selectSizeStyle = (common: ComponentProperties, size: ComponentSize) => {
     return {
         '.select-value-box': {
-            padding: `0 ${common.padding[size]}px`,
+            padding: `0 ${SUBFIX_SIZE + common.padding[size] * 2}px 0 ${common.padding[size]}px`,
             height: `${common.height[size]}px`,
-            borderRadius: `${common.borderRadius[size]}px`
+            borderRadius: `${common.borderRadius[size]}px`,
+            '.select-subfix': {
+                right: `${common.padding[size]}px`
+            }
         }
     };
 };
@@ -36,11 +42,19 @@ const selectStyles = (theme: Theme): any => {
             '&:hover': {
                 cursor: 'text',
                 borderColor: `${shade(theme.palette.border.border, theme.palette.action.shade.hover)}`
+            },
+            '.select-subfix': {
+                position: 'absolute',
+                top: '50%',
+                transform: 'translateY(-50%)'
             }
         },
         '&.select-active': {
             '.select-value-box': {
-                borderColor: theme.palette.primary.color
+                borderColor: theme.palette.primary.color,
+                '.select-subfix': {
+                    transform: 'translateY(-50%) rotate(180deg)'
+                }
             }
         },
         '&.select-size-sm': selectSizeStyle(theme.components.common, 'sm'),
@@ -77,6 +91,7 @@ export default ({ className, style, width, block, size, multiple, value, ...othe
                 {
                     Object.values(val).join(',')
                 }
+                <MdArrowDropDown className="select-subfix" size={SUBFIX_SIZE} />
             </div>
             <Popover visible={dropdownVisible} onClose={() => setDropdownVisible(false)}
                 anchorEl={containerRef.current} anchorPos={{ vertical: 'bottom', horizontal: 'center' }}
