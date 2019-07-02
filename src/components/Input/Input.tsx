@@ -55,7 +55,7 @@ const inputStyles = (theme: Theme): any => {
             '&:hover, &:focus': {
                 borderColor: theme.palette.primary.color
             },
-            ...placeholder(theme.components.input.placeholderColor)
+            ...placeholder(theme.palette.typography.placeholder)
         },
         '.input-prefix, .input-subfix': {
             position: 'absolute',

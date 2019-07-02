@@ -54,7 +54,7 @@ const editableTextStyles = (theme: Theme): any => {
         },
         '&.disabled': {
             cursor: 'not-allowed',
-            opacity: theme.palette.action.disabledOpacity
+            opacity: theme.palette.action.fade.disabled
         },
         '&.size-sm': editiableTextSizeStyle(theme.components.common, 'sm'),
         '&.size-md': editiableTextSizeStyle(theme.components.common, 'md'),

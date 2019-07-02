@@ -18,14 +18,24 @@ interface TypedBackground{
 interface TypographyPalette{
     body: string;
     caption: string;
+    placeholder: string;
 }
 
 interface TypedAction{
-    hover: number;
-    active: number;
-    selected: number;
-    borderColorSelected: string;
-    disabledOpacity: number;
+    shade: {
+        hover: number;
+        active: number;
+        selected: number;
+    };
+    fade: {
+        hover: number;
+        active: number;
+        selected: number;
+        disabled: number;
+    };
+    color: {
+        borderColorSelected: string;
+    };
 }
 
 interface Breakpoint{
@@ -91,10 +101,6 @@ interface TooltipProperties{
     backgroundColor: string;
 }
 
-interface InputProperties{
-    placeholderColor: string;
-}
-
 interface ScrollBarProperties{
     width: number;
     trackBackgroundColor: string;
@@ -117,8 +123,6 @@ interface Components{
     pointer: PointerProperties;
     slider: SliderProperties;
     tooltip: TooltipProperties;
-    listItem: ListItemProperties;
-    input: InputProperties;
     scrollBar: ScrollBarProperties;
     card: CardProperties;
     timelineRegion: TimelineRegionProperties;

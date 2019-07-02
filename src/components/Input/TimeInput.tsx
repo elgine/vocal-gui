@@ -7,6 +7,7 @@ import { Row } from '../Grid';
 import combineClassNames from '../../utils/combineClassNames';
 import { format, compose } from '../../utils/time';
 import prefix from '../../utils/prefix';
+import placeholder from '../mixins/placeholder';
 
 export interface TimeInputProps extends BaseComponentProps{
     theme: Theme;
@@ -24,6 +25,7 @@ const timeInputStyles = (theme: Theme): any => {
             background: 'transparent',
             padding: `2px 0`,
             borderBottom: `2px dashed ${theme.palette.default.color}`,
+            ...placeholder(theme.palette.typography.placeholder),
             '&:focus': {
                 borderBottomColor: theme.palette.primary.color
             }

@@ -16,19 +16,16 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<{}>{
     Component?: React.RefForwardingComponent<any, any>;
 }
 
-const FADE_HOVER = 0.12;
-const FADE_ACTIVE = 0.16;
-
 const genButtonColorStyle = (palette: Palette, color: ComponentColor) => {
     return {
         backgroundColor: palette[color].color,
         color: palette[color].contrastText,
         '&:not(.button-disabled)': {
             '&:hover': {
-                backgroundColor: shade(palette[color].color, palette.action.hover)
+                backgroundColor: shade(palette[color].color, palette.action.shade.bgHover)
             },
             '&:active': {
-                backgroundColor: shade(palette[color].color, palette.action.active)
+                backgroundColor: shade(palette[color].color, palette.action.shade.bgActive)
             }
         }
     };
@@ -40,10 +37,10 @@ const genIconButtonColorStyle = (palette: Palette, color: ComponentColor) => {
         backgroundColor: 'transparent',
         '&:not(.button-disabled)': {
             '&:hover': {
-                backgroundColor: fade(palette.typography.body, FADE_HOVER)
+                backgroundColor: fade(palette.typography.body, palette.action.fade.bgHover)
             },
             '&:active': {
-                backgroundColor: fade(palette.typography.body, FADE_ACTIVE)
+                backgroundColor: fade(palette.typography.body, palette.action.fade.bgActive)
             }
         }
     };
@@ -71,10 +68,10 @@ const genButtonSizeStyle = (commonProperties: ComponentProperties, size: Compone
 
 const genGhostButtonColorStyle = (palette: Palette, color: ComponentColor) => {
     const c = palette[color].color;
-    const bgColorHover = fade(c, FADE_HOVER);
-    const bgColorActive = fade(c, FADE_ACTIVE);
-    const colorHover = shade(c, palette.action.hover);
-    const colorActive = shade(c, palette.action.active);
+    const bgColorHover = fade(c, palette.action.fade.bgHover);
+    const bgColorActive = fade(c, palette.action.fade.bgActive);
+    const colorHover = shade(c, palette.action.shade.bgHover);
+    const colorActive = shade(c, palette.action.shade.bgActive);
     return {
         color: palette[color].color,
         borderColor: palette[color].color,
@@ -115,7 +112,8 @@ const genButtonStyle = (theme: Theme): any => {
         ...verticalAlign(),
         ...theme.typography.button,
         '&.button-disabled': {
-            opacity: palette.action.disabledOpacity
+            opacity: palette.action.fade.disabled,
+            pointerEvents: 'not-allowed'
         },
         '&.button-size-sm': genButtonSizeStyle(commonProperties, 'sm'),
         '&.button-size-md': genButtonSizeStyle(commonProperties, 'md'),

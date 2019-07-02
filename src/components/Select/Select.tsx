@@ -4,9 +4,9 @@ import { jsx, keyframes } from '@emotion/core';
 import Popover from '../Popover';
 import { List } from '../List';
 import { ListProps } from '../List/List';
-import Box from '../Grid/Box';
 import combineClassNames from '../../utils/combineClassNames';
 import verticalAlign from '../mixins/verticalAlign';
+import { shade } from '../utils/color';
 
 export { ListItem as Option, ListItemHeader as OptionGroupHeader } from '../List';
 
@@ -14,7 +14,8 @@ const selectSizeStyle = (common: ComponentProperties, size: ComponentSize) => {
     return {
         '.select-value-box': {
             padding: `0 ${common.padding[size]}px`,
-            height: `${common.height[size]}px`
+            height: `${common.height[size]}px`,
+            borderRadius: `${common.borderRadius[size]}px`
         }
     };
 };
@@ -30,7 +31,12 @@ const selectStyles = (theme: Theme): any => {
         },
         '.select-value-box': {
             ...verticalAlign(),
-            border: `1px solid ${theme.palette.border.border}`
+            boxSizing: 'border-box',
+            border: `1px solid ${theme.palette.border.border}`,
+            '&:hover': {
+                cursor: 'text',
+                borderColor: `${shade(theme.palette.border.border, theme.palette.action.shade.hover)}`
+            }
         },
         '&.select-active': {
             '.select-value-box': {
@@ -66,7 +72,7 @@ export default ({ className, style, width, block, size, multiple, value, ...othe
             block ? 'select-block' : '',
             dropdownVisible ? 'select-active' : '',
             className
-        )} style={combinedStyle}>
+        )} style={combinedStyle} onClick={() => setDropdownVisible(!dropdownVisible)}>
             <div className="select-value-box">
                 {
                     Object.values(val).join(',')

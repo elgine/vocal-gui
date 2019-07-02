@@ -19,7 +19,7 @@ const sliderStyles = (theme: Theme): any => {
             borderRadius: `${sliderProps.height}px`,
             margin: `${sliderProps.thumbSize * 0.5}px`,
             '&.slider-disabled': {
-                opacity: theme.palette.action.disabledOpacity,
+                opacity: theme.palette.action.fade.disabled,
                 pointerEvents: 'none'
             },
             '&.slider-vertical': {

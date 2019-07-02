@@ -10,7 +10,7 @@ export default {
         },
         border: {
             divider: '#0a0a0a',
-            border: '#333'
+            border: '#444'
         },
         background: {
             surface: '#333333',
@@ -19,11 +19,20 @@ export default {
             contrastText: '#aaa'
         },
         action: {
-            hover: -0.12,
-            active: 0.12,
-            selected: 0.14,
-            borderColorSelected: '#d3a82a',
-            disabledOpacity: 0.7
+            shade: {
+                hover: -0.12,
+                active: 0.12,
+                selected: 0.14
+            },
+            fade: {
+                hover: 0.08,
+                active: 0.12,
+                selected: 0.14,
+                disabled: 0.7
+            },
+            color: {
+                borderColorSelected: '#ebc158'
+            }
         },
         mask: {
             light: 'rgba(255, 255, 255, 0.4)',
@@ -31,7 +40,8 @@ export default {
         },
         typography: {
             body: '#aaa',
-            caption: '#999'
+            caption: '#999',
+            plaeholder: '#666'
         }
     },
     typography: {
@@ -169,9 +179,6 @@ export default {
         },
         tooltip: {
             backgroundColor: '#212121'
-        },
-        input: {
-            placeholderColor: '#666'
         },
         scrollBar: {
             width: 10,

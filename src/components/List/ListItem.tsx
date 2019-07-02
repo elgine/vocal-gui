@@ -1,31 +1,37 @@
 import React from 'react';
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
 import combineClassNames from '../../utils/combineClassNames';
+import { contrast, fade } from '../utils/color';
 
 const listItemSizeStyle = (common: ComponentProperties, size: ComponentSize) => {
     return {
-        padding: `0 ${common.padding[size]}px`
+        padding: `${common.padding[size] * 0.5}px ${common.padding[size]}px`,
     };
 };
 
 const listItemStyles = (theme: Theme): any => {
-    const { common, listItem } = theme.components;
+    const { common } = theme.components;
     return {
         boxSizing: 'border-box',
         '&.list-disabled': {
             pointerEvents: 'none',
-            opacity: theme.palette.action.disabledOpacity
+            opacity: theme.palette.action.fade.disabled
         },
         '&:not(.list-disabled)': {
             '&:hover': {
-                backgroundColor: listItem.backgroundColorHover
+                backgroundColor: fade(contrast(theme.palette.background.body), theme.palette.action.fade.hover)
             },
             '&:active, &.list-selected': {
-                backgroundColor: listItem.backgroundColorActive
+                backgroundColor: fade(contrast(theme.palette.background.body), theme.palette.action.fade.active)
+            },
+            '&.list-selected': {
+                backgroundColor: fade(contrast(theme.palette.background.body), theme.palette.action.fade.selected)
             }
         },
-        '&.list-item-sm': listItemSizeStyle(common, 'sm'),
-        '&.list-item-md': listItemSizeStyle(common, 'md'),
-        '&.list-item-lg': listItemSizeStyle(common, 'lg')
+        '&.list-item-size-sm': listItemSizeStyle(common, 'sm'),
+        '&.list-item-size-md': listItemSizeStyle(common, 'md'),
+        '&.list-item-size-lg': listItemSizeStyle(common, 'lg')
     };
 };
 
@@ -41,7 +47,7 @@ export default ({ selected, disabled, size, children, className, ...others }: Re
         <li css={listItemStyles}
             className={
                 combineClassNames(
-                    `size-${size}`,
+                    `list-item-size-${size || 'md'}`,
                     disabled ? 'list-disabled' : '',
                     selected ? 'list-selected' : '',
                     className

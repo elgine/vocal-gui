@@ -90,7 +90,7 @@ const numberInputStyles = (theme: Theme): any => {
             '&:hover, &:focus': {
                 borderColor: theme.palette.primary.color
             },
-            ...placeholder(theme.components.input.placeholderColor)
+            ...placeholder(theme.palette.typography.placeholder)
         },
         '&.number-input-size-sm': numberInputSizeStyle(theme.components.common, 'sm'),
         '&.number-input-size-md': numberInputSizeStyle(theme.components.common, 'md'),

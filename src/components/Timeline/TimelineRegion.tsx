@@ -19,7 +19,7 @@ const timelineRegionStyles = (theme: Theme): any => {
         position: 'absolute',
         top: 0,
         height: '100%',
-        border: `2px solid ${theme.palette.action.borderColorSelected}`,
+        border: `2px solid ${theme.palette.action.color.borderColorSelected}`,
         boxSizing: 'border-box',
         '.region-drag-start, .region-drag-end': {
             position: 'absolute',

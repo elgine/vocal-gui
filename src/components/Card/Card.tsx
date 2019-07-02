@@ -10,10 +10,10 @@ const cardStyles = (theme: Theme): any => {
         boxSizing: 'border-box',
         borderRadius: `${theme.components.common.borderRadius.md}px`,
         '&.card-selected': {
-            borderColor: theme.palette.action.borderColorSelected
+            borderColor: theme.palette.action.color.borderColorSelected
         },
         '&.card-disabled': {
-            opacity: theme.palette.action.disabledOpacity,
+            opacity: theme.palette.action.fade.disabled,
             pointerEvents: 'none'
         }
     };
