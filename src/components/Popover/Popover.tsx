@@ -29,6 +29,7 @@ export interface PopoverPosition{
 export interface PopoverProps extends BaseComponentProps{
     visible?: boolean;
     theme: Theme;
+    stretch?: boolean;
     anchorEl?: HTMLElement|null;
     anchorPos?: PopoverPosition;
     transformPos?: PopoverPosition;
@@ -37,11 +38,19 @@ export interface PopoverProps extends BaseComponentProps{
 }
 
 
-const applyHorizontalTransformPos = (pos: number, targetBounds: ClientRect, transformPos: 'left'|'center'|'right') => {
+const applyHorizontalTransformPos = (pos: number, targetBounds: ClientRect, transformPos: 'left'|'center'|'right', stretch: boolean = false, wrapperWidth: number = 0) => {
     if (transformPos === 'center') {
-        pos -= targetBounds.width * 0.5;
+        if (stretch) {
+            pos -= wrapperWidth * 0.5;
+        } else {
+            pos -= targetBounds.width * 0.5;
+        }
     } else if (transformPos === 'right') {
-        pos -= targetBounds.width;
+        if (stretch) {
+            pos -= wrapperWidth;
+        } else {
+            pos -= targetBounds.width;
+        }
     }
     return pos;
 };
@@ -56,7 +65,7 @@ const applyVerticalTransformPos = (pos: number, targetBounds: ClientRect, transf
 };
 
 export default withTheme(({
-    visible, anchorEl, anchorPos, transformPos,
+    visible, anchorEl, anchorPos, transformPos, stretch,
     onClose, transitionClassNames, children, theme, ...others
 }: React.PropsWithChildren<PopoverProps>) => {
     const [show, setShow] = useState(false);
@@ -100,7 +109,7 @@ export default withTheme(({
                 newPos.left = bounds.left + bounds.width * 0.5;
             }
 
-            newPos.left = applyHorizontalTransformPos(newPos.left, wBounds, tp.horizontal);
+            newPos.left = applyHorizontalTransformPos(newPos.left, wBounds, tp.horizontal, stretch, bounds.width);
 
             if (newPos.left + wBounds.width >= pageSize.width) {
                 newPos.left = bounds.left - wBounds.width;
@@ -126,7 +135,7 @@ export default withTheme(({
 
             setPos(newPos);
         }
-    }, [popoverRef.current, anchorEl, ap, tp, transitionActive, pageSize.width, pageSize.height]);
+    }, [popoverRef.current, anchorEl, ap, tp, stretch, transitionActive, pageSize.width, pageSize.height]);
 
     let popoverContainerStyle: React.CSSProperties = {
         display: show ? 'block' : 'none',
@@ -134,8 +143,12 @@ export default withTheme(({
         top: `${pos.top}px`
     };
 
+    if (stretch && anchorEl) {
+        popoverContainerStyle.minWidth = `${anchorEl.offsetWidth}px`;
+    }
+
     return createPortal(<div ref={wrapperRef} css={{ ...popoverContainerStyles(theme) }} style={popoverContainerStyle}>
-        <CSSTransition timeout={300} unmountOnExit classNames={transitionClassNames || 'scale'} in={transitionActive}
+        <CSSTransition timeout={300} mountOnEnter unmountOnExit classNames={transitionClassNames || 'scale'} in={transitionActive}
             onExited={() => setTransitionEnded(true)}>
             <div ref={popoverRef} className="popover" {...others}>
                 {children}

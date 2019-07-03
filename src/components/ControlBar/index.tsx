@@ -1,2 +1,2 @@
-export { default as ControlBar } from './ControlBar';
-export { default as ControlBarPlaceholder } from './ControlBarPlaceholder';
+import ControlBar from './ControlBar';
+export default ControlBar;

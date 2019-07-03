@@ -1,4 +1,5 @@
 export default (align: 'top' | 'middle' | 'bottom' = 'middle') => ({
+    wordSpacing: '-1em',
     '&::before': {
         content: '""',
         height: '100%',
@@ -8,6 +9,7 @@ export default (align: 'top' | 'middle' | 'bottom' = 'middle') => ({
     },
     '&>*': {
         display: 'inline-block',
-        verticalAlign: align
+        verticalAlign: align,
+        wordSpacing: 0
     }
 });

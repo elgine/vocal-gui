@@ -1,6 +1,5 @@
 import React from 'react';
-import { Row } from '../Grid';
-import ControlBarPlaceHolder from './ControlBarPlaceholder';
+import { Row, Grow } from '../Grid';
 import { RowProps } from '../Grid/Row';
 
 export interface ControlBarProps extends Omit<RowProps, 'theme'>{
@@ -12,22 +11,22 @@ export interface ControlBarProps extends Omit<RowProps, 'theme'>{
     rightProps?: RowProps;
 }
 
-export default ({
+export default React.forwardRef(({
     leftChildren, centerChildren, rightChildren,
     leftBoxProps, centerBoxProps, rightProps,
     ...others
-}: ControlBarProps) => {
+}: ControlBarProps, ref: React.Ref<any>) => {
     return (
-        <Row ph="md" flex {...others}>
+        <Row ref={ref} ph="md" flex {...others}>
             <Row>
                 {leftChildren}
             </Row>
-            <ControlBarPlaceHolder horizontalAlign="center" {...centerBoxProps}>
+            <Grow horizontalAlign="center" {...centerBoxProps}>
                 {centerChildren}
-            </ControlBarPlaceHolder>
+            </Grow>
             <Row>
                 {rightChildren}
             </Row>
         </Row>
     );
-};
+});

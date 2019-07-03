@@ -14,6 +14,7 @@ const listItemStyles = (theme: Theme): any => {
     const { common } = theme.components;
     return {
         boxSizing: 'border-box',
+        cursor: 'default',
         '&.list-disabled': {
             pointerEvents: 'none',
             opacity: theme.palette.action.fade.disabled

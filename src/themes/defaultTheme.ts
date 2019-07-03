@@ -41,7 +41,7 @@ export default {
         typography: {
             body: '#aaa',
             caption: '#999',
-            plaeholder: '#666'
+            placeholder: '#777'
         }
     },
     typography: {

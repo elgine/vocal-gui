@@ -9,14 +9,8 @@ const rowStyles = (theme: Theme): any => {
     const spacing = theme.spacing;
     return {
         position: 'relative',
-        // display: 'block',
         boxSizing: 'border-box',
         whiteSpace: 'nowrap',
-        // '&:after': {
-        //     content: '""',
-        //     clear: 'both',
-        //     visibility: 'hidden'
-        // },
         '&.flex': {
             display: 'flex',
             '&.left': {
@@ -40,7 +34,8 @@ const rowStyles = (theme: Theme): any => {
         },
         '&:not(.flex)': {
             '&>*': {
-                display: 'inline-block'
+                display: 'inline-block',
+                wordSpacing: '0'
             },
             '&:before': {
                 content: '""',
@@ -98,7 +93,11 @@ export interface RowProps extends BoxProps{
     gutter?: ComponentSize;
 }
 
-export default withTheme(({ flex, verticalAlign, horizontalAlign, gutter, children, className, theme, ...others }: React.PropsWithChildren<RowProps>) => {
+export default withTheme(({
+    flex, verticalAlign, horizontalAlign,
+    gutter, children, className, theme,
+    ...others
+}: React.PropsWithChildren<RowProps>) => {
     return (
         <ClassNames>
             {

@@ -88,9 +88,13 @@ export interface BoxProps extends React.HTMLAttributes<{}>{
     ma?: ComponentSize;
 }
 
-export default ({ pt, pb, pl, pr, ph, pv, pa, mt, mb, ml, mr, mh, mv, ma, children, className, ...others }: React.PropsWithChildren<BoxProps>) => {
+export default React.forwardRef(({
+    pt, pb, pl, pr, ph, pv, pa,
+    mt, mb, ml, mr, mh, mv, ma,
+    children, className, ...others
+}: React.PropsWithChildren<BoxProps>, ref: React.Ref<any>) => {
     return (
-        <div css={boxStyles} className={
+        <div ref={ref} css={boxStyles} className={
             combineClassNames(
                 pt ? `padding-top-${pt}` : '',
                 pb ? `padding-bottom-${pb}` : '',
@@ -112,4 +116,4 @@ export default ({ pt, pb, pl, pr, ph, pv, pa, mt, mb, ml, mr, mh, mv, ma, childr
             {children}
         </div>
     );
-};
+});
