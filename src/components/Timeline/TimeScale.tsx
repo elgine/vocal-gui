@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PIXELS_PER_TIME_UNIT } from '../../constant';
+import { PIXELS_PER_TIME_UNIT, TIME_UNITS } from '../../constant';
 import { toTimeString } from '../../utils/time';
 
 const MAX_CANVAS_WIDTH = 8192;
@@ -23,7 +23,7 @@ const render = (
     duration: number,
     ppms: number,
     units: number[],
-    color: string,
+    colors: string[],
     lastDur: number = 0,
     refresh: boolean = false
 ) => {
@@ -44,11 +44,12 @@ const render = (
         let aTo = ~~(to / step) * step;
         let canvas = canvases[canvasIndex];
         if (!canvas) return 0;
-        let rh = 8;
+        let rh = 16;
         let rw = 1;
         let arh = rh;
-        let arw = rw;
         let o = 0;
+        let c = '';
+        let drawText = false;
         let ctx = canvas.getContext('2d');
         if (!ctx) return 0;
         canvas.width = canvasW;
@@ -57,24 +58,26 @@ const render = (
         ctx.save();
         ctx.font = `${FONT_SIZE}px Arial`;
         ctx.textAlign = 'left';
-        ctx.textBaseline = 'top';
-        ctx.fillStyle = color;
+        ctx.textBaseline = 'bottom';
         for (;afrom < aTo; afrom += step) {
-            arw = rw * 0.5;
             o = (afrom - offset) * ppms;
+            drawText = false;
             if (afrom % units[0] === 0) {
+                drawText = true;
                 arh = rh;
-                arw = rw;
-                ctx.fillText(toTimeString(afrom), o, SPACING + arh);
+                c = colors[0];
             }
             else if (afrom % units[1] === 0) {
-                arh = rh * 0.5;
+                arh = rh * 0.7;
+                c = colors[1];
             }
             else {
-                arh = rh * 0.25;
-                continue;
+                arh = rh * 0.5;
+                c = colors[2];
             }
-            ctx.fillRect(o - arw * 0.5, 0, arw, arh);
+            ctx.fillStyle = c;
+            if (drawText) { ctx.fillText(toTimeString(afrom), o, height - (SPACING + arh)) }
+            ctx.fillRect(o - rw * 0.5, height - arh, rw, arh);
         }
         ctx.restore();
         offset = to;
@@ -86,18 +89,19 @@ const render = (
 export interface TimeScaleProps extends React.HTMLAttributes<{}>{
     duration?: number;
     units?: number[];
+    colors?: string[];
     height?: number;
     offset?: number;
-    color?: string;
 }
 
-export default ({ offset, height, color, units, duration, style, children, ...others }: React.PropsWithChildren<TimeScaleProps>) => {
+export default ({ offset, height, colors, units, duration, style, children, ...others }: React.PropsWithChildren<TimeScaleProps>) => {
     const sl = offset || 0;
-    const us = units || [15000, 5000, 1000];
+    const us = units || TIME_UNITS;
     const d = duration || 20000;
-    const h = height || 32;
+    const h = height || 40;
     const ppms = (PIXELS_PER_TIME_UNIT / us[0]);
     const w = d * ppms;
+    const cs = colors || ['rgba(255, 255, 255, 0.45)', 'rgba(255, 255, 255, 0.35)', 'rgba(255, 255, 255, 0.12)'];
     const [lastDur, setLastDur] = useState(0);
     const [lastPPMS, setLastPPMS] = useState(1);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -121,7 +125,7 @@ export default ({ offset, height, color, units, duration, style, children, ...ot
         if (ppms !== lastPPMS || lastDur < d) {
             let res = render(
                 canvases, maxDurPerCanvas, h, md, ppms, us,
-                color || 'rgba(255, 255, 255, 0.45)',
+                cs,
                 lastDur,
                 ppms !== lastPPMS
             );
@@ -130,7 +134,7 @@ export default ({ offset, height, color, units, duration, style, children, ...ot
                 setLastPPMS(ppms);
             }
         }
-    }, [height, containerRef.current, d, ppms, us, lastDur, lastPPMS]);
+    }, [height, containerRef.current, d, ppms, us, cs, lastDur, lastPPMS]);
     return (
         <div ref={containerRef} {...others}
             style={{
@@ -139,6 +143,8 @@ export default ({ offset, height, color, units, duration, style, children, ...ot
                 minWidth: '100%',
                 height: `${h}px`,
                 overflow: 'hidden',
+                boxSizing: 'border-box',
+                borderBottom: `1px solid ${cs[2]}`,
                 ...style
             }}>
             {children}

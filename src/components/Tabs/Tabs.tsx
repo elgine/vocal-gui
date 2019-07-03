@@ -66,7 +66,7 @@ export interface TabsProps extends React.HTMLAttributes<{}>{
 const renderTabHeaders = (selected: string, children: React.ReactNode, vertical: boolean, onHeaderClick: (e: React.MouseEvent<{}>, value: string) => void) => {
     return React.Children.map(children, (el: any) => {
         return (
-            <TabHeader key={el.props.value} vertical={vertical} onClick={(e) => onHeaderClick(e, el.props.value)} selected={selected === el.props.value}>{el.props.label}</TabHeader>
+            <TabHeader key={el.props.value} vertical={vertical} onClick={(e) => onHeaderClick(e, el.props.value)} selected={selected === el.props.value}>{el.props.title}</TabHeader>
         );
     });
 };

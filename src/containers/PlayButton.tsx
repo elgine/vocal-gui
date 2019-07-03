@@ -3,9 +3,8 @@ import {
     MdPlayArrow,
     MdPause
 } from 'react-icons/md';
-import Button, { ButtonProps } from './Button';
-import Tooltip from '../Tooltip';
-import TooltipButton from './TooltipButton';
+import { ButtonProps } from '../components/Button/Button';
+import TooltipButton from '../components/Button/TooltipButton';
 
 export interface PlayButtonProps extends Omit<ButtonProps, 'onChange'>{
     iconSize?: number;

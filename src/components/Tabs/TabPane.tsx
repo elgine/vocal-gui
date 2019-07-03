@@ -1,7 +1,7 @@
 import React from 'react';
 
 export interface TabPaneProps{
-    label?: string | React.ReactNode;
+    title?: string | React.ReactNode;
     value?: string;
 }
 

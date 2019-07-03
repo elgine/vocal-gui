@@ -1,5 +1,6 @@
 export interface TimelineState{
     pixelsPerMSec: number;
+    timeUnits: number[];
     duration: number;
     scaleTime: number;
 }

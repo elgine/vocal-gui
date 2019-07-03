@@ -34,8 +34,7 @@ const rowStyles = (theme: Theme): any => {
         },
         '&:not(.flex)': {
             '&>*': {
-                display: 'inline-block',
-                wordSpacing: '0'
+                display: 'inline-block'
             },
             '&:before': {
                 content: '""',

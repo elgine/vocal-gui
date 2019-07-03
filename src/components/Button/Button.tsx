@@ -13,6 +13,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<{}>{
     color?: ComponentColor;
     size?: ComponentSize;
     flat?: boolean;
+    selected?: boolean;
     Component?: React.RefForwardingComponent<any, any>;
 }
 
@@ -22,34 +23,40 @@ const genButtonColorStyle = (palette: Palette, color: ComponentColor) => {
         color: palette[color].contrastText,
         '&:not(.button-disabled)': {
             '&:hover': {
-                backgroundColor: shade(palette[color].color, palette.action.shade.bgHover)
+                backgroundColor: shade(palette[color].color, palette.action.shade.hover)
             },
             '&:active': {
-                backgroundColor: shade(palette[color].color, palette.action.shade.bgActive)
+                backgroundColor: shade(palette[color].color, palette.action.shade.active)
+            },
+            '&.button-selected': {
+                backgroundColor: fade(palette.typography.body, palette.action.shade.selected)
             }
         }
     };
 };
 
-const genIconButtonColorStyle = (palette: Palette, color: ComponentColor) => {
+const genFlatButtonColorStyle = (palette: Palette, color: ComponentColor) => {
     return {
         color: color === 'default' ? palette[color].contrastText : palette[color].color,
         backgroundColor: 'transparent',
         '&:not(.button-disabled)': {
             '&:hover': {
-                backgroundColor: fade(palette.typography.body, palette.action.fade.bgHover)
+                backgroundColor: fade(palette.typography.body, palette.action.fade.hover)
             },
             '&:active': {
-                backgroundColor: fade(palette.typography.body, palette.action.fade.bgActive)
+                backgroundColor: fade(palette.typography.body, palette.action.fade.active)
+            },
+            '&.button-selected': {
+                backgroundColor: fade(palette.typography.body, palette.action.fade.selected)
             }
         }
     };
 };
 
-const genIconButtonStyle = (palette: Palette) => {
+const genFlatButtonStyle = (palette: Palette) => {
     return {
-        '&.button-color-default': genIconButtonColorStyle(palette, 'default'),
-        '&.button-color-primary': genIconButtonColorStyle(palette, 'primary')
+        '&.button-color-default': genFlatButtonColorStyle(palette, 'default'),
+        '&.button-color-primary': genFlatButtonColorStyle(palette, 'primary')
     };
 };
 
@@ -68,10 +75,12 @@ const genButtonSizeStyle = (commonProperties: ComponentProperties, size: Compone
 
 const genGhostButtonColorStyle = (palette: Palette, color: ComponentColor) => {
     const c = palette[color].color;
-    const bgColorHover = fade(c, palette.action.fade.bgHover);
-    const bgColorActive = fade(c, palette.action.fade.bgActive);
-    const colorHover = shade(c, palette.action.shade.bgHover);
-    const colorActive = shade(c, palette.action.shade.bgActive);
+    const bgColorHover = fade(c, palette.action.fade.hover);
+    const bgColorActive = fade(c, palette.action.fade.active);
+    const bgColorSelected = fade(c, palette.action.fade.selected);
+    const colorHover = shade(c, palette.action.shade.hover);
+    const colorActive = shade(c, palette.action.shade.active);
+    const colorSelected = shade(c, palette.action.shade.selected);
     return {
         color: palette[color].color,
         borderColor: palette[color].color,
@@ -86,6 +95,11 @@ const genGhostButtonColorStyle = (palette: Palette, color: ComponentColor) => {
                 backgroundColor: bgColorActive,
                 color: colorActive,
                 borderColor: colorActive
+            },
+            '&.button-selected': {
+                backgroundColor: bgColorSelected,
+                color: colorSelected,
+                borderColor: colorSelected
             }
         }
     };
@@ -123,7 +137,7 @@ const genButtonStyle = (theme: Theme): any => {
             '&.button-color-primary': genButtonColorStyle(palette, 'primary')
         },
         '&.button-ghost': genGhostButtonStyle(palette),
-        '&.button-flat': genIconButtonStyle(palette),
+        '&.button-flat': genFlatButtonStyle(palette),
         '&.button-block': {
             display: 'block'
         }
@@ -131,13 +145,14 @@ const genButtonStyle = (theme: Theme): any => {
 };
 
 export default React.forwardRef(({
-    link, flat, color, size, shape, ghost, Component,
-    href, className, children, ...others
+    link, flat, color, size, shape, ghost, selected,
+    Component, href, className, children, ...others
 }: React.PropsWithChildren<ButtonProps>, ref: React.Ref<any>) => {
     let combinedClassName = combineClassNames(
         `button-size-${size || 'md'}`,
         `button-color-${color || 'default'}`,
         `button-shape-${shape || 'rounded'}`,
+        selected ? 'button-selected' : '',
         ghost ? 'button-ghost' : '',
         flat ? 'button-flat' : '',
         others.disabled ? 'button-disabled' : '',

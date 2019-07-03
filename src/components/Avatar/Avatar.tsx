@@ -59,12 +59,11 @@ export default ({ size, color, src, srcSet, shape, alt, className, style, ...oth
         combinedClassName += ` avatar-size-${size}`;
     } else {
         size = typeof size === 'number' ? size + 'px' : size;
-        combinedStyle.height = combinedStyle.width = size;
+        combinedStyle.lineHeight = combinedStyle.height = combinedStyle.width = size;
     }
     if (className) {
         combinedClassName += ` ${className}`;
     }
-
 
     color = color || 'default';
     if (color === 'default' || color === 'primary') {
@@ -79,7 +78,7 @@ export default ({ size, color, src, srcSet, shape, alt, className, style, ...oth
     return (
         <span css={avatarStyles} className={combinedClassName} style={combinedStyle} {...others}>
             {
-                !(src || srcSet) ? (alt ? alt.charAt(0) : '') : (
+                (!src || src === '' || !srcSet || srcSet === '') ? (alt ? alt.charAt(0) : '') : (
                     <img src={src} srcSet={srcSet} />
                 )
             }

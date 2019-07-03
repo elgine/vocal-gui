@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import Trigger from 'rc-trigger';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import { withTheme } from 'emotion-theming';
@@ -94,11 +93,22 @@ export default withTheme(({
     const wrapperRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
     useClickOutside(wrapperRef.current, onClickOutSide);
+    const [bounds, setBounds] = useState({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 });
     const [pos, setPos] = useState({ left: 0, top: 0 });
     const pageSize = useResize(null);
     useEffect(() => {
+        anchorEl && setBounds(anchorEl.getBoundingClientRect());
+    }, [anchorEl]);
+    const beforeEnter = () => {
+        if (anchorEl) {
+            setBounds(anchorEl.getBoundingClientRect());
+        }
+    };
+    const afterExit = () => {
+        setTransitionEnded(true);
+    };
+    useEffect(() => {
         if (anchorEl && popoverRef.current && transitionActive) {
-            const bounds = anchorEl.getBoundingClientRect();
             const wBounds = popoverRef.current.getBoundingClientRect();
             let newPos = { left: 0, top: 0 };
             if (ap.horizontal === 'left') {
@@ -112,9 +122,17 @@ export default withTheme(({
             newPos.left = applyHorizontalTransformPos(newPos.left, wBounds, tp.horizontal, stretch, bounds.width);
 
             if (newPos.left + wBounds.width >= pageSize.width) {
-                newPos.left = bounds.left - wBounds.width;
+                if (bounds.right - wBounds.width <= pageSize.width) {
+                    newPos.left = bounds.right - wBounds.width;
+                } else {
+                    newPos.left = bounds.left - wBounds.width;
+                }
             } else if (newPos.left < 0) {
-                newPos.left = bounds.right;
+                if (bounds.left >= 0) {
+                    newPos.left = bounds.left;
+                } else {
+                    newPos.left = bounds.right;
+                }
             }
 
             if (ap.vertical === 'top') {
@@ -128,14 +146,21 @@ export default withTheme(({
             newPos.top = applyVerticalTransformPos(newPos.top, wBounds, tp.vertical);
 
             if (newPos.top + wBounds.height > pageSize.height) {
-                newPos.top = bounds.top - wBounds.height;
-            } else if (bounds.top - wBounds.height < 0) {
-                newPos.top = bounds.bottom;
+                if (bounds.bottom - wBounds.height < -pageSize.height) {
+                    newPos.top = bounds.bottom - wBounds.height;
+                } else {
+                    newPos.top = bounds.top - wBounds.height;
+                }
+            } else if (newPos.top < 0) {
+                if (bounds.top >= 0) {
+                    newPos.top = bounds.top;
+                } else {
+                    newPos.top = bounds.bottom;
+                }
             }
-
             setPos(newPos);
         }
-    }, [popoverRef.current, anchorEl, ap, tp, stretch, transitionActive, pageSize.width, pageSize.height]);
+    }, [popoverRef.current, anchorEl, ap, tp, stretch, transitionActive, bounds, pageSize]);
 
     let popoverContainerStyle: React.CSSProperties = {
         display: show ? 'block' : 'none',
@@ -148,8 +173,9 @@ export default withTheme(({
     }
 
     return createPortal(<div ref={wrapperRef} css={{ ...popoverContainerStyles(theme) }} style={popoverContainerStyle}>
-        <CSSTransition timeout={300} mountOnEnter unmountOnExit classNames={transitionClassNames || 'scale'} in={transitionActive}
-            onExited={() => setTransitionEnded(true)}>
+        <CSSTransition timeout={300} unmountOnExit classNames={transitionClassNames || 'scale'} in={transitionActive}
+            onEnter={beforeEnter}
+            onExited={afterExit}>
             <div ref={popoverRef} className="popover" {...others}>
                 {children}
             </div>

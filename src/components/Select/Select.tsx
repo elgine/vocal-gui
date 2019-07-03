@@ -38,7 +38,6 @@ const selectStyles = (theme: Theme): any => {
         },
         '.select-value-box': {
             ...verticalAlign(),
-            boxSizing: 'border-box',
             '.select-subfix': {
                 position: 'absolute',
                 top: '50%',
@@ -88,7 +87,7 @@ export default ({ className, style, width, block, size, value, onChange, placeho
         ...style
     };
     if (!block) {
-        combinedStyle.width = `${w}px`;
+        combinedStyle.minWidth = `${w}px`;
     }
 
     const valArr = Object.values(val);

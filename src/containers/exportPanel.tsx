@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row } from '../components/Grid';
+import { MdLaunch } from 'react-icons/md';
 import { RowProps } from '../components/Grid/Row';
 import ControlBar from '../components/ControlBar';
 import Button from '../components/Button';
@@ -7,15 +7,16 @@ import Select, { Option } from '../components/Select';
 import Box from '../components/Grid/Box';
 
 export interface ExportPanelProps extends Omit<RowProps, 'theme'>{
-
+    height?: number;
 }
 
-export default ({ ...others }: ExportPanelProps) => {
+export default ({ height, style, ...others }: ExportPanelProps) => {
+    const h = height || 56;
     return (
         <ControlBar leftChildren={
             <React.Fragment>
-                <Box pr="md">Save as </Box>
-                <Select size="sm">
+                <Box pr="md">Save format as: </Box>
+                <Select value="mp3" placeholder="Choose format" size="sm">
                     <Option value="wav">
                         wav
                     </Option>
@@ -29,11 +30,13 @@ export default ({ ...others }: ExportPanelProps) => {
             </React.Fragment>
         } rightChildren={
             <React.Fragment>
-                <Button>
-                    export
+                <Button color="primary">
+                    <MdLaunch />
+                    &nbsp;
+                    <span>export</span>
                 </Button>
             </React.Fragment>
-        } {...others}
+        } style={{ height: `${h}px`, ...style }} {...others}
         />
     );
 };

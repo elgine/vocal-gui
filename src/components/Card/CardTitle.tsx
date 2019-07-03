@@ -6,13 +6,11 @@ import { shade } from '../utils/color';
 import gutter from '../mixins/gutter';
 
 const cardTitleStyles = (theme: Theme): any => {
-    const palette = theme.palette;
     const { lineHeight, ...caption } = theme.typography.caption;
     return {
-        padding: `0 ${theme.spacing.md}px`,
-        '&.card-gutter-sm': gutter(theme.spacing.sm, true, true),
-        '&.card-gutter-md': gutter(theme.spacing.md, true, true),
-        '&.card-gutter-lg': gutter(theme.spacing.lg, true, true),
+        '&.card-title-gutter-sm': gutter(theme.spacing.sm, true, true),
+        '&.card-title-gutter-md': gutter(theme.spacing.md, true, true),
+        '&.card-title-gutter-lg': gutter(theme.spacing.lg, true, true),
         '&.card-title-nowrap': {
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -37,7 +35,7 @@ export default ({ title, desc, nowrap, gutter, className, ...others }: CardTitle
         <div css={cardTitleStyles} className={
             combineClassNames(
                 nowrap ? 'card-title-nowrap' : '',
-                gutter ? `card-gutter-${gutter}` : '',
+                gutter ? `card-title-gutter-${gutter}` : '',
                 className
             )
         } {...others}>

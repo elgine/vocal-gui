@@ -1,7 +1,7 @@
 export default {
     palette: {
         primary: {
-            color: '#8d5eec',
+            color: '#8056ca',
             contrastText: '#fff'
         },
         default: {
@@ -10,23 +10,23 @@ export default {
         },
         border: {
             divider: '#0a0a0a',
-            border: '#444'
+            border: '#333'
         },
         background: {
-            surface: '#333333',
-            body: '#1f1f1f',
-            panel: '#363636',
-            contrastText: '#aaa'
+            surface: '#1d1d1d',
+            body: '#171717',
+            panel: '#2a2a2a',
+            contrastText: '#fff'
         },
         action: {
             shade: {
-                hover: -0.12,
-                active: 0.12,
-                selected: 0.14
+                hover: -0.08,
+                active: 0.08,
+                selected: 0.12
             },
             fade: {
-                hover: 0.08,
-                active: 0.12,
+                hover: 0.12,
+                active: 0.14,
                 selected: 0.14,
                 disabled: 0.7
             },
@@ -39,9 +39,9 @@ export default {
             dark: 'rgba(0, 0, 0, 0.4)'
         },
         typography: {
-            body: '#aaa',
-            caption: '#999',
-            placeholder: '#777'
+            body: '#999',
+            caption: '#444',
+            placeholder: '#666'
         }
     },
     typography: {
@@ -178,7 +178,7 @@ export default {
             thumbSize: 12
         },
         tooltip: {
-            backgroundColor: '#212121'
+            backgroundColor: '#333'
         },
         scrollBar: {
             width: 10,
