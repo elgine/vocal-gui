@@ -40,8 +40,8 @@ export default {
         },
         typography: {
             body: '#999',
-            caption: '#444',
-            placeholder: '#666'
+            caption: '#666',
+            placeholder: '#888'
         }
     },
     typography: {
