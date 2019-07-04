@@ -21,3 +21,9 @@ interface BaseComponentProps{
     className?: string;
     style?: React.CSSProperties;
 }
+
+interface EffectItem{
+    id: string;
+    title: string;
+    thumb: string;
+}

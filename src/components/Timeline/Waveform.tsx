@@ -8,7 +8,7 @@ export interface WaveformProps extends Omit<React.CanvasHTMLAttributes<{}>, 'onC
     duration?: number;
     buffer?: Float32Array;
     color?: string;
-    onThumbChange?: (base64Url: string) => void;
+    onThumbChange?: (canvases: HTMLCollection) => void;
 }
 
 export default ({ pixelsPerMSec, duration, height, buffer, color, style, onThumbChange, ...others }: WaveformProps) => {
@@ -56,7 +56,7 @@ export default ({ pixelsPerMSec, duration, height, buffer, color, style, onThumb
                 }
             }
             if (thumbRef.current) {
-                onThumbChange && onThumbChange(thumbRef.current.toDataURL());
+                onThumbChange && onThumbChange(canvases);
             }
         }
     }, [containerRef.current, buffer, ppms, d, h, c, thumbRef.current, onThumbChange]);

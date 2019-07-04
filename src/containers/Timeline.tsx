@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import WaveformThumb from '../components/Timeline/WaveformThumb';
-import WaveformBox from '../components/Timeline/WaveformBox';
 
 const timelineStyles = (theme: Theme): any => {
     return {
@@ -23,9 +21,14 @@ export interface TimelineProps{
     currentTime?: number;
     region?: {start: number; end: number};
     onSeek?: (v: number) => void;
+    onRegionChange?: (r: {start: number; end: number}) => void;
 }
 
-export default ({ pixelsPerMSec, timeScaleHeight, waveHeight, duration, region, timeUnits, currentTime, onSeek }: TimelineProps) => {
+export default ({
+    pixelsPerMSec, timeScaleHeight, waveHeight,
+    duration, region, timeUnits, currentTime,
+    onSeek, onRegionChange
+}: TimelineProps) => {
     const d = duration || 0;
     const ppms = pixelsPerMSec || 0.05;
     const tsh = timeScaleHeight || 48;
@@ -34,12 +37,7 @@ export default ({ pixelsPerMSec, timeScaleHeight, waveHeight, duration, region, 
     const [thumbSrc, setThumbSrc] = useState('');
     return (
         <div css={timelineStyles}>
-            <WaveformBox className="main-panel" timeUnits={timeUnits} duration={d} pixelsPerMSec={ppms}
-                timeScaleHeight={tsh} waveHeight={wh} region={r} onThumbChange={setThumbSrc}
-            />
-            <WaveformThumb className="thumb-panel" region={r} currentTime={currentTime}
-                src={thumbSrc} onSeek={onSeek}
-            />
+
         </div>
     );
 };

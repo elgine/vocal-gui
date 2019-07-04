@@ -2,8 +2,10 @@ import React from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 
-const recordPanelStyles = (theme: Theme) => {
-    return {};
+const recordPanelStyles = (theme: Theme): any => {
+    return {
+
+    };
 };
 
 export default () => {

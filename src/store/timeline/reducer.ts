@@ -1,4 +1,4 @@
-import { ACTION_SCALE_TIME, TimelineState } from './types';
+import { ACTION_SCALE_TIME, TimelineState, ACTION_SET_DURATION } from './types';
 import produce from 'immer';
 import { TIME_UNITS } from '../../constant';
 import calcProperTimeUnits from './calcProperTimeUnits';
@@ -19,6 +19,7 @@ export default {
                 draft.scaleTime = payload;
                 draft.timeUnits = calcProperTimeUnits(TIME_UNITS[0] * draft.scaleTime);
             });
-        }
+        },
+        [ACTION_SET_DURATION](state: TimelineState, payload: number) {}
     }
 };
