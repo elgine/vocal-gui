@@ -1,63 +1,66 @@
 import React from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import { fade } from '../utils/color';
 import combineClassNames from '../../utils/combineClassNames';
 
 const pointerStyles = (theme: Theme): any => {
     const pointer = theme.components.pointer;
     const bg = pointer.color;
-    const bgStart = pointer.colorStart;
-    const bgEnd = pointer.colorEnd;
-    const tangent = Math.SQRT2 * pointer.headerSize;
     return {
         position: 'absolute',
         bottom: 0,
         width: '1px',
-        top: `${tangent}px`,
+        top: 0,
         left: 0,
         backgroundColor: bg,
-        '&:hover, &:active': {
-            backgroundColor: fade(bg, pointer.fadeHover)
-        },
-        '&:after': {
-            backgroundColor: 'inherit',
-            content: '""',
+        '.time-label': {
             position: 'absolute',
-            left: `-${pointer.headerSize * 0.5}px`,
-            top: `-${pointer.headerSize}px`,
-            width: `${pointer.headerSize}px`,
-            height: `${pointer.headerSize}px`,
-            transform: 'rotate(45deg)'
+            bottom: '100%',
+            transform: 'translateX(-50%)'
         },
-        '&.pointer-start': {
-            backgroundColor: bgStart,
-            '&:hover, &:active': {
-                backgroundColor: fade(bgStart, pointer.fadeHover)
-            }
+        '&:hover, &:active': {
+            opacity: 0.6
         },
-        '&.pointer-end': {
-            backgroundColor: bgEnd,
-            '&:hover, &:active': {
-                backgroundColor: fade(bgEnd, pointer.fadeHover)
+        '&.pointer-has-header': {
+            top: `${pointer.headerSize}px`,
+            '&:after': {
+                backgroundColor: 'inherit',
+                content: '""',
+                position: 'absolute',
+                left: `-${pointer.headerSize * 0.5}px`,
+                top: `-${pointer.headerSize}px`,
+                width: `${pointer.headerSize}px`,
+                height: `${pointer.headerSize}px`,
+                transform: 'rotate(45deg)'
             }
         }
     };
 };
 
 export interface PointerProps extends React.HTMLAttributes<{}>{
-    start?: boolean;
-    end?: boolean;
+    hasHeader?: boolean;
+    color?: string;
+    pixelsPerMSec?: number;
+    time?: number;
 }
 
-export default ({ start, end, className, ...others }: PointerProps) => {
+export default ({ hasHeader, className, color, time, pixelsPerMSec, style, ...others }: PointerProps) => {
+    const t = time || 0;
+    const ppms = pixelsPerMSec || 0.05;
+    const left = t * ppms;
+    let combinedStyle: React.CSSProperties = {
+        left: `${left}px`,
+        ...style
+    };
+    if (color) {
+        combinedStyle.backgroundColor = color;
+    }
     return (
         <div css={pointerStyles} className={
             combineClassNames(
-                start ? 'pointer-start' : '',
-                end ? 'pointer-end' : '',
+                hasHeader ? 'pointer-has-header' : '',
                 className
             )
-        } {...others}></div>
+        } style={combinedStyle} {...others}></div>
     );
 };

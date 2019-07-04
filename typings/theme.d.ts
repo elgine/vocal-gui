@@ -78,8 +78,6 @@ interface ListItemProperties{
 
 interface PointerProperties{
     color: string;
-    colorStart: string;
-    colorEnd: string;
     headerSize: number;
     fadeHover: number;
 }

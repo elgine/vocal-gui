@@ -32,7 +32,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(({ height, file, sty
             {...others}
             leftChildren={
                 (
-                    file.tag.loading ? (
+                    file.loading ? (
                         <TitleLoader height={40} />
                     ) : (
                         <Card>

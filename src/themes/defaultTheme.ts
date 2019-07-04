@@ -165,8 +165,6 @@ export default {
         },
         pointer: {
             color: '#d3a82a',
-            colorStart: '#98c92d',
-            colorEnd: '#fc4242',
             headerSize: 8,
             fadeHover: 0.7
         },

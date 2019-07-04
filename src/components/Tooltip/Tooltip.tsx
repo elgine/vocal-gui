@@ -25,6 +25,7 @@ export interface TooltipProps extends Omit<PopoverProps, 'theme' | 'anchorEl'>{
     children?: ReactElement;
 }
 
+const DELTA_DURATION_CLOSE_TOOLTIP = 1000;
 const DELTA_DURATION_DESTROY_TOOLTIP = 200;
 
 let container: HTMLElement|null = null;
@@ -45,6 +46,8 @@ const generateGlobalTooltipPopover = ({ onClose, ...props }: any, uid: string) =
     }
     if (!container) {
         container = document.createElement('div');
+        container.id = 'tooltip-container';
+        document.body.appendChild(container);
     }
 
     const onCloseWrapped = () => {
@@ -54,7 +57,7 @@ const generateGlobalTooltipPopover = ({ onClose, ...props }: any, uid: string) =
 
     ReactDOM.render(
         <ThemeProvider theme={defaultTheme}>
-            <Popover onClose={onCloseWrapped} {...props} />;
+            <Popover notPortal onClose={onCloseWrapped} {...props} />
         </ThemeProvider>
         , container
     );
@@ -66,6 +69,7 @@ export default ({ title, desc, children, ...others }: TooltipProps) => {
     const uid = useRef(uuid());
     const onOpen = useCallback(() => title && setShowTooltip(true), [title]);
     const onClose = useCallback(() => setShowTooltip(false), []);
+    const [timer, setTimer] = useState(-1);
     useEffect(() => {
         generateGlobalTooltipPopover({
             visible: showTooltip,
@@ -81,25 +85,32 @@ export default ({ title, desc, children, ...others }: TooltipProps) => {
     }, [showTooltip, anchorEl, uid.current, onOpen, title, desc, others]);
 
     if (!children) return null;
-    const { onMouseEnter, onClick, onMouseLeave } = children.props;
-    const onMouseEnterWrapped = (e: React.MouseEvent) => {
+    const { onMouseOver, onMouseOut } = children.props;
+    const onMouseOverWrapped = (e: React.MouseEvent) => {
+        clearTimeout(timer);
         setAnchorEl(e.target as HTMLElement);
         onOpen();
-        onMouseEnter && onMouseEnter(e);
+        onMouseOver && onMouseOver(e);
     };
-    const onMouseLeaveWrapped = (e: React.MouseEvent) => {
-        setAnchorEl(null);
-        onClose();
-        onMouseLeave && onMouseLeave(e);
+    const closeTooltip = useCallback(() => {
+        setTimer(window.setTimeout(() => {
+            setAnchorEl(null);
+            onClose();
+        }, DELTA_DURATION_CLOSE_TOOLTIP));
+    }, [onClose]);
+    const onMouseOutWrapped = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const el = e.target as HTMLElement;
+        if (container && (container === el || container.contains(el))) {
+            return;
+        }
+        closeTooltip();
+        onMouseOut && onMouseOut(e);
     };
-    const onClickWrapped = (e: React.MouseEvent) => {
-        setAnchorEl(null);
-        onClose();
-        onClick && onClick(e);
-    };
+
     return React.cloneElement(children, {
-        onMouseEnter: onMouseEnterWrapped,
-        onMouseLeave: onMouseLeaveWrapped,
-        onClick: onClickWrapped
+        onMouseOver: onMouseOverWrapped,
+        onMouseOut: onMouseOutWrapped
     });
 };

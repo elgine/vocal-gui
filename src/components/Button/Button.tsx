@@ -87,19 +87,13 @@ const genGhostButtonColorStyle = (palette: Palette, color: ComponentColor) => {
         backgroundColor: 'transparent',
         '&:not(.button-disabled)': {
             '&:hover': {
-                color: colorHover,
-                borderColor: colorHover,
                 backgroundColor: bgColorHover
             },
             '&:active': {
-                backgroundColor: bgColorActive,
-                color: colorActive,
-                borderColor: colorActive
+                backgroundColor: bgColorActive
             },
             '&.button-selected': {
-                backgroundColor: bgColorSelected,
-                color: colorSelected,
-                borderColor: colorSelected
+                backgroundColor: bgColorSelected
             }
         }
     };

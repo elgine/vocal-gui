@@ -48,54 +48,7 @@ export default () => {
     };
     return (
         <div css={editorStyles} style={combinedStyle}>
-            <Header height={HEADER_HEIGHT} />
-            <ControlBar className="controlbar" leftChildren={
-                <React.Fragment>
-                    <TooltipButton flat tooltip="Set clip region">
-                        <MdBorderStyle size={ICON_SIZE} />
-                    </TooltipButton>
-                    <TooltipButton flat tooltip="Undo">
-                        <MdUndo size={ICON_SIZE} />
-                    </TooltipButton>
-                    <TooltipButton flat tooltip="Redo">
-                        <MdRedo size={ICON_SIZE} />
-                    </TooltipButton>
-                </React.Fragment>
-            } rightChildren={
-                <React.Fragment>
-                    <TooltipButton flat tooltip="Zoom out timeline">
-                        <MdZoomOut size={ICON_SIZE} />
-                    </TooltipButton>
-                    <TooltipButton flat tooltip="Zoom in timeline">
-                        <MdZoomIn size={ICON_SIZE} />
-                    </TooltipButton>
-                    <Slider min={0.1} max={4} value={1} />
-                </React.Fragment>
-            } style={{ height: `${EDITOR_CONTROLBAR_HEIGHT}px` }}
-            />
             <Timeline />
-            <ControlBar
-                className="controlbar player-controlbar"
-                leftChildren={
-                    <Volume iconSize={ICON_SIZE} />
-                }
-                rightChildren={
-                    <React.Fragment>
-                        <RepeatButton flat iconSize={ICON_SIZE} />
-                    </React.Fragment>
-                }
-                centerChildren={
-                    <React.Fragment>
-                        <TooltipButton tooltip="Skip previous" flat>
-                            <MdSkipPrevious size={ICON_SIZE} />
-                        </TooltipButton>
-                        <PlayButton size="lg" flat iconSize={ICON_SIZE * 1.5} />
-                        <TooltipButton tooltip="Skip next" flat>
-                            <MdSkipNext size={ICON_SIZE} />
-                        </TooltipButton>
-                    </React.Fragment>
-                } style={{ height: `${PLAYER_CONROLBAR_HEIGHT}px` }}
-            />
         </div>
     );
 };

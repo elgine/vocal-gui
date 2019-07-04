@@ -3,11 +3,11 @@ import { ListView, GridItem } from '../components/ListView';
 
 export default () => {
     return (
-        <ListView items={
+        <ListView gutter="md" items={
             []
         } renderItem={
             (item) => (
-
+                <GridItem {...item} />
             )
         }
         />

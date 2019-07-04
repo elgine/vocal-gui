@@ -25,6 +25,9 @@ const genLayoutStyle = (theme: Theme): any => {
         'ul, li': {
             listStyle: 'none'
         },
+        'img[src=""], img:not([src])': {
+            opacity: 0
+        },
         'body': {
             fontFamily: theme.typography.fontFamily,
             backgroundColor: theme.palette.background.body,

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
@@ -27,50 +27,26 @@ export interface PopoverPosition{
 
 export interface PopoverProps extends BaseComponentProps{
     visible?: boolean;
+    offset?: number;
     theme: Theme;
     stretch?: boolean;
+    notPortal?: boolean;
     anchorEl?: HTMLElement|null;
     anchorPos?: PopoverPosition;
+    position?: {left: number; top: number};
     transformPos?: PopoverPosition;
     transitionClassNames?: string | Dictionary<string>;
     onClose?: (...args: any[]) => void;
 }
 
-
-const applyHorizontalTransformPos = (pos: number, targetBounds: ClientRect, transformPos: 'left'|'center'|'right', stretch: boolean = false, wrapperWidth: number = 0) => {
-    if (transformPos === 'center') {
-        if (stretch) {
-            pos -= wrapperWidth * 0.5;
-        } else {
-            pos -= targetBounds.width * 0.5;
-        }
-    } else if (transformPos === 'right') {
-        if (stretch) {
-            pos -= wrapperWidth;
-        } else {
-            pos -= targetBounds.width;
-        }
-    }
-    return pos;
-};
-
-const applyVerticalTransformPos = (pos: number, targetBounds: ClientRect, transformPos: 'top'|'middle'|'bottom') => {
-    if (transformPos === 'middle') {
-        pos -= targetBounds.height * 0.5;
-    } else if (transformPos === 'bottom') {
-        pos -= targetBounds.height;
-    }
-    return pos;
-};
-
-export default withTheme(({
-    visible, anchorEl, anchorPos, transformPos, stretch,
-    onClose, transitionClassNames, children, theme, ...others
-}: React.PropsWithChildren<PopoverProps>) => {
+export default withTheme(React.forwardRef(({
+    visible, anchorEl, anchorPos, transformPos, stretch, position, offset,
+    onClose, transitionClassNames, children, theme, notPortal, ...others
+}: React.PropsWithChildren<PopoverProps>, ref: React.Ref<any>) => {
     const [show, setShow] = useState(false);
     const [transitionActive, setTransitionActive] = useState(false);
     const [transitionEnded, setTransitionEnded] = useState(false);
-
+    const o = offset || 8;
     const ap = anchorPos || { horizontal: 'left', vertical: 'top' };
     const tp = transformPos || { horizontal: 'left', vertical: 'top' };
 
@@ -90,28 +66,30 @@ export default withTheme(({
         onClose && onClose();
     };
 
-    const wrapperRef = useRef<HTMLDivElement>(null);
+    const wrapperRef = (ref as React.RefObject<HTMLDivElement>) || useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
     useClickOutside(wrapperRef.current, onClickOutSide);
-    const [bounds, setBounds] = useState({ top: 0, left: 0, right: 0, bottom: 0, width: 0, height: 0 });
     const [pos, setPos] = useState({ left: 0, top: 0 });
     const pageSize = useResize(null);
-    useEffect(() => {
-        anchorEl && setBounds(anchorEl.getBoundingClientRect());
-    }, [anchorEl]);
-    const beforeEnter = () => {
-        if (anchorEl) {
-            setBounds(anchorEl.getBoundingClientRect());
-        }
-    };
     const afterExit = () => {
         setTransitionEnded(true);
     };
-    useEffect(() => {
+
+    const [bounds, setBounds] = useState({ left: 0, right: 0, width: 0, top: 0, bottom: 0, height: 0 });
+    useLayoutEffect(() => {
+        anchorEl && setBounds(anchorEl.getBoundingClientRect());
+    }, [anchorEl]);
+    const beforeEnter = () => {
+        anchorEl && setBounds(anchorEl.getBoundingClientRect());
+    };
+
+    const updater = useCallback(() => {
         if (anchorEl && popoverRef.current && transitionActive) {
             const wBounds = popoverRef.current.getBoundingClientRect();
             let newPos = { left: 0, top: 0 };
-            if (ap.horizontal === 'left') {
+            if (position) {
+                newPos.left = position.left;
+            } else if (ap.horizontal === 'left') {
                 newPos.left = bounds.left;
             } else if (ap.horizontal === 'right') {
                 newPos.left = bounds.right;
@@ -119,23 +97,41 @@ export default withTheme(({
                 newPos.left = bounds.left + bounds.width * 0.5;
             }
 
-            newPos.left = applyHorizontalTransformPos(newPos.left, wBounds, tp.horizontal, stretch, bounds.width);
-
-            if (newPos.left + wBounds.width >= pageSize.width) {
-                if (bounds.right - wBounds.width <= pageSize.width) {
-                    newPos.left = bounds.right - wBounds.width;
+            if (tp.horizontal === 'center') {
+                if (stretch) {
+                    newPos.left -= bounds.width * 0.5;
                 } else {
-                    newPos.left = bounds.left - wBounds.width;
+                    newPos.left -= wBounds.width * 0.5;
                 }
-            } else if (newPos.left < 0) {
-                if (bounds.left >= 0) {
-                    newPos.left = bounds.left;
+            } else if (tp.horizontal === 'right') {
+                if (stretch) {
+                    newPos.left -= bounds.width;
                 } else {
-                    newPos.left = bounds.right;
+                    newPos.left -= wBounds.width;
                 }
             }
 
-            if (ap.vertical === 'top') {
+            if (newPos.left + wBounds.width + o >= pageSize.width) {
+                if (position) {
+                    newPos.left = position.left - wBounds.width - o;
+                } else if (bounds.right - wBounds.width <= pageSize.width) {
+                    newPos.left = bounds.right - wBounds.width;
+                } else {
+                    newPos.left = bounds.left - wBounds.width - o;
+                }
+            } else if (newPos.left - o < 0) {
+                if (position) {
+                    newPos.left = position.left + o;
+                } else if (bounds.left >= 0) {
+                    newPos.left = bounds.left;
+                } else {
+                    newPos.left = bounds.right + o;
+                }
+            }
+
+            if (position) {
+                newPos.top = position.top;
+            } else if (ap.vertical === 'top') {
                 newPos.top = bounds.top;
             } else if (ap.vertical === 'bottom') {
                 newPos.top = bounds.bottom;
@@ -143,24 +139,59 @@ export default withTheme(({
                 newPos.top = bounds.top + bounds.height * 0.5;
             }
 
-            newPos.top = applyVerticalTransformPos(newPos.top, wBounds, tp.vertical);
+            if (tp.vertical === 'middle') {
+                newPos.top -= wBounds.height * 0.5;
+            } else if (tp.vertical === 'bottom') {
+                newPos.top -= wBounds.height;
+            }
 
-            if (newPos.top + wBounds.height > pageSize.height) {
-                if (bounds.bottom - wBounds.height < -pageSize.height) {
+            if (newPos.top + wBounds.height + o > pageSize.height) {
+                if (position) {
+                    newPos.top = position.top - wBounds.height - o;
+                } else if (bounds.bottom - wBounds.height <= pageSize.height) {
                     newPos.top = bounds.bottom - wBounds.height;
                 } else {
-                    newPos.top = bounds.top - wBounds.height;
+                    newPos.top = bounds.top - wBounds.height - o;
                 }
             } else if (newPos.top < 0) {
-                if (bounds.top >= 0) {
+                if (position) {
+                    newPos.top = position.top + o;
+                } else if (bounds.top >= 0) {
                     newPos.top = bounds.top;
                 } else {
-                    newPos.top = bounds.bottom;
+                    newPos.top = bounds.bottom + o;
+                }
+            }
+
+            if (position) {
+                if (position.left <= newPos.left) {
+                    newPos.left += o;
+                } else if (position.left > newPos.left) {
+                    newPos.left -= o;
+                }
+
+                if (position.top <= newPos.top) {
+                    newPos.top += o;
+                } else if (position.top > newPos.top) {
+                    newPos.top -= o;
+                }
+            } else {
+                if (newPos.left >= bounds.right) {
+                    newPos.left += o;
+                } else if (newPos.left + wBounds.width <= bounds.left) {
+                    newPos.left -= o;
+                }
+
+                if (newPos.top >= bounds.bottom) {
+                    newPos.top += o;
+                } else if (newPos.top + wBounds.height <= bounds.top) {
+                    newPos.top -= o;
                 }
             }
             setPos(newPos);
         }
-    }, [popoverRef.current, anchorEl, ap, tp, stretch, transitionActive, bounds, pageSize]);
+    }, [popoverRef.current, anchorEl, ap, tp, stretch, transitionActive, pageSize, position, bounds, o]);
+    useEffect(updater, [updater]);
 
     let popoverContainerStyle: React.CSSProperties = {
         display: show ? 'block' : 'none',
@@ -171,8 +202,8 @@ export default withTheme(({
     if (stretch && anchorEl) {
         popoverContainerStyle.minWidth = `${anchorEl.offsetWidth}px`;
     }
-
-    return createPortal(<div ref={wrapperRef} css={{ ...popoverContainerStyles(theme) }} style={popoverContainerStyle}>
+    const content = <div ref={wrapperRef}
+        css={{ ...popoverContainerStyles(theme) }} style={popoverContainerStyle}>
         <CSSTransition timeout={300} unmountOnExit classNames={transitionClassNames || 'scale'} in={transitionActive}
             onEnter={beforeEnter}
             onExited={afterExit}>
@@ -180,5 +211,7 @@ export default withTheme(({
                 {children}
             </div>
         </CSSTransition>
-    </div>, document.body);
-});
+    </div>;
+    if (notPortal) return content;
+    else return createPortal(content, document.body);
+}));

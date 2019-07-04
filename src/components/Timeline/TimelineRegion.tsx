@@ -6,8 +6,9 @@ import useMovement from '../../hooks/useMovement';
 import Tooltip from '../Tooltip';
 import { TooltipProps } from '../Tooltip/Tooltip';
 import { toTimeString } from '../../utils/time';
+import TimeLabel from './TimeLabel';
 
-const DRAG_REGION_WIDTH = 4;
+const DRAG_REGION_WIDTH = 8;
 
 const TOOLTIP_POSITION: Pick<TooltipProps, 'anchorPos' | 'transformPos'> = {
     anchorPos: { horizontal: 'center', vertical: 'top' },
@@ -19,24 +20,37 @@ const timelineRegionStyles = (theme: Theme): any => {
         position: 'absolute',
         top: 0,
         height: '100%',
-        border: `2px solid ${theme.palette.action.color.borderColorSelected}`,
         boxSizing: 'border-box',
+        borderRadius: `${theme.components.common.borderRadius.md}px`,
+        border: `2px solid ${theme.palette.action.color.borderColorSelected}`,
         '.region-drag-start, .region-drag-end': {
             position: 'absolute',
             width: `${DRAG_REGION_WIDTH}px`,
             height: '80%',
             top: '10%',
-            left: '50%',
-            transform: 'translateX(-50%)',
+            backgroundColor: theme.palette.action.color.borderColorSelected,
+            cursor: 'ew-resize',
             '.region-drag-icon': {
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
                 transform: 'translate(-50%, -50%) rotate(90deg)'
             }
+        },
+        '.region-drag-start': {
+            left: `-${DRAG_REGION_WIDTH * 0.5}px`
+        },
+        '.region-drag-end': {
+            right: `-${DRAG_REGION_WIDTH * 0.5}px`
         }
     };
 };
+
+const RegionSideWithTimeLabel = TimeLabel((props: React.HTMLAttributes<{}>) => {
+    return (
+        <div {...props}></div>
+    );
+});
 
 export interface TimelineRegionProps extends React.HTMLAttributes<{}>{
     start: number;
@@ -81,24 +95,10 @@ export default ({ start, end, pixelsPerMSec, onRegionChange, style, ...others }:
         width: `${(e - s) * ppms}px`,
         ...style
     };
-    const dragStartStyle: React.CSSProperties = {
-        left: `${s * ppms}px`
-    };
-    const dragEndStyle: React.CSSProperties = {
-        left: `${e * ppms}px`
-    };
     return (
         <div css={timelineRegionStyles} style={combinedStyle} {...others}>
-            <Tooltip title={toTimeString(s)} {...TOOLTIP_POSITION}>
-                <div className="region-drag-start" style={dragStartStyle} onMouseDown={dragStartHook.onMouseDown}>
-                    <MdDragHandle className="region-drag-icon" />
-                </div>
-            </Tooltip>
-            <Tooltip title={toTimeString(e)} {...TOOLTIP_POSITION}>
-                <div className="region-drag-end" style={dragEndStyle} onMouseDown={dragEndHook.onMouseDown}>
-                    <MdDragHandle className="region-drag-icon" />
-                </div>
-            </Tooltip>
+            <RegionSideWithTimeLabel onMouseDown={dragStartHook.onMouseDown} />
+            <RegionSideWithTimeLabel onMouseDown={dragEndHook.onMouseDown} />
         </div>
     );
 };
