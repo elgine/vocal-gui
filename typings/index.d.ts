@@ -17,6 +17,11 @@ type ComponentSize = 'sm' | 'md' | 'lg';
 type ComponentColor = 'primary'|'default';
 type ComponentShape = 'circular' | 'rounded' | 'default';
 
+interface Segment{
+    start: number;
+    end: number;
+}
+
 interface BaseComponentProps{
     className?: string;
     style?: React.CSSProperties;

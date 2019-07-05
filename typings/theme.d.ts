@@ -113,8 +113,11 @@ interface TabsProperties{
     headerFontSize: string;
 }
 
+type IconProperties = ResponsiveProperty<number>;
+
 interface Components{
     common: ComponentProperties;
+    icon: IconProperties;
     modal: ModalProperties;
     frameSelection: FrameSelectionProperties;
     timelineItem: TimelineItemProperties;

@@ -8,59 +8,66 @@ const pointerStyles = (theme: Theme): any => {
     const bg = pointer.color;
     return {
         position: 'absolute',
-        bottom: 0,
-        width: '1px',
-        top: 0,
+        width: '2px',
         left: 0,
+        top: 0,
+        height: '100%',
         backgroundColor: bg,
-        '.time-label': {
-            position: 'absolute',
-            bottom: '100%',
-            transform: 'translateX(-50%)'
-        },
-        '&:hover, &:active': {
-            opacity: 0.6
-        },
+        tranform: 'translateX(-50%)',
+        cursor: 'ew-resize',
         '&.pointer-has-header': {
-            top: `${pointer.headerSize}px`,
             '&:after': {
+                transition: `0.12s ${theme.transitions.easeInSine} transform`,
                 backgroundColor: 'inherit',
                 content: '""',
                 position: 'absolute',
-                left: `-${pointer.headerSize * 0.5}px`,
-                top: `-${pointer.headerSize}px`,
+                borderRadius: '50%',
                 width: `${pointer.headerSize}px`,
                 height: `${pointer.headerSize}px`,
-                transform: 'rotate(45deg)'
+                left: '50%',
+                marginLeft: `-${pointer.headerSize * 0.5}px`
+            },
+            '&:hover, &:active': {
+                '&:after': {
+                    transform: 'scale(1.5, 1.5)'
+                }
+            },
+            '&.pointer-header-pos-top': {
+                '&:after': {
+                    top: 0
+                }
+            },
+            '&.pointer-header-pos-bottom': {
+                '&:after': {
+                    bottom: 0
+                }
             }
         }
     };
 };
 
 export interface PointerProps extends React.HTMLAttributes<{}>{
+    headerPos?: 'top' | 'bottom';
     hasHeader?: boolean;
     color?: string;
-    pixelsPerMSec?: number;
-    time?: number;
 }
 
-export default ({ hasHeader, className, color, time, pixelsPerMSec, style, ...others }: PointerProps) => {
-    const t = time || 0;
-    const ppms = pixelsPerMSec || 0.05;
-    const left = t * ppms;
+export default React.forwardRef(({ hasHeader, headerPos, className, color, style, children, ...others }: PointerProps, ref: React.Ref<any>) => {
     let combinedStyle: React.CSSProperties = {
-        left: `${left}px`,
         ...style
     };
     if (color) {
         combinedStyle.backgroundColor = color;
     }
     return (
-        <div css={pointerStyles} className={
+        <div ref={ref} css={pointerStyles} className={
             combineClassNames(
                 hasHeader ? 'pointer-has-header' : '',
+                `pointer-header-pos-${headerPos || 'top'}`,
                 className
             )
-        } style={combinedStyle} {...others}></div>
+        } style={combinedStyle} {...others}>
+            {children}
+        </div>
     );
-};
+});

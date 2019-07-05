@@ -7,6 +7,7 @@ import { ThemeProvider } from 'emotion-theming';
 import Popover from '../Popover';
 import { PopoverProps } from '../Popover/Popover';
 import defaultTheme from '../../themes/defaultTheme';
+import { contrast } from '../utils/color';
 
 const tooltipStyles = (theme: Theme): any => {
     const p = theme.components.common.padding.sm;
@@ -23,6 +24,7 @@ export interface TooltipProps extends Omit<PopoverProps, 'theme' | 'anchorEl'>{
     title?: string;
     desc?: string;
     children?: ReactElement;
+    backgroundColor?: string;
 }
 
 const DELTA_DURATION_CLOSE_TOOLTIP = 1000;
@@ -63,17 +65,21 @@ const generateGlobalTooltipPopover = ({ onClose, ...props }: any, uid: string) =
     );
 };
 
-export default ({ title, desc, children, ...others }: TooltipProps) => {
+export default ({ title, desc, children, backgroundColor, style, ...others }: TooltipProps) => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [showTooltip, setShowTooltip] = useState(false);
     const uid = useRef(uuid());
-    const onOpen = useCallback(() => title && setShowTooltip(true), [title]);
-    const onClose = useCallback(() => setShowTooltip(false), []);
     const [timer, setTimer] = useState(-1);
     useEffect(() => {
+        let combinedStyle: React.CSSProperties = { ...style };
+        if (backgroundColor) {
+            combinedStyle.backgroundColor = backgroundColor;
+            combinedStyle.color = contrast(backgroundColor);
+        }
         generateGlobalTooltipPopover({
             visible: showTooltip,
             anchorEl: anchorEl,
+            style: combinedStyle,
             children: (
                 <div css={tooltipStyles}>
                     <div>{title}</div>
@@ -82,22 +88,27 @@ export default ({ title, desc, children, ...others }: TooltipProps) => {
             ),
             ...others
         }, uid.current);
-    }, [showTooltip, anchorEl, uid.current, onOpen, title, desc, others]);
+    }, [showTooltip, anchorEl, uid.current, title, desc, style, others]);
 
     if (!children) return null;
     const { onMouseOver, onMouseOut } = children.props;
-    const onMouseOverWrapped = (e: React.MouseEvent) => {
+    const onOpen = useCallback((el: HTMLElement) => {
+        if (!title || title === '') return;
         clearTimeout(timer);
-        setAnchorEl(e.target as HTMLElement);
-        onOpen();
+        setAnchorEl(el);
+        setShowTooltip(true);
+    }, [timer, title]);
+    const onClose = useCallback(() => {
+        setAnchorEl(null); setShowTooltip(false);
+    }, []);
+    const onMouseOverWrapped = (e: React.MouseEvent) => {
+        onOpen(e.target as HTMLElement);
         onMouseOver && onMouseOver(e);
     };
-    const closeTooltip = useCallback(() => {
-        setTimer(window.setTimeout(() => {
-            setAnchorEl(null);
-            onClose();
-        }, DELTA_DURATION_CLOSE_TOOLTIP));
-    }, [onClose]);
+    const closeDelay = useCallback(() => {
+        clearTimeout(timer);
+        setTimer(window.setTimeout(onClose, DELTA_DURATION_CLOSE_TOOLTIP));
+    }, [onClose, timer]);
     const onMouseOutWrapped = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -105,7 +116,7 @@ export default ({ title, desc, children, ...others }: TooltipProps) => {
         if (container && (container === el || container.contains(el))) {
             return;
         }
-        closeTooltip();
+        closeDelay();
         onMouseOut && onMouseOut(e);
     };
 

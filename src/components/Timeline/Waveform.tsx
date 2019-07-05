@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { clamp } from 'lodash';
 import { CANVAS_MAX_WIDTH } from '../../constant';
+import { fade } from '../utils/color';
 
 export interface WaveformProps extends Omit<React.CanvasHTMLAttributes<{}>, 'onChange'>{
     height?: number;
@@ -11,11 +12,11 @@ export interface WaveformProps extends Omit<React.CanvasHTMLAttributes<{}>, 'onC
     onThumbChange?: (canvases: HTMLCollection) => void;
 }
 
-export default ({ pixelsPerMSec, duration, height, buffer, color, style, onThumbChange, ...others }: WaveformProps) => {
+export default ({ pixelsPerMSec, duration, height, buffer, color, onThumbChange, style, ...others }: WaveformProps) => {
     const h = height || 256;
     const ppms = pixelsPerMSec || 0.05;
     const d  = duration || 0;
-    const c = color || '#42d496';
+    const c = color || 'rgba(200, 200, 200, 0.4)';
     const containerRef = useRef<HTMLDivElement>(null);
     const thumbRef = useRef<HTMLCanvasElement>(document.createElement('canvas'));
     useEffect(() => {
@@ -60,12 +61,16 @@ export default ({ pixelsPerMSec, duration, height, buffer, color, style, onThumb
             }
         }
     }, [containerRef.current, buffer, ppms, d, h, c, thumbRef.current, onThumbChange]);
-
-    const combinedStyle: React.CSSProperties = {
-        background: `linear-gradient(to bottom, transparent 0, transparent ${h * 0.5}px, rgba(255, 255, 255, 0.1) ${h * 0.5}px, rgba(255, 255, 255, 0.1) ${h * 0.5 + 1}px, transparent ${h * 0.5 + 1}px)`,
-        ...style
-    };
     return (
-        <div ref={containerRef} style={combinedStyle} {...others}></div>
+        <div ref={containerRef} style={{ position: 'relative', height: `${h}px`, ...style }} {...others}>
+            <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: 0,
+                width: '100%',
+                height: '1px',
+                backgroundColor: fade(c, 0.2),
+            }}></div>
+        </div>
     );
 };

@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
+import TimeScale from '../components/Timeline/TimeScale';
+import Pointer from '../components/Timeline/Pointer';
+import Waveform from '../components/Timeline/Waveform';
+import WaveformPanel from './WaveformPanel';
 
 const timelineStyles = (theme: Theme): any => {
     return {
@@ -20,6 +24,7 @@ export interface TimelineProps{
     duration?: number;
     currentTime?: number;
     region?: {start: number; end: number};
+    selectingRegion?: boolean;
     onSeek?: (v: number) => void;
     onRegionChange?: (r: {start: number; end: number}) => void;
 }
@@ -27,7 +32,7 @@ export interface TimelineProps{
 export default ({
     pixelsPerMSec, timeScaleHeight, waveHeight,
     duration, region, timeUnits, currentTime,
-    onSeek, onRegionChange
+    selectingRegion, onSeek, onRegionChange
 }: TimelineProps) => {
     const d = duration || 0;
     const ppms = pixelsPerMSec || 0.05;
@@ -37,7 +42,8 @@ export default ({
     const [thumbSrc, setThumbSrc] = useState('');
     return (
         <div css={timelineStyles}>
-
+            <TimeScale />
+            <WaveformPanel pixelsPerMSec={ppms} duration={d} timeScaleHeight={tsh} waveHeight={wh} region={r} />
         </div>
     );
 };

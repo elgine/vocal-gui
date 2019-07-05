@@ -61,10 +61,10 @@ export default withTheme(React.forwardRef(({
         setTransitionActive(visible || false);
     }, [visible, transitionEnded]);
 
-    const onClickOutSide = (e: MouseEvent) => {
+    const onClickOutSide = useCallback((e: MouseEvent) => {
         if (anchorEl && (anchorEl.contains(e.target as HTMLElement) || anchorEl === e.target)) return;
         onClose && onClose();
-    };
+    }, [anchorEl, onClose]);
 
     const wrapperRef = (ref as React.RefObject<HTMLDivElement>) || useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
@@ -76,7 +76,10 @@ export default withTheme(React.forwardRef(({
     };
 
     const [bounds, setBounds] = useState({ left: 0, right: 0, width: 0, top: 0, bottom: 0, height: 0 });
-    useLayoutEffect(() => {
+    useEffect(() => {
+        visible && anchorEl && setBounds(anchorEl.getBoundingClientRect());
+    }, [visible]);
+    useEffect(() => {
         anchorEl && setBounds(anchorEl.getBoundingClientRect());
     }, [anchorEl]);
     const beforeEnter = () => {
@@ -84,7 +87,7 @@ export default withTheme(React.forwardRef(({
     };
 
     const updater = useCallback(() => {
-        if (anchorEl && popoverRef.current && transitionActive) {
+        if (popoverRef.current && transitionActive) {
             const wBounds = popoverRef.current.getBoundingClientRect();
             let newPos = { left: 0, top: 0 };
             if (position) {
@@ -190,7 +193,7 @@ export default withTheme(React.forwardRef(({
             }
             setPos(newPos);
         }
-    }, [popoverRef.current, anchorEl, ap, tp, stretch, transitionActive, pageSize, position, bounds, o]);
+    }, [popoverRef.current, ap, tp, stretch, transitionActive, pageSize, position, bounds, o]);
     useEffect(updater, [updater]);
 
     let popoverContainerStyle: React.CSSProperties = {

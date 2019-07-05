@@ -136,20 +136,25 @@ export default {
     components: {
         common: {
             padding: {
-                sm: 10,
-                md: 12,
-                lg: 14
+                sm: 8,
+                md: 10,
+                lg: 12
             },
             height: {
-                sm: 28,
-                md: 32,
-                lg: 36
+                sm: 30,
+                md: 36,
+                lg: 44
             },
             borderRadius: {
                 sm: 4,
                 md: 4,
                 lg: 6
             }
+        },
+        icon: {
+            sm: 14,
+            md: 16,
+            lg: 20
         },
         modal: {
             headerHeight: 48,
@@ -165,7 +170,7 @@ export default {
         },
         pointer: {
             color: '#d3a82a',
-            headerSize: 8,
+            headerSize: 10,
             fadeHover: 0.7
         },
         slider: {

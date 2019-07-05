@@ -27,13 +27,13 @@ const register = () => {
     document.body.addEventListener('click', onClickOutside);
 };
 
-export default (dom: HTMLElement|null, onClickOutside?: (e: MouseEvent) => void, e: 'mousedown'|'mouseup'|'click' = 'click') => {
+export default (dom: HTMLElement|null, callback?: (e: MouseEvent) => void, e: 'mousedown'|'mouseup'|'click' = 'click') => {
     register();
     const onGlobalClick = useCallback((e: Event) => {
         const target = (e.target as HTMLElement);
         if (dom && (dom.contains(target) || dom === target)) return;
-        onClickOutside && onClickOutside(e as MouseEvent);
-    }, [dom, onClickOutside]);
+        callback && callback(e as MouseEvent);
+    }, [dom, callback]);
     useEffect(() => {
         eventHandlers[e].add(onGlobalClick);
         return () => {

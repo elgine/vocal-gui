@@ -1,9 +1,19 @@
+import { Effect } from '../presets/effects';
+
+export interface RenderTask{
+    source: string;
+    dest: string;
+    effectId: Effect;
+    effectOptions: any;
+    segements: Segment[];
+}
 
 export default class Renderer {
 
     public readonly offlineAudioCtx: OfflineAudioContext;
-
     private _rendering: boolean = false;
+    private _tasks: RenderTask[] = [];
+    private _taskIndex: number = -1;
 
     constructor(options: OfflineAudioContextOptions) {
         this.offlineAudioCtx = new OfflineAudioContext(options);
@@ -22,7 +32,7 @@ export default class Renderer {
     }
 
     stop(id: string) {
-
+        this._rendering = false;
     }
 
     stopAll() {
@@ -39,5 +49,9 @@ export default class Renderer {
 
     private _next() {
 
+    }
+
+    get rendering() {
+        return this._rendering;
     }
 }

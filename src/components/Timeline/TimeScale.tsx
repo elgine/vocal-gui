@@ -21,6 +21,7 @@ const render = (
     durPerCanvas: number,
     height: number,
     duration: number,
+    dialLen: number,
     ppms: number,
     units: number[],
     colors: string[],
@@ -44,7 +45,7 @@ const render = (
         let aTo = ~~(to / step) * step;
         let canvas = canvases[canvasIndex];
         if (!canvas) return 0;
-        let rh = 16;
+        let rh = dialLen;
         let rw = 1;
         let arh = rh;
         let o = 0;
@@ -92,9 +93,10 @@ export interface TimeScaleProps extends React.HTMLAttributes<{}>{
     colors?: string[];
     height?: number;
     offset?: number;
+    dialLen?: number;
 }
 
-export default ({ offset, height, colors, units, duration, style, children, ...others }: React.PropsWithChildren<TimeScaleProps>) => {
+export default ({ offset, height, colors, units, duration, dialLen, style, children, ...others }: React.PropsWithChildren<TimeScaleProps>) => {
     const sl = offset || 0;
     const us = units || TIME_UNITS;
     const d = duration || 20000;
@@ -102,6 +104,7 @@ export default ({ offset, height, colors, units, duration, style, children, ...o
     const ppms = (PIXELS_PER_TIME_UNIT / us[0]);
     const w = d * ppms;
     const cs = colors || ['rgba(255, 255, 255, 0.45)', 'rgba(255, 255, 255, 0.35)', 'rgba(255, 255, 255, 0.12)'];
+    const dl = dialLen || 16;
     const [lastDur, setLastDur] = useState(0);
     const [lastPPMS, setLastPPMS] = useState(1);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -124,7 +127,7 @@ export default ({ offset, height, colors, units, duration, style, children, ...o
         }
         if (ppms !== lastPPMS || lastDur < d) {
             let res = render(
-                canvases, maxDurPerCanvas, h, md, ppms, us,
+                canvases, maxDurPerCanvas, h, md, dl, ppms, us,
                 cs,
                 lastDur,
                 ppms !== lastPPMS
