@@ -1,4 +1,5 @@
 import { init } from '@rematch/core';
+import immerPlugin from '@rematch/immer';
 import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
 import fileReducer from './file/reducer';
@@ -15,7 +16,8 @@ const store = init({
     },
     redux: {
         middlewares: [thunk, saga]
-    }
+    },
+    plugins: [immerPlugin()]
 });
 
 // Run sagas

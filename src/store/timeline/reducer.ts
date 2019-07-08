@@ -1,5 +1,4 @@
 import { ACTION_SCALE_TIME, TimelineState, ACTION_SET_DURATION } from './types';
-import produce from 'immer';
 import { TIME_UNITS } from '../../constant';
 import calcProperTimeUnits from './calcProperTimeUnits';
 
@@ -15,10 +14,9 @@ export default {
     reducers: {
         [ACTION_SCALE_TIME](state: TimelineState, payload: number) {
             if (state.scaleTime === payload) return;
-            return produce(state, draft => {
-                draft.scaleTime = payload;
-                draft.timeUnits = calcProperTimeUnits(TIME_UNITS[0] * draft.scaleTime);
-            });
+            state.scaleTime = payload;
+            state.timeUnits = calcProperTimeUnits(TIME_UNITS[0] * state.scaleTime);
+            return state;
         },
         [ACTION_SET_DURATION](state: TimelineState, payload: number) {}
     }

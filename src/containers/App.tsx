@@ -15,23 +15,23 @@ export default () => {
                     <Toolbar >
                         <Tooltip title={getLang('UNDO', Lang.CN)}>
                             <IconButton>
-                                <Undo />
+                                <Undo fontSize="small" />
                             </IconButton>
                         </Tooltip>
                         <Tooltip title={getLang('REDO', Lang.CN)}>
                             <IconButton>
-                                <Redo />
+                                <Redo fontSize="small" />
                             </IconButton>
                         </Tooltip>
                         <Grow />
                         <Tooltip title={getLang('HELP', Lang.CN)}>
                             <IconButton>
-                                <Help />
+                                <Help fontSize="small" />
                             </IconButton>
                         </Tooltip>
                         <Tooltip title={getLang('SETTINGS', Lang.CN)}>
                             <IconButton>
-                                <Settings />
+                                <Settings fontSize="small" />
                             </IconButton>
                         </Tooltip>
                     </Toolbar>
