@@ -1,4 +1,5 @@
 export default {
+    MORE: 'More',
     CLIP: 'Set clip region',
     UNDO: 'Undo',
     REDO: 'Redo',

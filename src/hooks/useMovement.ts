@@ -29,6 +29,7 @@ function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number)
     useLayoutEffect(() => {
         const mouseMoveFn = (e: MouseEvent) => {
             e.preventDefault();
+            e.stopPropagation();
             setCurPos(mouseCoordHandler(e, corrector));
         };
         const onMouseMove = throttle(mouseMoveFn, thi);

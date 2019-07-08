@@ -1,4 +1,5 @@
 export default {
+    MORE: '更多',
     CLIP: '设置截取区域',
     UNDO: '撤回',
     REDO: '重做',

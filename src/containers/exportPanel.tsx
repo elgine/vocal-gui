@@ -1,42 +1,34 @@
 import React from 'react';
-import { MdLaunch } from 'react-icons/md';
-import { RowProps } from '../components/Grid/Row';
-import ControlBar from '../components/ControlBar';
-import Button from '../components/Button';
-import Select, { Option } from '../components/Select';
-import Box from '../components/Grid/Box';
+import { Box, Select, MenuItem, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
 
-export interface ExportPanelProps extends Omit<RowProps, 'theme'>{
-    height?: number;
+export interface ExportPanelProps{
+    open?: boolean;
+    onCancel: () => void;
+    onExport: (v: any) => void;
 }
 
-export default ({ height, style, ...others }: ExportPanelProps) => {
-    const h = height || 56;
+export default ({ open, onCancel, onExport }: ExportPanelProps) => {
     return (
-        <ControlBar leftChildren={
-            <React.Fragment>
-                <Box pr="md">Save format as: </Box>
-                <Select value="mp3" placeholder="Choose format" size="sm">
-                    <Option value="wav">
-                        wav
-                    </Option>
-                    <Option value="mp3">
-                        mp3
-                    </Option>
-                    <Option value="aac">
-                        aac
-                    </Option>
-                </Select>
-            </React.Fragment>
-        } rightChildren={
-            <React.Fragment>
-                <Button color="primary">
-                    <MdLaunch />
-                    &nbsp;
-                    <span>export</span>
+        <Dialog open={open || false} onClose={onCancel}>
+            <DialogTitle>
+                Export
+            </DialogTitle>
+            <DialogContent dividers>
+                <Box>
+                    <Select fullWidth>
+                        <MenuItem>.wav</MenuItem>
+                        <MenuItem>.mp3</MenuItem>
+                    </Select>
+                </Box>
+            </DialogContent>
+            <DialogActions>
+                <Button>
+                    Cancel
                 </Button>
-            </React.Fragment>
-        } style={{ height: `${h}px`, ...style }} {...others}
-        />
+                <Button onClick={onExport} autoFocus>
+                    Export
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 };

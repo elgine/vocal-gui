@@ -9,7 +9,7 @@ export enum Lang{
     CN
 }
 
-export const getDesc = (key: string, lang: Lang) => {
+export const getLang = (key: string, lang: Lang) => {
     if (lang === Lang.EN) return EN[key];
     else if (lang === Lang.CN) return CN[key];
 };
