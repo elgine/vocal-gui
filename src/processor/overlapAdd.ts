@@ -33,17 +33,44 @@ export default class OverlapAdd {
         this._inputQueue.set(inBuffer, this._inputSize);
         this._inputSize += inBufferLen;
 
+        let offset = 0;
+        while (this._inputSize >= offset + this._frameSize) {
+            for (let i = 0; i < this._frameSize; i++) {
+                this._frame[i] = this._inputQueue[offset + i] * this._win[i];
+            }
+            this._analyse();
+            this._processing();
+            this._synthesis();
+            for (let i = 0; i < this._frameSize; i++) {
+                this._buffer[i] += this._frame[i] * this._win[i];
+            }
+            this._pushToOutputQueue(this._buffer, this._hopS);
+            // for (let i = 0; i < this._frameSize; i++) {
+            //     if (i + this._hopS >= this._frameSize) {
+            //         this._buffer[i] = 0;
+            //     } else {
+            //         this._buffer[i] = this._buffer[i + this._hopS];
+            //     }
+            // }
+            this._buffer.copyWithin(0, this._hopS, this._frameSize - this._hopS);
+            this._buffer.fill(0, this._frameSize - this._hopS);
+            offset += this._hopA;
+        }
+        this._inputQueue.copyWithin(0, offset);
+        this._inputSize -= offset;
     }
 
-    pop(output: Float32Array, bufferSize: number) {
-
+    pop(output: Float32Array, bufferSize: number, flush: boolean = false) {
+        if (this._outputSize < bufferSize && !flush) return 0;
+        let popSize = Math.min(this._outputSize, bufferSize);
+        for (let i = 0; i < popSize; i++) {
+            output[i] = this._outputQueue[i];
+        }
+        this._outputQueue.copyWithin(0, popSize);
+        this._outputSize -= popSize;
     }
 
-    dispose() {
-
-    }
-
-    protected _anslyse() {
+    protected _analyse() {
 
     }
 
@@ -55,7 +82,9 @@ export default class OverlapAdd {
 
     }
 
-    protected _pushToOutputQueue(b: ArrayLike<number>) {
-        this._outputQueue.set(b, this._outputQueue.length);
+    protected _pushToOutputQueue(b: ArrayLike<number>, size: number) {
+        for (let i = 0; i < size; i++) {
+            this._outputQueue[this._outputSize++] = b[i];
+        }
     }
 }
