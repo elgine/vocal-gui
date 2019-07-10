@@ -10,6 +10,7 @@ import { toTimeString } from '../utils/time';
 import { TIME_UNITS } from '../constant';
 
 export interface TimelineProps{
+    audioBuffer?: AudioBuffer;
     timeUnits?: number[];
     pixelsPerMSec?: number;
     currentTime?: number;
@@ -18,7 +19,7 @@ export interface TimelineProps{
     segment?: Segment;
 }
 
-export default withTheme(({ theme, segment, timeUnits, pixelsPerMSec, currentTime, waveHeight, timeScaleHeight }: TimelineProps & {theme: Theme}) => {
+export default withTheme(({ theme, audioBuffer, segment, timeUnits, pixelsPerMSec, currentTime, waveHeight, timeScaleHeight }: TimelineProps & {theme: Theme}) => {
     const boxRef = useRef<HTMLDivElement>(null);
     const tus = timeUnits || TIME_UNITS;
     const ppms = pixelsPerMSec || 0.01;
@@ -48,11 +49,23 @@ export default withTheme(({ theme, segment, timeUnits, pixelsPerMSec, currentTim
         setShowPreSeek(false);
     };
     const innerCompGenerator = useCallback(({ children, ...props }: any) => <div ref={boxRef} {...props}>{children}</div>, []);
+    const duration = audioBuffer ? audioBuffer.duration * 1000 : 0;
     return (
         <Box component={innerCompGenerator} position="relative" bgcolor="background.default"
+            overflow="auto hidden" width="100%"
             onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
-            <TimeScale timeUnits={tus} pixelsPerMSec={ppms} colors={timeScaleColors} height={tsh} />
-            <Waveform pixelsPerMSec={ppms} color={timeScaleColors[0]} height={wh} />
+            <TimeScale duration={duration} timeUnits={tus} pixelsPerMSec={ppms} colors={timeScaleColors} height={tsh} />
+            {
+                audioBuffer ? Array(audioBuffer.numberOfChannels).fill(0).map((item, i) => {
+                    return (
+                        <Waveform key={i} duration={duration} height={wh}
+                            buffer={audioBuffer.getChannelData(i)}
+                            pixelsPerMSec={ppms}
+                            color={timeScaleColors[0]}
+                        />
+                    );
+                }) : undefined
+            }
             <Fade in={showPreSeek}>
                 <Pointer hideHead showLabel={showPreSeek} label={toTimeString(preSeek)}
                     color={timeScaleColors[2]} left={ppms * preSeek}
