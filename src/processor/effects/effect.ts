@@ -60,10 +60,10 @@ export interface EffectOptions{
 
 export default class Effect {
 
-    protected _audioContext: AudioContext;
+    protected _audioContext: BaseAudioContext;
     protected _gain: GainNode;
 
-    constructor(audioContext: AudioContext) {
+    constructor(audioContext: BaseAudioContext) {
         this._audioContext = audioContext;
         this._gain = this._audioContext.createGain();
     }
@@ -84,5 +84,13 @@ export default class Effect {
 
     dispose() {
         this._gain.disconnect();
+    }
+
+    get input(): AudioNode {
+        return this._gain;
+    }
+
+    get output() {
+        return this._gain;
     }
 }

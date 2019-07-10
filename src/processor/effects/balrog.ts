@@ -73,7 +73,7 @@ export default class Balrog extends Effect {
     private _fire: AudioBufferSourceNode;
     private _filter2: BiquadFilterNode;
 
-    constructor(audioContext: AudioContext, kernelBuffer: AudioBuffer, fireBuffer: AudioBuffer) {
+    constructor(audioContext: BaseAudioContext, kernelBuffer: AudioBuffer, fireBuffer: AudioBuffer) {
         super(audioContext);
         this._filter = this._audioContext.createBiquadFilter();
         this._filter.type = 'highshelf';
@@ -192,5 +192,9 @@ export default class Balrog extends Effect {
     stop() {
         this._fire.stop();
         this._osc.stop();
+    }
+
+    get input() {
+        return this._delay;
     }
 }

@@ -1,75 +1,16 @@
 import { clamp } from 'lodash';
 import Composite from './composite';
-
-function createFadeBuffer(context: AudioContext, activeTime: number, fadeTime: number) {
-    let length1 = activeTime * context.sampleRate;
-    let length2 = (activeTime - 2 * fadeTime) * context.sampleRate;
-    let length = length1 + length2;
-    let buffer = context.createBuffer(1, length, context.sampleRate);
-    let p = buffer.getChannelData(0);
-
-    console.log('createFadeBuffer() length = ' + length);
-
-    let fadeLength = fadeTime * context.sampleRate;
-
-    let fadeIndex1 = fadeLength;
-    let fadeIndex2 = length1 - fadeLength;
-
-    // 1st part of cycle
-    for (let i = 0; i < length1; ++i) {
-        let value = 0;
-        if (i < fadeIndex1) {
-            value = Math.sqrt(i / fadeLength);
-        } else if (i >= fadeIndex2) {
-            value = Math.sqrt(1 - (i - fadeIndex2) / fadeLength);
-        } else {
-            value = 1;
-        }
-
-        p[i] = value;
-    }
-
-    // 2nd part
-    for (let i = length1; i < length; ++i) {
-        p[i] = 0;
-    }
-
-
-    return buffer;
-}
-
-function createDelayTimeBuffer(context: AudioContext, activeTime: number, fadeTime: number, shiftUp: boolean) {
-    let length1 = activeTime * context.sampleRate;
-    let length2 = (activeTime - 2 * fadeTime) * context.sampleRate;
-    let length = length1 + length2;
-    let buffer = context.createBuffer(1, length, context.sampleRate);
-    let p = buffer.getChannelData(0);
-
-    console.log('createDelayTimeBuffer() length = ' + length);
-
-    // 1st part of cycle
-    for (let i = 0; i < length1; ++i) {
-        if (shiftUp)
-        // This line does shift-up transpose
-        { p[i] = (length1 - i) / length }
-        else
-        // This line does shift-down transpose
-        { p[i] = i / length1 }
-    }
-
-    // 2nd part
-    for (let i = length1; i < length; ++i) {
-        p[i] = 0;
-    }
-
-    return buffer;
-}
+import { createDelayTimeBuffer, createFadeBuffer } from '../dsp/createBuffer';
 
 export interface JungleOptions{
     pitchOffset: number;
 }
 
 export default class Jungle extends Composite {
+
+    static PITCH_OFFSET_DEFAULT: number = 0;
+    static PITCH_OFFSET_MIN: number = -0.1;
+    static PITCH_OFFSET_MAX: number = 1;
 
     private _previousPitch: number = 1;
     private _bufferTime: number;
@@ -94,7 +35,7 @@ export default class Jungle extends Composite {
     private _mix1: GainNode;
     private _mix2: GainNode;
 
-    constructor(audioContext: AudioContext, delayTime: number = 0.1, fadeTime: number = 0.05, bufferTime: number = 0.1) {
+    constructor(audioContext: BaseAudioContext, delayTime: number = 0.1, fadeTime: number = 0.05, bufferTime: number = 0.1) {
         super(audioContext);
         this._previousPitch = -1;
         this._bufferTime = bufferTime;
@@ -191,7 +132,7 @@ export default class Jungle extends Composite {
 
     set(options: AnyOf<JungleOptions>) {
         if (options.pitchOffset !== undefined) {
-            const mul = options.pitchOffset;
+            const mul = clamp(options.pitchOffset, Jungle.PITCH_OFFSET_MIN, Jungle.PITCH_OFFSET_MAX);
             if (mul > 0) {
                 this._mod1Gain.gain.value = 0;
                 this._mod2Gain.gain.value = 0;

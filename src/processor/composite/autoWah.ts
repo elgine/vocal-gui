@@ -26,7 +26,7 @@ export default class AutoWah extends Composite {
     private _awDepth: GainNode;
     private _awFilter: BiquadFilterNode;
 
-    constructor(audioContext: AudioContext) {
+    constructor(audioContext: BaseAudioContext) {
         super(audioContext);
         this._waveShaper = this._audioContext.createWaveShaper();
         this._awFollower = this._audioContext.createBiquadFilter();

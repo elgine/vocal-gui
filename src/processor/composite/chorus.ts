@@ -22,7 +22,7 @@ export default class Chorus extends Composite {
     private _oscGain: GainNode;
     private _osc: OscillatorNode;
 
-    constructor(audioContext: AudioContext) {
+    constructor(audioContext: BaseAudioContext) {
         super(audioContext);
         this._delay = this._audioContext.createDelay();
         this._osc = this._audioContext.createOscillator();

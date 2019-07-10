@@ -1,12 +1,12 @@
 export default class Composite {
 
-    protected _audioContext: AudioContext;
+    protected _audioContext: BaseAudioContext;
     protected _input: GainNode;
     protected _dry: GainNode;
     protected _wet: GainNode;
     protected _output: GainNode;
 
-    constructor(audioContext: AudioContext) {
+    constructor(audioContext: BaseAudioContext) {
         this._audioContext = audioContext;
         this._input = this._audioContext.createGain();
         this._output = this._audioContext.createGain();
@@ -35,5 +35,13 @@ export default class Composite {
         this._dry.disconnect();
         this._wet.disconnect();
         this._output.disconnect();
+    }
+
+    get output() {
+        return this._output;
+    }
+
+    get input() {
+        return this._input;
     }
 }

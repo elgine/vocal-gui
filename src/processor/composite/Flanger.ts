@@ -28,7 +28,7 @@ export default class Flanger extends Composite {
     private _delay: DelayNode;
     private _feedback: GainNode;
 
-    constructor(audioContext: AudioContext) {
+    constructor(audioContext: BaseAudioContext) {
         super(audioContext);
         this._osc = this._audioContext.createOscillator();
         this._oscGain = this._audioContext.createGain();

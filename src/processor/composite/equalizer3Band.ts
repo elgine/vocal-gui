@@ -25,7 +25,7 @@ export default class Equalizer3Band extends Composite {
     private _lo: BiquadFilterNode;
     private _mi: BiquadFilterNode;
 
-    constructor(audioContext: AudioContext) {
+    constructor(audioContext: BaseAudioContext) {
         super(audioContext);
 
         this._hi = this._audioContext.createBiquadFilter();

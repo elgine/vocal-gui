@@ -30,9 +30,9 @@
 
 // Since all this stuff depends on global data, just wrap it all in a clousure
 // for tidyness, and so we can call it multiple times.
-function vocoder(ctx: AudioContext, cb: Function, mb: Float32Array, opts: any = {}) {
+function vocoder(ctx: BaseAudioContext, cb: Function, mb: Float32Array, opts: any = {}) {
 
-    let audioContext: AudioContext|null = null;
+    let audioContext: BaseAudioContext|null = null;
     let modulatorBuffer: AudioBuffer|null = null;
     let carrierBuffer: AudioBuffer|null = null;
     let modulatorNode: AudioBufferSourceNode|null = null;
