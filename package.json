@@ -7,6 +7,7 @@
     "test": "jest",
     "test:watch": "npm test -- --watch",
     "start": "electron .",
+    "dev:recorder": "cross-env NODE_ENV=dev webpack-dev-server --entry ./example/recorder.ts --config ./build/webpack.config.base.js",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --entry ./src/index.tsx --config ./build/webpack.config.base.js",
     "build": "cross-env NODE_ENV=production webpack --config ./build/webpack.config.base.js",
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./build/webpack.config.electron.renderer.js",

@@ -1,9 +1,9 @@
-import { Effect } from '../presets/effects';
+import { EffectType } from './effectType';
 
 export default class Player {
 
     public readonly audioCtx: AudioContext;
-    private _effect: Effect = Effect.NONE;
+    private _effect: EffectType = EffectType.NONE;
 
     constructor() {
         this.audioCtx = new AudioContext();
@@ -12,7 +12,7 @@ export default class Player {
         }
     }
 
-    setEffect(effect: Effect, initialState?: any) {
+    setEffect(effect: EffectType, initialState?: any) {
         if (this._effect === effect) return;
         this._effect = effect;
         // Build graph

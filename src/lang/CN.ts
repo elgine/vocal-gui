@@ -1,4 +1,9 @@
 export default {
+    CLOSE_RECORD: '退出录音',
+    START_RECORD: '开始录音',
+    STOP_RECORD: '停止录音',
+    SAVE_RECORD: '保存录音',
+    RECORD: '录音',
     MORE: '更多',
     CLIP: '设置截取区域',
     UNDO: '撤回',

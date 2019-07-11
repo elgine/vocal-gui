@@ -1,4 +1,5 @@
-import Effect, { EffectType } from './effect';
+import Effect from './effect';
+import { EffectType } from '../effectType';
 import Alien from './alien';
 import Robot1 from './robot1';
 import Robot2 from './robot2';

@@ -1,4 +1,9 @@
 export default {
+    CLOSE_RECORD: 'Exit recording',
+    START_RECORD: 'Start recording',
+    STOP_RECORD: 'Stop recording',
+    SAVE_RECORD: 'Save recording',
+    RECORD: 'Record',
     MORE: 'More',
     CLIP: 'Set clip region',
     UNDO: 'Undo',

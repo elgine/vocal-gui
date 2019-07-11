@@ -1,9 +1,9 @@
-import { Effect } from '../presets/effects';
+import { EffectType } from './effectType';
 
 export interface RenderTask{
     source: string;
     dest: string;
-    effectId: Effect;
+    effectType: EffectType;
     effectOptions: any;
     segements: Segment[];
 }
