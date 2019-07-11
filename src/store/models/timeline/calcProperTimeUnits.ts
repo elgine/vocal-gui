@@ -1,4 +1,4 @@
-import calcMaxFactor from '../../utils/calcMaxFactor';
+import calcMaxFactor from '../../../utils/calcMaxFactor';
 
 export default (timeUnit: number) => {
     timeUnit = ~~Math.round(timeUnit / 1000) * 1000;

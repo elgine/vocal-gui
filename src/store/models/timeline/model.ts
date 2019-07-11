@@ -1,5 +1,5 @@
 import { ACTION_SCALE_TIME, TimelineState, ACTION_SET_DURATION } from './types';
-import { TIME_UNITS } from '../../constant';
+import { TIME_UNITS } from '../../../constant';
 import calcProperTimeUnits from './calcProperTimeUnits';
 
 const initialState: TimelineState = {

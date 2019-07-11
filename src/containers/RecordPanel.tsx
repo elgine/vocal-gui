@@ -4,15 +4,8 @@ import { PlayArrow, Close, Done, Stop, SettingsOutlined } from '@material-ui/ico
 import RecorderWaveform from '../components/RecorderWaveform';
 import { getLang, LangContext } from '../lang';
 import { toTimeString } from '../utils/time';
-import Recorder from '../processor/recorder';
 import Grow from '../components/Grow';
 import { getRecorder } from '../processor';
-
-/**
- * `onaudioprocess` will be triggered when ScriptProcessor's buffer is capcable.
- * If too small, GC will trigger frequently, because of `onaudioprocess` event
- */
-const SAFE_BUFFER_SIZE = 2048;
 
 interface RecordControlsProps{
     recording?: boolean;

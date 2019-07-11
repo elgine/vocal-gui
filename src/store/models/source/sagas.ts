@@ -10,7 +10,7 @@ import {
     ACTION_LOAD_FILE_FROM_LOCAL_FAILED,
     ACTION_LOAD_FILE_FROM_URL_FAILED
 } from './types';
-import { loadFromLocal, loadFromUrl } from '../../utils/loader';
+import { loadFromLocal, loadFromUrl } from '../../../utils/loader';
 
 function* doImportFromLocal(action: LoadFileFromLocalAction) {
     try {

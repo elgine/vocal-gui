@@ -6,7 +6,7 @@ import {
     ACTION_LOAD_FILE_FROM_LOCAL_FAILED,
     ACTION_LOAD_FILE_FROM_URL_FAILED
 } from './types';
-import { UNDEFINED_STRING } from '../../constant';
+import { UNDEFINED_STRING } from '../../../constant';
 
 const initialState: SourceState = {
     loading: false,

@@ -4,7 +4,7 @@ import {
 } from './types';
 
 import { Model } from '@rematch/core';
-import { getRecorder } from '../../processor';
+import { getRecorder } from '../../../processor';
 
 const initialState: RecorderState = {
     recording: false,

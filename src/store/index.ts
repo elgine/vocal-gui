@@ -2,21 +2,13 @@ import { init } from '@rematch/core';
 import immerPlugin from '@rematch/immer';
 import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
-import sourceReducer from './source/reducer';
-import recorderReducer from './recorder/reducer';
-import playerReducer from './player/reducer';
-import timelineReducer from './timeline/reducer';
-import { importUrlSaga, importLocalSaga } from './source/sagas';
+import models from './models';
+import { importUrlSaga, importLocalSaga } from './models/source/sagas';
 
 const saga = createSagaMiddleware();
 
 const store = init({
-    models: {
-        recorder: recorderReducer,
-        source: sourceReducer,
-        player: playerReducer,
-        timeline: timelineReducer
-    },
+    models,
     redux: {
         middlewares: [saga, thunk]
     },
