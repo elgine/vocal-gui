@@ -2,15 +2,18 @@ import { init } from '@rematch/core';
 import immerPlugin from '@rematch/immer';
 import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
-import models from './models';
+import createWorkerMiddleware from "./middlewares/workerMiddleware";
 import { importUrlSaga, importLocalSaga } from './models/source/sagas';
+import workers from "../workers";
+import models from './models';
 
 const saga = createSagaMiddleware();
+const worker = createWorkerMiddleware(workers);
 
 const store = init({
     models,
     redux: {
-        middlewares: [saga, thunk]
+        middlewares: [worker, saga, thunk]
     },
     plugins: [immerPlugin()]
 });

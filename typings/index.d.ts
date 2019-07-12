@@ -3,13 +3,6 @@ type AnyOf<T> = {
     [K in keyof T]?: T[K];
 };
 
-interface WorkerResponse{
-    type: string;
-    code: number;
-    data?: any;
-    msg?: string;
-}
-
 type TypedArray = Int8Array | Uint8Array |
 Int16Array | Uint16Array |
 Int32Array | Uint32Array |

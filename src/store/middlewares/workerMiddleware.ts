@@ -1,5 +1,4 @@
 import { AnyAction, Dispatch } from 'redux';
-
 /**
  * Worker middleware, handle those actions with
  * type like `WORKER/${workerName}/${workerCMD}`
@@ -8,6 +7,9 @@ import { AnyAction, Dispatch } from 'redux';
 export default (workers: Dictionary<Worker>) => {
     return (store: any) => {
         return (next: Dispatch<AnyAction>) => {
+            for(let k in workers){
+                workers[k].addEventListener('message', (e: MessageEvent) => next(e.data));
+            }
             return (action: AnyAction) => {
                 let { type, ...data } = action;
                 let actionType = String(type);
