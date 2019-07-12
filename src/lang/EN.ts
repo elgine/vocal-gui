@@ -11,7 +11,7 @@ export default {
     ZOOM_IN_TIMELINE: 'Zoom in timeline',
     ZOOM_OUT_TIMELINE: 'Zoom out timeline',
     REPEAT: 'Repeat',
-    NOT_REPEAT: 'Not repeat',
+    NO_REPEAT: 'Not repeat',
     MUTED: 'Muted',
     UNMUTED: 'Unmuted',
     SETTINGS: 'Settings',

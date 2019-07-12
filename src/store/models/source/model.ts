@@ -1,7 +1,7 @@
-import {RematchDispatch} from "@rematch/core";
+import { RematchDispatch } from '@rematch/core';
 import {
     SourceState,
-    ACTION_LOAD_FILE_FROM_LOCAL, 
+    ACTION_LOAD_FILE_FROM_LOCAL,
     ACTION_LOAD_FILE_FROM_URL,
     ACTION_LOAD_FILE_FROM_LOCAL_COMPLETE,
     ACTION_LOAD_FILE_FROM_URL_COMPLETE,
@@ -22,15 +22,15 @@ const initialState: SourceState = {
 export default {
     state: initialState,
     reducers: {
-        [REDUCER_SET_INFO](state: SourceState, payload: any){
+        [REDUCER_SET_INFO](state: SourceState, payload: any) {
             state.info = payload;
             return state;
         },
-        [REDUCER_SET_LOADING](state: SourceState, payload: boolean){
+        [REDUCER_SET_LOADING](state: SourceState, payload: boolean) {
             state.loading = payload;
             return state;
         },
-        [REDUCER_SET_BUFFER](state: SourceState, payload: AudioBuffer){
+        [REDUCER_SET_BUFFER](state: SourceState, payload: AudioBuffer) {
             state.audioBuffer = payload;
             return state;
         }

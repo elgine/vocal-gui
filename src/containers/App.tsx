@@ -1,10 +1,10 @@
 import React, { useRef, useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import { ThemeProvider } from '@material-ui/styles';
-import { Dialog, Button, Box } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import theme from './theme';
-import RecordPanel from './RecordPanel';
 import { getLang, LangContext, Lang } from '../lang';
+import PlayerControls from './PlayerControls';
 
 const mapStateToProps = (state: any) => {
     return {
@@ -18,25 +18,30 @@ const mapDispatchToProps = (dispatch: any) => {
 };
 
 export interface AppProps{
+
 }
 
+const BODY_BACKGROUND = {
+    light: '#fff',
+    dark: '#121212'
+};
+
+const playerControlsStyle: React.CSSProperties = {
+    position: 'absolute',
+    boxSizing: 'border-box',
+    bottom: '0',
+    width: '100%',
+    left: '0'
+};
+
 export default connect(mapStateToProps, mapDispatchToProps)((props: AppProps) => {
-    const [openRecordPanel, setOpenRecordPanel] = useState(false);
-    const lang = useContext(LangContext);
     return (
         <ThemeProvider theme={theme}>
             <LangContext.Provider value={Lang.CN}>
-                <Box bgcolor={theme.palette.type === 'dark' ? '#121212' : '#fff'} minHeight="100%"
+                <Box bgcolor={BODY_BACKGROUND[theme.palette.type]} height="100%"
                     color={theme.palette.getContrastText(theme.palette.background.default)}>
-                    <Button onClick={() => setOpenRecordPanel(true)}>
-                        {
-                            getLang('RECORD', lang)
-                        }
-                    </Button>
-                    <Dialog onClose={() => setOpenRecordPanel(false)}
-                        open={openRecordPanel}>
-                        <RecordPanel saving />
-                    </Dialog>
+
+                    <PlayerControls style={playerControlsStyle} />
                 </Box>
             </LangContext.Provider>
         </ThemeProvider>

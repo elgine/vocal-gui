@@ -6,7 +6,10 @@ export const REDUCER_SET_VOLUME = 'REDUCER_SET_VOLUME';
 export const REDUCER_SET_PLAYBACK_SPEED = 'REDUCER_SET_PLAYBACK_SPEED';
 export const REDUCER_SET_EFFECT = 'REDUCER_SET_EFFECT';
 export const REDUCER_SET_EFFECT_OPTIONS = 'REDUCER_SET_EFFECT_OPTIONS';
+export const REDUCER_SET_REPEAT = 'REDUCER_SET_REPEAT';
 
+export const ACTION_SWITCH_REPEAT = 'ACTION_SWITCH_REPEAT';
+export const ACTION_SWITCH_PLAYING = 'ACTION_SWITCH_PLAYING';
 export const ACTION_PLAY = 'ACTION_PLAY';
 export const ACTION_STOP = 'ACTION_STOP';
 export const ACTION_SEEK = 'ACTION_SEEK';
@@ -19,6 +22,7 @@ export const ACTION_SET_EFFECT = 'ACTION_SET_EFFECT';
 export const ACTION_SET_EFFECT_OPTIONS = 'ACTION_SET_EFFECT_OPTIONS';
 
 export interface PlayerState{
+    repeat: boolean;
     playing: boolean;
     currentTime: number;
     volume: number;
