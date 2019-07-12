@@ -16,9 +16,7 @@ export default class Female extends Effect {
         this._jungle.output.connect(this._compressor);
         this._compressor.connect(this._gain);
 
-        this.set({
-            pitchOffset: 1
-        });
+        this.set(femaleDefaultOptions);
     }
 
     set(options: AnyOf<FemaleOptions>) {
@@ -44,3 +42,7 @@ export default class Female extends Effect {
         return this._jungle.input;
     }
 }
+
+export const femaleDefaultOptions = {
+    pitchOffset: 1
+};

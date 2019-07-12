@@ -105,9 +105,7 @@ export default class Jungle extends Composite {
         this._mix1.connect(this._wet);
         this._mix2.connect(this._wet);
 
-        this.set({
-            pitchOffset: 1
-        });
+        this.set(jungleDefaultOptions);
     }
 
     start() {
@@ -175,3 +173,7 @@ export default class Jungle extends Composite {
         this._modGain2.gain.setTargetAtTime(0.5 * delayTime, 0, 0.01 * 1000);
     }
 }
+
+export const jungleDefaultOptions = {
+    pitchOffset: 1
+};

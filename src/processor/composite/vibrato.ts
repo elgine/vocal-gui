@@ -68,3 +68,9 @@ export default class Vibrato extends Composite {
         this._delay.disconnect();
     }
 }
+
+export const vibrartoDefaultOptions = {
+    vibratoDelay: Vibrato.VIBRATO_DELAY_DEFAULT,
+    vibratoDepth: Vibrato.VIBRATO_DEPTH_DEFAULT,
+    vibratoSpeed: Vibrato.VIBRATO_SPEED_DEFAULT
+};

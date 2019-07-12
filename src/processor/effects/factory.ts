@@ -1,20 +1,20 @@
 import Effect from './effect';
 import { EffectType } from '../effectType';
-import Alien from './alien';
+import Alien, { alienDefaultOptions } from './alien';
 import Robot1 from './robot1';
 import Robot2 from './robot2';
 import Astronaut from './astronaut';
-import Uncle from './uncle';
-import Female from './female';
-import Child from './child';
-import Male from './male';
+import Uncle, { uncleDefaultOptions } from './uncle';
+import Female, { femaleDefaultOptions } from './female';
+import Child, { childDefaultOptions } from './child';
+import Male, { maleDefaultOptions } from './male';
 import OldMale from './oldMale';
-import OldFemale from './oldFemale';
+import OldFemale, { oldFemaleDefaultOptions } from './oldFemale';
 import Transformer from './transformer';
-import Balrog from './balrog';
+import Balrog, { balrogDefaultOptions } from './balrog';
 import Cave from './cave';
 import BroadRoom from './broadRoom';
-import UnderWater from './underWater';
+import UnderWater, { underWaterDefaultOptions } from './underWater';
 import Hall from './hall';
 import Muffler from './muffler';
 import Telephone from './telephone';
@@ -22,7 +22,7 @@ import Radio from './radio';
 import Megaphone from './megaphone';
 import AudioCache, { FIRE, LARGE_WIDE_ECHO_HALL, LARGE_LONG_ECHO_HALL, UNDER_WATER, CHURCH, MUFFLER, RADIO } from '../audioCache';
 
-export default async (type: EffectType, ctx: BaseAudioContext) => {
+export const createEffect = async (type: EffectType, ctx: BaseAudioContext) => {
     let effect: Effect|null = null;
     switch (type) {
         case EffectType.ALIEN: effect = new Alien(ctx); break;
@@ -61,4 +61,21 @@ export default async (type: EffectType, ctx: BaseAudioContext) => {
         case EffectType.MEGAPHONE: effect = new Megaphone(ctx); break;
     }
     return effect;
+};
+
+export const createEffectOptions = (type: EffectType) => {
+    let options: any = {};
+    switch (type) {
+        case EffectType.ALIEN: options = alienDefaultOptions; break;
+        case EffectType.BALROG: options = balrogDefaultOptions; break;
+        case EffectType.CHILD: options = childDefaultOptions; break;
+        case EffectType.FEMALE: options = femaleDefaultOptions; break;
+        case EffectType.MALE: options = maleDefaultOptions; break;
+        case EffectType.OLD_FEMALE: options = oldFemaleDefaultOptions; break;
+        case EffectType.OLD_MALE: options = maleDefaultOptions; break;
+        case EffectType.UNCLE: options = uncleDefaultOptions; break;
+        case EffectType.UNDER_WATER: options = underWaterDefaultOptions; break;
+    }
+    options.gain = 1;
+    return options;
 };

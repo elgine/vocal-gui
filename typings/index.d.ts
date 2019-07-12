@@ -4,6 +4,7 @@ type AnyOf<T> = {
 };
 
 interface WorkerResponse{
+    type: string;
     code: number;
     data?: any;
     msg?: string;

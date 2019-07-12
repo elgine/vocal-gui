@@ -117,19 +117,7 @@ export default class Balrog extends Effect {
         this._fire.connect(this._fireGain);
         this._fireGain.connect(this._gain);
 
-        this.set({
-            lfoFreq: Balrog.LFO_FREQ_DEFAULT,
-            lfoGain: Balrog.LFO_GAIN_DEFAULT,
-            delay: Balrog.DELAY_DEFAULT,
-            highshelfFreq: Balrog.HIGHSHELF_FREQ_DEFAULT,
-            highshelfGain: Balrog.HIGHSHELF_GAIN_DEFAULT,
-            lowpassFreq: Balrog.LOWPASS_FREQ_DEFAULT,
-            compressorThreshold: Balrog.COMPRESSOR_THRESHOLD_DEFAULT,
-            compressorRatio: Balrog.COMPRESSOR_RATIO_DEFAULT,
-            echoGain: Balrog.ECHO_GAIN_DEFAULT,
-            mainGain: Balrog.MAIN_GAIN_DEFAULT,
-            fireGain: Balrog.FIRE_GAIN_DEFAULT
-        });
+        this.set(balrogDefaultOptions);
     }
 
     set(options: AnyOf<BalrogOptions>) {
@@ -198,3 +186,17 @@ export default class Balrog extends Effect {
         return this._delay;
     }
 }
+
+export const balrogDefaultOptions = {
+    lfoFreq: Balrog.LFO_FREQ_DEFAULT,
+    lfoGain: Balrog.LFO_GAIN_DEFAULT,
+    delay: Balrog.DELAY_DEFAULT,
+    highshelfFreq: Balrog.HIGHSHELF_FREQ_DEFAULT,
+    highshelfGain: Balrog.HIGHSHELF_GAIN_DEFAULT,
+    lowpassFreq: Balrog.LOWPASS_FREQ_DEFAULT,
+    compressorThreshold: Balrog.COMPRESSOR_THRESHOLD_DEFAULT,
+    compressorRatio: Balrog.COMPRESSOR_RATIO_DEFAULT,
+    echoGain: Balrog.ECHO_GAIN_DEFAULT,
+    mainGain: Balrog.MAIN_GAIN_DEFAULT,
+    fireGain: Balrog.FIRE_GAIN_DEFAULT
+};

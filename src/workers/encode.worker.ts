@@ -45,6 +45,7 @@ const encode = (channelData: Float32Array[]) => {
                 chunks.push(chunk);
             } else {
                 ctx.postMessage({
+                    type: 'close',
                     code: -1,
                     msg: 'Can not encode buffer to mp3 frame'
                 });
@@ -63,7 +64,7 @@ const close = () => {
 };
 
 ctx.addEventListener('message', (e) => {
-    switch (e.data.cmd) {
+    switch (e.data.type) {
         case 'init': {
             init(e.data.data);
             break;

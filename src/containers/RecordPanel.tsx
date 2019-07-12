@@ -1,10 +1,9 @@
 import React, { useRef, useState, useCallback, useEffect, useContext } from 'react';
 import { Box, Toolbar, Typography, Fab, IconButton, CircularProgress, Tooltip, Collapse } from '@material-ui/core';
-import { PlayArrow, Close, Done, Stop, SettingsOutlined } from '@material-ui/icons';
+import { PlayArrow, Close, Done, Stop } from '@material-ui/icons';
 import RecorderWaveform from '../components/RecorderWaveform';
 import { getLang, LangContext } from '../lang';
 import { toTimeString } from '../utils/time';
-import Grow from '../components/Grow';
 import { getRecorder } from '../processor';
 
 interface RecordControlsProps{
@@ -33,7 +32,7 @@ const RecordControls = React.memo(({ recording, complete, saving, onToggleBtnCli
                 </IconButton>
             </Tooltip>
             <Tooltip title={recording ? getLang('STOP_RECORD', lang) : getLang('START_RECORD', lang)}>
-                <Fab color="primary" onClick={onToggleBtnClick}>
+                <Fab color="secondary" onClick={onToggleBtnClick}>
                     {
                         recording ? <Stop /> : <PlayArrow />
                     }
@@ -77,36 +76,6 @@ const RecordDuration = React.memo(({ duration }: RecordDurationProps) => {
     return prevProps.duration === nextProps.duration;
 });
 
-interface RecordPanelHeaderProps{
-    recording?: boolean;
-    onSettingsClick?: React.MouseEventHandler;
-    onCloseClick?: React.MouseEventHandler;
-}
-
-const RecordPanelHeader = ({ recording, onSettingsClick, onCloseClick }: RecordPanelHeaderProps) => {
-    const lang = useContext(LangContext);
-    return (
-        <Toolbar>
-            <Typography variant="h6">
-                Record
-            </Typography>
-            <Grow />
-            <Tooltip title={getLang('SETTINGS', lang)}>
-                <div>
-                    <IconButton disabled={recording} color="inherit" onClick={onSettingsClick}>
-                        <SettingsOutlined />
-                    </IconButton>
-                </div>
-            </Tooltip>
-            <Tooltip title={getLang('CLOSE_RECORD', lang)}>
-                <IconButton color="inherit" onClick={onCloseClick}>
-                    <Close />
-                </IconButton>
-            </Tooltip>
-        </Toolbar>
-    );
-};
-
 export interface RecordPanelProps{
     saving?: boolean;
     recording?: boolean;
@@ -133,17 +102,14 @@ export default ({ saving, recording, onRecordChange, onClose }: RecordPanelProps
         };
     }, [onAudioDataProcess]);
     return (
-        <Box>
-            <RecordPanelHeader />
-            <Box position="relative" bgcolor="primary.main" color="primary.contrastText">
+        <React.Fragment>
+            <Box bgcolor="grey.200">
                 <RecordDuration duration={duration} />
-                <Box height="400px">
-                    <RecorderWaveform />
-                </Box>
+                <RecorderWaveform style={{ height: '400px' }} />
             </Box>
             <RecordControls complete={!recording && duration > 0} recording={recording}
                 saving={saving} onToggleBtnClick={onToggleBtnClick} onCloseClick={onClose}
             />
-        </Box>
+        </React.Fragment>
     );
 };

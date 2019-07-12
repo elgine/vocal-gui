@@ -25,9 +25,9 @@ export const getPlayer = () => {
     return player;
 };
 
-export const getRenderer = (options: OfflineAudioContextOptions) => {
+export const getRenderer = (options?: OfflineAudioContextOptions) => {
     if (!renderer) {
-        renderer = new Renderer(options);
+        renderer = new Renderer(options || { length: 2, sampleRate: 44100 });
     }
     return renderer;
 };

@@ -1,6 +1,6 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions } from './effect';
-import AutoWah, { AutoWahOptions } from '../composite/autoWah';
+import AutoWah, { AutoWahOptions, autoWahDefaultOptions } from '../composite/autoWah';
 
 export interface UnderWaterOptions extends AutoWahOptions, EffectOptions{
     lowpassFreq: number;
@@ -81,3 +81,10 @@ export default class UnderWater extends Effect {
         super.dispose();
     }
 }
+
+export const underWaterDefaultOptions = {
+    lowpassFreq: UnderWater.LOWPASS_FREQ_DEFAULT,
+    inputGain: UnderWater.INPUT_GAIN_DEFAULT,
+    underWaterBackgroundGain: UnderWater.UNDER_WATER_BACKGROUND_GAIN_DEFAULT,
+    ...autoWahDefaultOptions
+};

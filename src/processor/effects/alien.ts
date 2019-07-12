@@ -28,10 +28,7 @@ export default class Alien extends Effect {
         this._oscGain.connect(this._delay.delayTime);
         this._delay.connect(this._gain);
         this._delay.delayTime.value = 0.05;
-        this.set({
-            lfoFreq: Alien.LFO_FREQ_DEFAULT,
-            lfoGain: Alien.LFO_GAIN_DEFAULT
-        });
+        this.set(alienDefaultOptions);
     }
 
     set(options: AnyOf<AlienOptions>) {
@@ -60,3 +57,8 @@ export default class Alien extends Effect {
         return this._delay;
     }
 }
+
+export const alienDefaultOptions = {
+    lfoFreq: Alien.LFO_FREQ_DEFAULT,
+    lfoGain: Alien.LFO_GAIN_DEFAULT
+};

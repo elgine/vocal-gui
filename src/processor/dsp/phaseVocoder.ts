@@ -136,3 +136,8 @@ export default class PhaseVocoder extends OverlapAdd {
         this._stretch = this._hopS / this._hopA;
     }
 }
+
+export const phaseVocoderDefaultOptions = {
+    pitch: 1,
+    tempo: 1
+};

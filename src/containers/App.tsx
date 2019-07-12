@@ -1,7 +1,7 @@
 import React, { useRef, useState, useContext } from 'react';
 import { connect } from 'react-redux';
 import { ThemeProvider } from '@material-ui/styles';
-import { Dialog, Button } from '@material-ui/core';
+import { Dialog, Button, Box } from '@material-ui/core';
 import theme from './theme';
 import RecordPanel from './RecordPanel';
 import { getLang, LangContext, Lang } from '../lang';
@@ -26,15 +26,18 @@ export default connect(mapStateToProps, mapDispatchToProps)((props: AppProps) =>
     return (
         <ThemeProvider theme={theme}>
             <LangContext.Provider value={Lang.CN}>
-                <Button onClick={() => setOpenRecordPanel(true)}>
-                    {
-                        getLang('RECORD', lang)
-                    }
-                </Button>
-                <Dialog onClose={() => setOpenRecordPanel(false)}
-                    open={openRecordPanel}>
-                    <RecordPanel saving />
-                </Dialog>
+                <Box bgcolor={theme.palette.type === 'dark' ? '#121212' : '#fff'} minHeight="100%"
+                    color={theme.palette.getContrastText(theme.palette.background.default)}>
+                    <Button onClick={() => setOpenRecordPanel(true)}>
+                        {
+                            getLang('RECORD', lang)
+                        }
+                    </Button>
+                    <Dialog onClose={() => setOpenRecordPanel(false)}
+                        open={openRecordPanel}>
+                        <RecordPanel saving />
+                    </Dialog>
+                </Box>
             </LangContext.Provider>
         </ThemeProvider>
     );

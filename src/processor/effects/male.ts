@@ -1,6 +1,6 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions } from './effect';
-import Jungle, { JungleOptions } from '../composite/jungle';
+import Jungle, { JungleOptions, jungleDefaultOptions } from '../composite/jungle';
 
 export interface MaleOptions extends JungleOptions, EffectOptions{
     lowpassFreq: number;
@@ -21,9 +21,7 @@ export default class Male extends Effect {
         this._jungle = new Jungle(this._audioContext);
         this._lowpass.connect(this._jungle.input);
         this._jungle.output.connect(this._gain);
-        this.set({
-            lowpassFreq: Male.LOWPASS_FREQ_DEFAULT
-        });
+        this.set(maleDefaultOptions);
     }
 
     set(options: AnyOf<MaleOptions>) {
@@ -52,3 +50,8 @@ export default class Male extends Effect {
         return this._lowpass;
     }
 }
+
+export const maleDefaultOptions = {
+    lowpassFreq: Male.LOWPASS_FREQ_DEFAULT,
+    ...jungleDefaultOptions
+};

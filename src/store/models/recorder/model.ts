@@ -1,11 +1,10 @@
+import { RematchDispatch, Model, ModelEffects } from '@rematch/core';
 import {
     RecorderState, ACTION_START_RECORDING, ACTION_STOP_RECORDING, ACTION_SAVE_RECORDING,
-    ACTION_SAVE_RECORDING_SUCCESS, ACTION_CANCEL_SAVING_RECORDING
+    ACTION_SAVE_RECORDING_SUCCESS, REDUCER_SET_RECORDING, REDUCER_SET_SAVING
 } from './types';
-
-import { Model } from '@rematch/core';
 import { getRecorder } from '../../../processor';
-
+    
 const initialState: RecorderState = {
     recording: false,
     saving: false
@@ -14,33 +13,30 @@ const initialState: RecorderState = {
 export default {
     state: initialState,
     reducers: {
-        [ACTION_START_RECORDING](state: RecorderState) {
-            state.recording = true;
+        [REDUCER_SET_RECORDING](state: RecorderState, payload: boolean) {
+            state.recording = payload;
             return state;
         },
-        [ACTION_STOP_RECORDING](state: RecorderState) {
-            state.recording = false;
-            return state;
-        },
-        [ACTION_SAVE_RECORDING](state: RecorderState) {
-            state.saving = true;
-            return state;
-        },
-        [ACTION_SAVE_RECORDING_SUCCESS](state: RecorderState) {
-            state.saving = false;
-            return state;
-        },
-        [ACTION_CANCEL_SAVING_RECORDING](state: RecorderState) {
-            state.saving = false;
+        [REDUCER_SET_SAVING](state: RecorderState, payload: boolean) {
+            state.saving = payload;
             return state;
         }
     },
-    effects: {
-        async [ACTION_START_RECORDING](payload: undefined, rootState: any) {
+    effects: (dispatch: RematchDispatch) => ({
+        async [ACTION_START_RECORDING](payload: any, rootState: any) {
             const recorder = getRecorder();
             await recorder.init();
             recorder.start();
-            this[ACTION_START_RECORDING](rootState.recorder);
+            dispatch.recorder[REDUCER_SET_RECORDING](true);
+        },
+        [ACTION_STOP_RECORDING](payload: any, rootState: any) {
+            dispatch.recorder[REDUCER_SET_RECORDING](false);
+        },
+        [ACTION_SAVE_RECORDING](payload: any, rootState: any) {
+            dispatch.recorder[REDUCER_SET_SAVING](true);
+        },
+        [ACTION_SAVE_RECORDING_SUCCESS](payload: string, rootState: any) {
+            dispatch.recorder[REDUCER_SET_SAVING](false);
         }
-    }
+    })
 };

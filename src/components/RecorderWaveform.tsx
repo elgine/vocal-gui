@@ -7,17 +7,17 @@ const HEIGHT = 400;
 const BAR_WIDTH = 2;
 const INTERVAL = 2;
 
-export interface RecorderWaveformProps{
+export interface RecorderWaveformProps extends React.HTMLAttributes<{}>{
     color?: string;
     sampleRate?: number;
 }
 
-export default React.memo(({ color, sampleRate }: RecorderWaveformProps) => {
+export default React.memo(({ color, sampleRate, style, ...others }: RecorderWaveformProps) => {
     const recorder = getRecorder();
     const offscreenRef = useRef<HTMLCanvasElement>(document.createElement('canvas'));
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const sampleRateRef = useRef(25);
-    const colorRef = useRef(color || 'rgba(255, 255, 255, 0.4)');
+    const sampleRateRef = useRef(5);
+    const colorRef = useRef(color || '#df372e');
     if (color) {
         colorRef.current = color;
     }
@@ -53,8 +53,6 @@ export default React.memo(({ color, sampleRate }: RecorderWaveformProps) => {
         ctx.fillStyle = c;
         ctx.translate(canvas.width - width, 0);
         for (let i = 0, p = 0; i < bufferCount; i += resampleInterval, p += BAR_WIDTH + INTERVAL) {
-            //
-            console.log(buffer[i]);
             let val = clamp(Math.abs(buffer[i]), 0.01, 1);
             ctx.fillRect(p, (1 - val) * HEIGHT * 0.5, BAR_WIDTH, val * HEIGHT);
         }
@@ -72,7 +70,7 @@ export default React.memo(({ color, sampleRate }: RecorderWaveformProps) => {
         };
     }, [recorder, onAudioDataProcess]);
     return (
-        <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }}></canvas>
+        <canvas ref={canvasRef} style={{ width: '100%', height: '100%', ...style }} {...others}></canvas>
     );
 }, (prevProps: RecorderWaveformProps, nextProps: RecorderWaveformProps) => {
     return (prevProps.sampleRate === nextProps.sampleRate && prevProps.color === nextProps.color);

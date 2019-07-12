@@ -68,3 +68,9 @@ export default class AutoWah extends Composite {
         }
     }
 }
+
+export const autoWahDefaultOptions = {
+    envelopeFollowerFilterFrequency: AutoWah.ENVELOPE_FOLLOWER_FILTER_FREQUENCY_DEFAULT,
+    filterDepth: AutoWah.FILTER_DEPTH_DEFAULT,
+    filterQ: AutoWah.FILTER_Q_DEFAULT
+};

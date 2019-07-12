@@ -20,7 +20,6 @@ export default ({ pixelsPerMSec, duration, height, buffer, color, onThumbChange,
     const containerRef = useRef<HTMLDivElement>(null);
     const thumbRef = useRef<HTMLCanvasElement>(document.createElement('canvas'));
     useEffect(() => {
-        console.log('redraw');
         if (containerRef.current && buffer) {
             const canvases = containerRef.current.getElementsByTagName('canvas');
             const bufCount = buffer.length;

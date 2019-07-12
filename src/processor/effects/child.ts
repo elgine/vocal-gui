@@ -46,13 +46,7 @@ export default class Child extends Effect {
         this._phaseVocoder.node.connect(this._highpass);
         this._highpass.connect(this._gain);
 
-        this.set({
-            highpassFreq: Child.HIGHPASS_DEFAULT,
-            pitch: Child.PITCH_DEFAULT,
-            lowshelfGain: Equalizer3Band.LOWSHELF_GAIN_DEFAULT,
-            highshelfGain: Equalizer3Band.HIGHSHELF_GAIN_DEFAULT,
-            peakingGain: Equalizer3Band.PEAKING_GAIN_DEFAULT
-        });
+        this.set(childDefaultOptions);
     }
 
     set(options: AnyOf<ChildOptions>) {
@@ -77,3 +71,11 @@ export default class Child extends Effect {
         return this._equalizer.input;
     }
 }
+
+export const childDefaultOptions = {
+    highpassFreq: Child.HIGHPASS_DEFAULT,
+    pitch: Child.PITCH_DEFAULT,
+    lowshelfGain: Equalizer3Band.LOWSHELF_GAIN_DEFAULT,
+    highshelfGain: Equalizer3Band.HIGHSHELF_GAIN_DEFAULT,
+    peakingGain: Equalizer3Band.PEAKING_GAIN_DEFAULT
+};

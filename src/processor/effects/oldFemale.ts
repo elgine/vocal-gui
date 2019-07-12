@@ -1,7 +1,7 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions } from './effect';
-import { PhaseVocoderOptions } from '../dsp/phaseVocoder';
-import Vibrato, { VibratoOptions } from '../composite/vibrato';
+import { PhaseVocoderOptions, phaseVocoderDefaultOptions } from '../dsp/phaseVocoder';
+import Vibrato, { VibratoOptions, vibrartoDefaultOptions } from '../composite/vibrato';
 import PhaseVocoderNode from '../phaseVocoderNode';
 
 export interface OldFemaleOptions extends PhaseVocoderOptions, VibratoOptions, EffectOptions{
@@ -61,3 +61,9 @@ export default class OldFemale extends Effect {
         return this._vocoder.node;
     }
 }
+
+export const oldFemaleDefaultOptions = {
+    highpassFreq: OldFemale.HIGHPASS_FREQ_DEFAULT,
+    ...phaseVocoderDefaultOptions,
+    ...vibrartoDefaultOptions
+};
