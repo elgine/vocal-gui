@@ -67,17 +67,18 @@ const close = () => {
 };
 
 ctx.addEventListener('message', (e) => {
-    if(!e.data.type)return;
-    switch (e.data.type.toLowerCase()) {
-        case 'init': {
-            init(e.data.data);
+    const action = e.data;
+    if(!action.type)return;
+    switch (action.type.toLowerCase()) {
+        case 'encode/ACTION_INIT': {
+            init(action.payload);
             break;
         }
-        case 'encode': {
-            encode(e.data.data);
+        case 'encode/ACTION_ENCODE': {
+            encode(action.buffer);
             break;
         }
-        case 'close': {
+        case 'encode/ACTION_CLOSE': {
             close();
         }
     }

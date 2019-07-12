@@ -14,13 +14,12 @@ export default (workers: Dictionary<Worker>) => {
                 let { type, ...data } = action;
                 let actionType = String(type);
                 let paths = actionType.split('/');
-                if (paths[0].toLowerCase() === 'worker') {
+                if (actionType.toLowerCase().startsWith('worker')) {
                     let workerName = paths[1] || '';
-                    let workerCMD = paths[2] || '';
                     if (workers[workerName]) {
                         workers[workerName].postMessage({
-                            workerCMD,
-                            data
+                            type: `${workerName}/${paths[2] || ''}`,
+                            payload: data
                         });
                     }
                 }
