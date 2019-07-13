@@ -105,7 +105,7 @@ export default ({ pixelsPerMSec, offset, height, colors, timeUnits, duration, di
     const ppms = pixelsPerMSec || (PIXELS_PER_TIME_UNIT / us[0]);
     const w = d * ppms;
     const cs = colors || ['rgba(255, 255, 255, 0.45)', 'rgba(255, 255, 255, 0.35)', 'rgba(255, 255, 255, 0.12)'];
-    const dl = dialLen || 16;
+    const dl = dialLen || h * 0.25;
     const [lastDur, setLastDur] = useState(0);
     const [lastPPMS, setLastPPMS] = useState(1);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -148,7 +148,6 @@ export default ({ pixelsPerMSec, offset, height, colors, timeUnits, duration, di
                 height: `${h}px`,
                 overflow: 'hidden',
                 boxSizing: 'border-box',
-                borderBottom: `1px solid ${cs[2]}`,
                 ...style
             }}>
             {children}

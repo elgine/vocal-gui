@@ -9,6 +9,14 @@ Int32Array | Uint32Array |
 BigInt64Array | BigUint64Array |
 Float32Array | Float64Array;
 
+interface ScrollBarProperties{
+    width: number;
+    trackBgColor: string;
+    thumbBgColor: string;
+    thumbBgColorHover: string;
+    thumbBgColorActive: string;
+}
+
 interface Size{
     width: number;
     height: number;

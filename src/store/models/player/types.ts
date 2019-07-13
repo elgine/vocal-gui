@@ -18,8 +18,6 @@ export const ACTION_START_PLAYING = 'ACTION_START_PLAYING';
 export const ACTION_START_PLAYING_ASYNC = 'ACTION_START_PLAYING_ASYNC';
 export const ACTION_STOP_PLAYING = 'ACTION_STOP_PLAYING';
 export const ACTION_SET_PLAYBACK_SPEED = 'ACTION_SET_PLAYBACK_SPEED';
-export const ACTION_SET_EFFECT = 'ACTION_SET_EFFECT';
-export const ACTION_SET_EFFECT_OPTIONS = 'ACTION_SET_EFFECT_OPTIONS';
 
 export interface PlayerState{
     repeat: boolean;
@@ -27,6 +25,4 @@ export interface PlayerState{
     currentTime: number;
     volume: number;
     playbackSpeed: number;
-    effect: EffectType;
-    effectOptions: any;
 }

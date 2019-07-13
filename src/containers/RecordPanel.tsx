@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect, useContext } from 'react';
-import { Box, Toolbar, Typography, Fab, IconButton, CircularProgress, Tooltip, Collapse } from '@material-ui/core';
+import { Box, Toolbar, Typography, Fab, IconButton, CircularProgress, Tooltip } from '@material-ui/core';
 import { PlayArrow, Close, Done, Stop } from '@material-ui/icons';
 import RecorderWaveform from '../components/RecorderWaveform';
 import { getLang, LangContext } from '../lang';

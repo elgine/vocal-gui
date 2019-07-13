@@ -1,4 +1,6 @@
 export default {
+    SOURCE_URL: 'Source url',
+    ENTER_URL_DESC: 'Please enter the audio link in order to download and edit the source',
     CLOSE_RECORD: 'Exit recording',
     START_RECORD: 'Start recording',
     STOP_RECORD: 'Stop recording',
@@ -8,6 +10,9 @@ export default {
     CLIP: 'Set clip region',
     UNDO: 'Undo',
     REDO: 'Redo',
+    LOAD_FROM_LOCAL: 'Load from local file',
+    LOAD_FROM_URL: 'Load from url',
+    LOAD_FROM_MIC: 'Load from mic stream',
     ZOOM_IN_TIMELINE: 'Zoom in timeline',
     ZOOM_OUT_TIMELINE: 'Zoom out timeline',
     REPEAT: 'Repeat',
@@ -19,5 +24,7 @@ export default {
     PLAY: 'Play',
     STOP: 'Stop',
     SKIP_PREVIOUS: 'Skip previous',
-    SKIP_NEXT: 'Skip next'
+    SKIP_NEXT: 'Skip next',
+    CANCEL: 'Cancel',
+    CONFIRM: 'Confirm'
 } as Dictionary<string>;

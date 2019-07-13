@@ -1,16 +1,16 @@
-import {RematchDispatch, ModelConfig} from "@rematch/core";
-import { 
-    TimelineState, 
-    ACTION_SCALE_TIME, 
+import { RematchDispatch, ModelConfig } from '@rematch/core';
+import {
+    TimelineState,
+    ACTION_SCALE_TIME,
     ACTION_SOURCE_CHANGE,
     REDUCER_SET_DURATION,
-    REDUCER_SET_SCALE_TIME 
+    REDUCER_SET_SCALE_TIME
 } from './types';
 import { TIME_UNITS } from '../../../constant';
 import calcProperTimeUnits from './calcProperTimeUnits';
 
 const initialState: TimelineState = {
-    pixelsPerMSec: 0.5,
+    pixelsPerMSec: 0.01,
     duration: 0,
     scaleTime: 1,
     timeUnits: TIME_UNITS
@@ -30,10 +30,10 @@ const timelineModel: ModelConfig<TimelineState> = {
         }
     },
     effects: (dispatch: RematchDispatch) => ({
-        [ACTION_SCALE_TIME](payload: number, rootState: any){
+        [ACTION_SCALE_TIME](payload: number, rootState: any) {
             dispatch.timeline[REDUCER_SET_SCALE_TIME](payload);
         },
-        [ACTION_SOURCE_CHANGE](payload: any, rootState: any){
+        [ACTION_SOURCE_CHANGE](payload: any, rootState: any) {
             dispatch.timeline[REDUCER_SET_DURATION](rootState.source.audioBuffer);
         }
     })
