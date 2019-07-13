@@ -11,6 +11,7 @@ import { SourceState } from '../store/models/source/types';
 import UploadButton from '../components/UploadButton';
 import { getLang, LangContext } from '../lang';
 import LoadButton from '../components/LoadButton';
+import { contrast } from '../utils/color';
 
 const mapStateToProps = ({ timeline, source, }: {timeline: TimelineState; source: SourceState}) => {
     return {
@@ -40,7 +41,7 @@ const useStyles = (theme: Theme) => {
         },
         timeScale: {
             boxShadow: theme.shadows[3],
-            backgroundColor: theme.palette.background.paper,
+            backgroundColor: theme.palette.background.paper
         },
         thumb: {
             position: 'relative'
@@ -97,7 +98,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                                 ))
                             ) : (
                                 <Box height={`${wh * 2}px`} lineHeight={`${wh * 2}px`} textAlign="center">
-                                    <LoadButton />
+                                    <LoadButton variant="contained" />
                                 </Box>
                             )
                         )

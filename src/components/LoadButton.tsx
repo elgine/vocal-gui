@@ -19,7 +19,7 @@ export interface LoadButtonProps extends ButtonGroupProps{
     onTrigger?: (type: SourceType, val?: File | string) => void;
 }
 
-export default ({ onTrigger }: LoadButtonProps) => {
+export default ({ onTrigger, ...others }: LoadButtonProps) => {
     const lang = useContext(LangContext);
     const dropdownBtnRef = useRef<HTMLButtonElement>(null);
     const [showOtherWays, setShowOtherWays] = useState(false);
@@ -31,7 +31,7 @@ export default ({ onTrigger }: LoadButtonProps) => {
     const onUpload = (fl: FileList) => onTrigger && onTrigger(SourceType.LOCAL, fl[0]);
     return (
         <React.Fragment>
-            <ButtonGroup color="primary" variant="outlined">
+            <ButtonGroup color="primary" variant="outlined" {...others}>
                 <UploadButton accept={SUPPORT_MIME} onChange={onUpload}>
                     <CloudUpload fontSize="small" />
                     &nbsp;

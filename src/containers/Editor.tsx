@@ -35,10 +35,10 @@ export default withTheme(({ theme, className, ...others }: EditorProps & {theme:
         <div className={combineClassNames(
             classes.root,
             className
-        )}>
+        )} {...others}>
             <ControlBar />
             <TimelinePanel />
-            <PlayerControls />
+            {/* <PlayerControls /> */}
         </div>
     );
 });

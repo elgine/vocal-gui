@@ -8,6 +8,8 @@ export default {
     RECORD: 'Record',
     MORE: 'More',
     CLIP: 'Set clip region',
+    POINTER: 'Pointer',
+    APPLY_EFFECT: 'Apply effect',
     UNDO: 'Undo',
     REDO: 'Redo',
     LOAD_FROM_LOCAL: 'Load from local file',

@@ -8,6 +8,8 @@ export default {
     RECORD: '录音',
     MORE: '更多',
     CLIP: '设置截取区域',
+    POINTER: '指针',
+    APPLY_EFFECT: '应用效果',
     UNDO: '撤回',
     REDO: '重做',
     LOAD_FROM_LOCAL: '加载本地文件',
