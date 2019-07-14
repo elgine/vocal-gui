@@ -37,11 +37,19 @@ const useStyles = (theme: Theme) => {
             position: 'relative',
             width: '100%',
             overflow: 'auto hidden',
+            height: '100%',
+            boxSizing: 'border-box',
             marginBottom: `${theme.spacing(2)}px`
         },
+        content: {
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)'
+        },
         timeScale: {
-            boxShadow: theme.shadows[3],
-            backgroundColor: theme.palette.background.paper
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.12)'
         },
         thumb: {
             position: 'relative'
@@ -78,7 +86,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                 classes.root,
                 className
             )} {...others}>
-                <div className={classes.main}>
+                <div className={classes.main} style={{ paddingTop: `${tsh}px` }}>
                     <TimeScale
                         className={classes.timeScale}
                         timeUnits={timeUnits}
@@ -86,23 +94,25 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                         duration={duration}
                         height={tsh}
                     />
-                    {
-                        source.loading ? (
-                            <Box height={`${wh * 2}px`} lineHeight={`${wh * 2}px`} textAlign="center">
-                                <CircularProgress />
-                            </Box>
-                        ) : (
-                            sourceBuffers.length > 0 ? (
-                                sourceBuffers.map((b, i) => (
-                                    <Waveform key={i} height={wh} pixelsPerMSec={pixelsPerMSec} duration={sourceDuration} buffer={b} />
-                                ))
-                            ) : (
-                                <Box height={`${wh * 2}px`} lineHeight={`${wh * 2}px`} textAlign="center">
-                                    <LoadButton variant="contained" />
+                    <div className={classes.content}>
+                        {
+                            source.loading ? (
+                                <Box py={2} textAlign="center">
+                                    <CircularProgress />
                                 </Box>
+                            ) : (
+                                sourceBuffers.length > 0 ? (
+                                    sourceBuffers.map((b, i) => (
+                                        <Waveform key={i} height={wh} pixelsPerMSec={pixelsPerMSec} duration={sourceDuration} buffer={b} />
+                                    ))
+                                ) : (
+                                    <Box py={2} textAlign="center">
+                                        <LoadButton variant="contained" />
+                                    </Box>
+                                )
                             )
-                        )
-                    }
+                        }
+                    </div>
                 </div>
                 <div className={classes.thumb}>
 

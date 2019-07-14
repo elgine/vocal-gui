@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
-import { ButtonProps } from '@material-ui/core/Button';
+import { IconButtonProps } from '@material-ui/core/IconButton';
 import { PlayArrow, Stop } from '@material-ui/icons';
 import { LangContext, getLang } from '../lang';
 
-export interface PlayButtonProps extends Omit<ButtonProps, 'onChange' | 'value'>{
+export interface PlayButtonProps extends Omit<IconButtonProps, 'onChange' | 'value'>{
     value?: boolean;
     onChange?: (v: boolean) => void;
 }
 
-export default ({ value, onChange }: PlayButtonProps) => {
+export default ({ value, onChange, ...others }: PlayButtonProps) => {
     const lang = useContext(LangContext);
     const onClick = (e: React.MouseEvent) => {
         onChange && onChange(!value);
@@ -17,7 +17,7 @@ export default ({ value, onChange }: PlayButtonProps) => {
     return (
         <Tooltip title={getLang(value ? 'STOP' : 'PLAY', lang)}>
             <div>
-                <IconButton onClick={onClick}>
+                <IconButton {...others} onClick={onClick}>
                     {
                         value ? <Stop /> : <PlayArrow />
                     }

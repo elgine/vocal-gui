@@ -1,4 +1,10 @@
 export default {
+    NEW: 'New',
+    SECOND: 'Seconds',
+    SKIP_NEXT: 'Skip to end position',
+    SKIP_PREVIOUS: 'Skip previous to start position',
+    START_TIME: 'Start timestamp',
+    END_TIME: 'End timestamp',
     SOURCE_URL: 'Source url',
     ENTER_URL_DESC: 'Please enter the audio link in order to download and edit the source',
     CLOSE_RECORD: 'Exit recording',
@@ -25,8 +31,6 @@ export default {
     HELP: 'Help',
     PLAY: 'Play',
     STOP: 'Stop',
-    SKIP_PREVIOUS: 'Skip previous',
-    SKIP_NEXT: 'Skip next',
     CANCEL: 'Cancel',
     CONFIRM: 'Confirm'
 } as Dictionary<string>;

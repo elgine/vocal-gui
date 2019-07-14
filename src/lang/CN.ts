@@ -1,4 +1,10 @@
 export default {
+    NEW: '新建',
+    SECOND: '秒',
+    SKIP_NEXT: '跳转至结束结束位置',
+    SKIP_PREVIOUS: '跳转至开始位置',
+    START_TIME: '开始时间戳',
+    END_TIME: '截止时间戳',
     SOURCE_URL: '源文件链接',
     ENTER_URL_DESC: '请输入正确的链接地址',
     CLOSE_RECORD: '退出录音',
@@ -15,8 +21,8 @@ export default {
     LOAD_FROM_LOCAL: '加载本地文件',
     LOAD_FROM_URL: '加载网络文件',
     LOAD_FROM_MIC: '捕获自麦克风流',
-    ZOOM_IN_TIMELINE: '收缩时间轴',
-    ZOOM_OUT_TIMELINE: '放大时间轴',
+    ZOOM_IN_TIMELINE: '放大时间轴',
+    ZOOM_OUT_TIMELINE: '缩小时间轴',
     REPEAT: '循环播放',
     NO_REPEAT: '不循环播放',
     MUTED: '静音',
@@ -25,8 +31,6 @@ export default {
     HELP: '帮助',
     PLAY: '播放',
     STOP: '暂停播放',
-    SKIP_PREVIOUS: '往前跳过',
-    SKIP_NEXT: '往后跳过',
     CANCEL: '取消',
     CONFIRM: '确定'
 } as Dictionary<string>;
