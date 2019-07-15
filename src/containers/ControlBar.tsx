@@ -1,17 +1,17 @@
 import React, { useContext, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import {
-    Toolbar, IconButton, Tooltip, Button, Collapse,
+    Toolbar, IconButton, Tooltip, Button, Divider,
     TextField, InputAdornment, Box, Menu, List,
-    MenuItem, ListItemAvatar, ListItemText, Slider
+    MenuItem, ListItemAvatar, ListItemText, Slider,
+    Collapse
 } from '@material-ui/core';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import {
-    Undo, Redo, Flip as Clip, TouchApp,
-    Tune, ArrowRightAlt, OpenInNew, ArrowDropDown,
-    CloudUpload, Link, Mic, ZoomIn, ZoomOut
+    Undo, Redo, Flip as Clip, ArrowRightAlt, OpenInNew,
+    ArrowDropDown, CloudUpload, Link, Mic, ZoomIn, ZoomOut
 } from '@material-ui/icons';
-import Grow from '../components/Grow';
+import Placeholder from '../components/Placeholder';
 import { getLang, LangContext } from '../lang';
 import ToggleButton from '../components/ToggleButton';
 
@@ -28,17 +28,16 @@ const mapDispatchToProps = (dispatch: any) => {
 };
 
 export interface ControlBarProps extends ToolbarProps{
-
+    cliping?: boolean;
+    onClipingChange?: (v: boolean) => void;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(({ ...others }: ControlBarProps) => {
+export default connect(mapStateToProps, mapDispatchToProps)(({ cliping, onClipingChange, ...others }: ControlBarProps) => {
     const lang = useContext(LangContext);
     const newBtnRef = useRef<HTMLButtonElement>(null);
-    const [showCollapse, setShowCollapse] = useState(true);
     const [showNewDialog, setShowNewDialog] = useState(false);
-    const [editMode, setEditMode] = useState(false);
     const onClipModeChange = (v: boolean) => {
-
+        onClipingChange && onClipingChange(v);
     };
     const onNewBtnClick = () => {
         setShowNewDialog(true);
@@ -64,16 +63,26 @@ export default connect(mapStateToProps, mapDispatchToProps)(({ ...others }: Cont
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={getLang('CLIP', lang)}>
-                    <ToggleButton onChange={onClipModeChange}>
+                    <ToggleButton value={cliping} onChange={onClipModeChange}>
                         <Clip />
                     </ToggleButton>
                 </Tooltip>
-                <Tooltip title={getLang('POINTER', lang)}>
-                    <ToggleButton>
-                        <TouchApp />
-                    </ToggleButton>
-                </Tooltip>
-                <Grow />
+                <Divider />
+                <Placeholder position="relative">
+                    <Collapse in={cliping}>
+                        <Box px={1} display="flex" alignItems="center">
+                            <TextField InputProps={{
+                                endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
+                            }} placeholder={getLang('START_TIME', lang)}
+                            />
+                            <Box px={2}><ArrowRightAlt /></Box>
+                            <TextField InputProps={{
+                                endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
+                            }} placeholder={getLang('END_TIME', lang)}
+                            />
+                        </Box>
+                    </Collapse>
+                </Placeholder>
                 <Tooltip title={getLang('ZOOM_IN_TIMELINE', lang)}>
                     <ToggleButton>
                         <ZoomIn />
@@ -88,22 +97,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(({ ...others }: Cont
                     <Slider style={{ width: `${120}px` }} />
                 </Box>
             </Toolbar>
-            <Collapse in={showCollapse}>
-                <Toolbar style={{ justifyContent: 'center' }}>
-                    <TextField InputProps={{
-                        endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
-                    }} placeholder={getLang('START_TIME', lang)}
-                    />
-                    &nbsp;
-                    <Box px={2}><ArrowRightAlt /></Box>
-                    &nbsp;
-                    <TextField InputProps={{
-                        endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
-                    }} placeholder={getLang('END_TIME', lang)}
-                    />
-                </Toolbar>
-            </Collapse>
-            <Menu anchorEl={newBtnRef.current} open={showNewDialog} anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+            <Menu anchorEl={newBtnRef.current} open={showNewDialog} anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                 transformOrigin={{ horizontal: 'left', vertical: 'top' }} onClose={() => setShowNewDialog(false)}>
                 <List>
                     <MenuItem button>

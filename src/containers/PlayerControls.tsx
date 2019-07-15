@@ -7,7 +7,7 @@ import { ToolbarProps } from '@material-ui/core/Toolbar';
 import Volume from '../components/Volume';
 import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
-import Grow from '../components/Grow';
+import Grow from '../components/Placeholder';
 import { Tune, SkipNext, SkipPrevious } from '@material-ui/icons';
 import { getLang, LangContext } from '../lang';
 import { PlayerState, ACTION_SWITCH_REPEAT, ACTION_SWITCH_PLAYING } from '../store/models/player/types';

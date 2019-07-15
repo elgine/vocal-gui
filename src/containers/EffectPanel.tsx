@@ -8,7 +8,7 @@ import { EFFECTS, EFFECT_LANG_MAP, EffectType, EFFECT_CATEGORY_MAP, EFFECT_CATEG
 import { getLang, LangContext } from '../lang';
 import { fade } from '../utils/color';
 import combineClassNames from '../utils/combineClassNames';
-import Grow from '../components/Grow';
+import Placeholder from '../components/Placeholder';
 import { EMPTY_STRING } from '../constant';
 
 interface EffectItemProps extends GridProps{
@@ -109,7 +109,7 @@ export default ({ ...others }: EffectPanelProps) => {
                         <ArrowBack />
                     </IconButton>
                 </Fade>
-                <Grow />
+                <Placeholder />
                 <Zoom in={!showDetail}>
                     <Tooltip title={getLang('FILTER_BY_EFFECT_CATEGORY', lang)}>
                         <Button ref={filterBtnRef} onClick={() => setShowFilterList(true)}>

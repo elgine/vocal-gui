@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import TimeScale from '../components/TimeScale';
-import { Box, CircularProgress, Button, ButtonGroup, Popover } from '@material-ui/core';
+import { Box, CircularProgress, Button, ButtonGroup, Popover, Typography } from '@material-ui/core';
 import { makeStyles, withTheme, Theme } from '@material-ui/core/styles';
 import { ArrowDropDown } from '@material-ui/icons';
 import Waveform from '../components/Waveform';
@@ -97,7 +97,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                     <div className={classes.content}>
                         {
                             source.loading ? (
-                                <Box py={2} textAlign="center">
+                                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
                                     <CircularProgress />
                                 </Box>
                             ) : (
@@ -106,7 +106,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                                         <Waveform key={i} height={wh} pixelsPerMSec={pixelsPerMSec} duration={sourceDuration} buffer={b} />
                                     ))
                                 ) : (
-                                    <Box py={2} textAlign="center">
+                                    <Box height="100%" display="flex" flexDirection="column"
+                                        alignItems="center" justifyContent="center">
                                         <LoadButton variant="contained" />
                                     </Box>
                                 )

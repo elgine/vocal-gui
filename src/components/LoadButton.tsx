@@ -45,7 +45,7 @@ export default ({ onTrigger, ...others }: LoadButtonProps) => {
             </ButtonGroup>
             <Menu open={showOtherWays} onClose={() => setShowOtherWays(false)}
                 anchorEl={dropdownBtnRef.current}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}>
                 <MenuItem onClick={onClickLink}>
                     <Link fontSize="small" />

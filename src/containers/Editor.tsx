@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles, Theme, withTheme } from '@material-ui/core/styles';
 import combineClassNames from '../utils/combineClassNames';
 import PlayerControls from './PlayerControls';
@@ -45,12 +45,13 @@ export interface EditorProps extends React.HTMLAttributes<{}>{
 
 export default withTheme(({ theme, className, ...others }: EditorProps & {theme: Theme}) => {
     const classes = useStyles(theme)();
+    const [cliping, setCliping] = useState(false);
     return (
         <div className={combineClassNames(
             classes.root,
             className
         )} {...others}>
-            <ControlBar className={classes.controlBar} />
+            <ControlBar className={classes.controlBar} cliping={cliping} onClipingChange={setCliping} />
             <TimelinePanel className={classes.timelinePanel} />
             <PlayerControls className={classes.playerControls} />
         </div>
