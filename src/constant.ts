@@ -9,6 +9,7 @@ export const MD5_KEY = 'elgine1994';
 export const UNDEFINED_STRING = 'Undefined';
 export const EMPTY_DICT = {};
 export const EMPTY_ARRAY = [];
+export const EMPTY_STRING = '';
 export const CANVAS_MAX_WIDTH = 8192;
 export const SUPPORT_AUDIO_EXTS = ['ogg', 'mp3', 'wav', 'webm'];
 export const SUPPORT_MIME = SUPPORT_AUDIO_EXTS.map((ext) => `audio/${ext}`).join(', ');

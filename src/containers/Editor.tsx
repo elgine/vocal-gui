@@ -45,9 +45,6 @@ export interface EditorProps extends React.HTMLAttributes<{}>{
 
 export default withTheme(({ theme, className, ...others }: EditorProps & {theme: Theme}) => {
     const classes = useStyles(theme)();
-    const controlBarStyle: React.CSSProperties = {
-        height: `${CONTROL_BAR_HEIGHT}px`
-    };
     return (
         <div className={combineClassNames(
             classes.root,
