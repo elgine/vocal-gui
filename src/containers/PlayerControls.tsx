@@ -10,7 +10,7 @@ import RepeatButton from '../components/RepeatButton';
 import Grow from '../components/Placeholder';
 import { Tune, SkipNext, SkipPrevious } from '@material-ui/icons';
 import { getLang, LangContext } from '../lang';
-import { PlayerState, ACTION_SWITCH_REPEAT, ACTION_SWITCH_PLAYING } from '../store/models/player/types';
+import { PlayerState, ACTION_SWITCH_REPEAT, ACTION_SWITCH_PLAYING, ACTION_SET_VOLUME, ACTION_SKIP_PREVIOUS, ACTION_SKIP_NEXT } from '../store/models/player/types';
 import EffectPanel from './EffectPanel';
 
 const mapStateToProps = ({ player }: {player: PlayerState}) => {
@@ -21,17 +21,28 @@ const mapStateToProps = ({ player }: {player: PlayerState}) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
+        onSkipPrevious: dispatch.player[ACTION_SKIP_PREVIOUS],
+        onSkipNext: dispatch.player[ACTION_SKIP_NEXT],
         onRepeatChange: dispatch.player[ACTION_SWITCH_REPEAT],
-        onPlayingChange: dispatch.player[ACTION_SWITCH_PLAYING]
+        onPlayingChange: dispatch.player[ACTION_SWITCH_PLAYING],
+        onVolumeChange: dispatch.player[ACTION_SET_VOLUME]
     };
 };
 
-export interface PlayerControlsProps extends ToolbarProps, PlayerState{
+export interface PlayerControlsProps extends Omit<ToolbarProps, 'onVolumeChange'>, PlayerState{
     onRepeatChange: (v: boolean) => void;
     onPlayingChange: (v: boolean) => void;
+    onVolumeChange: (v: number) => void;
+    onSkipPrevious: () => void;
+    onSkipNext: () => void;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(({ onRepeatChange, onPlayingChange, repeat, playing, volume, playbackSpeed, currentTime, ...others }: PlayerControlsProps) => {
+export default connect(mapStateToProps, mapDispatchToProps)(({
+    repeat, playing, volume, playbackSpeed, currentTime,
+    onRepeatChange, onPlayingChange, onVolumeChange, onSkipPrevious,
+    onSkipNext,
+    ...others
+}: PlayerControlsProps) => {
     const lang = useContext(LangContext);
     const [showEffects, setShowEffects] = useState(false);
     const effectBtnRef = useRef<HTMLButtonElement>(null);
@@ -44,16 +55,16 @@ export default connect(mapStateToProps, mapDispatchToProps)(({ onRepeatChange, o
                 <EffectPanel style={{ width: '400px', height: '500px', overflowY: 'auto' }} />
             </Popover>
             <Toolbar {...others}>
-                <Volume value={volume} />
+                <Volume value={volume} onChange={onVolumeChange} />
                 <Grow display="flex" alignContent="center" justifyContent="center">
                     <Tooltip title={getLang('SKIP_PREVIOUS', lang)}>
-                        <IconButton>
+                        <IconButton onClick={onSkipPrevious}>
                             <SkipPrevious />
                         </IconButton>
                     </Tooltip>
                     <PlayButton value={playing} onChange={onPlayingChange} />
                     <Tooltip title={getLang('SKIP_NEXT', lang)}>
-                        <IconButton>
+                        <IconButton onClick={onSkipNext}>
                             <SkipNext />
                         </IconButton>
                     </Tooltip>

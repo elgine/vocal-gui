@@ -77,7 +77,10 @@ const render = (
                 c = colors[2];
             }
             ctx.fillStyle = c;
-            if (drawText) { ctx.fillText(toTimeString(afrom), o, height - (SPACING + arh)) }
+            if (drawText) {
+                // toTimeString(afrom)
+                ctx.fillText((afrom * 0.001).toFixed(2) + 's', o, height - (SPACING + arh));
+            }
             ctx.fillRect(o - rw * 0.5, height - arh, rw, arh);
         }
         ctx.restore();

@@ -13,3 +13,9 @@ export const EMPTY_STRING = '';
 export const CANVAS_MAX_WIDTH = 8192;
 export const SUPPORT_AUDIO_EXTS = ['ogg', 'mp3', 'wav', 'webm'];
 export const SUPPORT_MIME = SUPPORT_AUDIO_EXTS.map((ext) => `audio/${ext}`).join(', ');
+
+export const ZOOM_MINIMUM = 0.5;
+export const ZOOM_MAXIMUM = 4;
+
+export const VOLUME_MINIMUM = 0;
+export const VOLUME_MAXIMUM = 1;

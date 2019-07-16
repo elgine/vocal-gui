@@ -2,13 +2,10 @@ import { RematchDispatch } from '@rematch/core';
 import {
     ACTION_SEEK, PlayerState, ACTION_SET_VOLUME, ACTION_SET_PLAYBACK_SPEED,
     ACTION_PLAY, ACTION_STOP, ACTION_SWITCH_REPEAT, ACTION_SWITCH_PLAYING,
+    ACTION_SKIP_PREVIOUS, ACTION_SKIP_NEXT,
     REDUCER_SET_CURRENT_TIME, REDUCER_SET_VOLUME, REDUCER_SET_PLAYBACK_SPEED,
-    REDUCER_SET_EFFECT, REDUCER_SET_EFFECT_OPTIONS, REDUCER_SET_PLAYING,
-    REDUCER_SET_REPEAT
+    REDUCER_SET_PLAYING, REDUCER_SET_REPEAT
 } from './types';
-import { EffectType } from '../../../processor/effectType';
-import { merge } from 'lodash';
-import { createEffectOptions } from '../../../processor/effects/factory';
 
 const initialState: PlayerState = {
     repeat: false,
@@ -43,6 +40,12 @@ export default {
         }
     },
     effects: (dispatch: RematchDispatch) => ({
+        [ACTION_SKIP_PREVIOUS](payload: any, rootState: any) {
+            dispatch.player[ACTION_SEEK](rootState.timeline.region.start);
+        },
+        [ACTION_SKIP_NEXT](payload: any, rootState: any) {
+            dispatch.player[ACTION_SEEK](rootState.timeline.region.end);
+        },
         [ACTION_SWITCH_REPEAT](payload: any, rootState: any) {
             if (rootState.player.repeat) {
                 dispatch.player[REDUCER_SET_REPEAT](false);

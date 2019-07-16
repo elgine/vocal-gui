@@ -7,9 +7,11 @@ import {
     ACTION_LOAD_SOURCE,
     ACTION_LOAD_FAILED,
     ACTION_LOAD_FROM_LOCAL,
-    ACTION_LOAD_FROM_URL
+    ACTION_LOAD_FROM_URL,
+    ACTION_LOAD_SOURCE_SUCCESS
 } from './types';
 import { UNDEFINED_STRING } from '../../../constant';
+import { ACTION_SOURCE_CHANGE } from '../timeline/types';
 
 const initialState: SourceState = {
     loading: false,
@@ -35,12 +37,17 @@ export default {
         }
     },
     effects: (dispatch: RematchDispatch) => ({
-        [ACTION_LOAD_SOURCE](payload: {type: SourceType; url?: string; file?: File}) {
+        [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File}) {
             if (payload.type === 'LOCAL') {
-                dispatch.source[ACTION_LOAD_FROM_LOCAL](payload.file);
+                dispatch.source[ACTION_LOAD_FROM_LOCAL](payload.value);
             } else if (payload.type === 'URL') {
-                dispatch.source[ACTION_LOAD_FROM_URL](payload.url);
+                dispatch.source[ACTION_LOAD_FROM_URL](payload.value);
             }
+        },
+        [ACTION_LOAD_SOURCE_SUCCESS](payload: AudioBuffer) {
+            dispatch.source[REDUCER_SET_BUFFER](payload);
+            dispatch.source[REDUCER_SET_LOADING](false);
+            dispatch.timeline[ACTION_SOURCE_CHANGE](payload);
         },
         [ACTION_LOAD_FROM_URL](payload: string, rootState: any) {
             dispatch.source[REDUCER_SET_INFO]({

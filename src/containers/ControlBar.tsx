@@ -13,12 +13,14 @@ import { getLang, LangContext } from '../lang';
 import ToggleButton from '../components/ToggleButton';
 import Cursor from '../components/Cursor';
 import LoadButton from '../components/LoadButton';
+import { ZOOM_MINIMUM, ZOOM_MAXIMUM } from '../constant';
 
 export interface ControlBarProps extends ToolbarProps{
     cliping?: boolean;
     onClipingChange?: (v: boolean) => void;
     region?: {start: number; end: number};
     onRegionChange?: (v: {start: number; end: number}) => void;
+    onLoadSource?: (v: {type: SourceType; value?: string| File}) => void;
     onUndo?: () => void;
     onRedo?: () => void;
     onZoomIn?: () => void;
@@ -32,6 +34,7 @@ export interface ControlBarProps extends ToolbarProps{
 export default ({
     cliping, onClipingChange, region, zoom, zoomMin, zoomMax,
     onRegionChange, onRedo, onUndo, onZoomIn, onZoomOut, onZoom,
+    onLoadSource,
     ...others
 }: ControlBarProps) => {
     const lang = useContext(LangContext);
@@ -58,10 +61,14 @@ export default ({
 
     return (
         <Toolbar {...others}>
-            <LoadButton>
-                <OpenInNew />
-                <ArrowDropDown />
-            </LoadButton>
+            <Tooltip title={getLang('LOAD_SOURCE_FROM', lang)}>
+                <div>
+                    <LoadButton onLoadSource={onLoadSource}>
+                        <OpenInNew />
+                        <ArrowDropDown />
+                    </LoadButton>
+                </div>
+            </Tooltip>
             <Tooltip title={getLang('UNDO', lang)}>
                 <IconButton onClick={onUndo}>
                     <Undo />
@@ -109,7 +116,11 @@ export default ({
                 </IconButton>
             </Tooltip>
             <Box ml={2} maxWidth="120px" width="100%">
-                <Slider value={zoom} min={zoomMin} max={zoomMax} onChange={onZoomSliderChange} />
+                <Slider value={zoom}
+                    min={zoomMin || ZOOM_MINIMUM}
+                    max={zoomMax || ZOOM_MAXIMUM}
+                    onChange={onZoomSliderChange}
+                />
             </Box>
         </Toolbar>
     );

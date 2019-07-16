@@ -28,30 +28,30 @@ export const Uploaded = ({ accept, multiple, children, onChange, ...others }: Up
     );
 };
 
-export interface LoadMethodPanelProps extends Omit<MenuProps, 'onClose'>{
-    onTrigger?: (type: SourceType, ...args: any[]) => void;
-    onClose?: Function;
+export interface LoadMethodPanelProps extends MenuProps{
+    onLoadSource?: (v: {type: SourceType; value?: string | File}) => void;
 }
 
-export const LoadMethodPanel = ({ onTrigger, onClose, ...others }: LoadMethodPanelProps) => {
+export const LoadMethodPanel = ({ onLoadSource, onClose, ...others }: LoadMethodPanelProps) => {
     const lang = useContext(LangContext);
     const [url, setUrl] = useState('');
     const [showUrlDialog, setShowUrlDialog] = useState(false);
     const onUrlBtnClick = () => {
         setShowUrlDialog(true);
     };
-    const onTriggerWrapped = (type: SourceType, ...args: any[]) => {
-        onTrigger && onTrigger(type, ...args);
+    const onTrigger = (type: SourceType, value?: string | File) => {
+        onLoadSource && onLoadSource({ type, value });
         setShowUrlDialog(false);
-        onClose && onClose();
+        onClose && onClose({}, 'backdropClick');
     };
-    const onMicBtnClcik = () => onTriggerWrapped('MIC');
-    const onLocalFileListChange = (v: FileList) => onTriggerWrapped('LOCAL', v[0]);
-    const onLinkDialogCommit = () => onTriggerWrapped('URL', url);
+    const onMicBtnClcik = () => onTrigger('MIC');
+    const onLocalFileListChange = (v: FileList) => onTrigger('LOCAL', v[0]);
+    const onLinkDialogCommit = () => onTrigger('URL', url);
     return (
         <React.Fragment>
             <Menu anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                 transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+                onClose={onClose}
                 {...others}>
                 <List>
                     <Uploaded accept={SUPPORT_MIME} onChange={onLocalFileListChange}>
@@ -118,20 +118,23 @@ export const UrlDialog = ({ url, onUrlChange, onConfirm, onClose, ...others }: U
 };
 
 export interface LoadButtonProps extends ButtonProps{
-    onTrigger?: (type: SourceType, val?: File | string) => void;
+    onLoadSource?: (v: {type: SourceType; value?: File | string}) => void;
 }
 
-export default ({ onTrigger, children, ...others }: LoadButtonProps) => {
+export default ({ onLoadSource, children, ...others }: LoadButtonProps) => {
     const btnRef = useRef<HTMLButtonElement>(null);
     const [showMethodPanel, setShowMethodPanel] = useState(false);
     return (
-        <Button ref={btnRef} onClick={() => setShowMethodPanel(true)} {...others}>
-            {children}
+        <React.Fragment>
+            <Button ref={btnRef} onClick={() => setShowMethodPanel(true)} {...others}>
+                {children}
+            </Button>
             <LoadMethodPanel anchorEl={btnRef.current}
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                open={showMethodPanel} onClose={() => setShowMethodPanel(false)}
+                onLoadSource={onLoadSource} open={showMethodPanel}
+                onClose={() => setShowMethodPanel(false)}
             />
-        </Button>
+        </React.Fragment>
     );
 };
