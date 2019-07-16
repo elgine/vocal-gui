@@ -9,6 +9,11 @@ Int32Array | Uint32Array |
 BigInt64Array | BigUint64Array |
 Float32Array | Float64Array;
 
+type SourceTypeLocal = 'LOCAL';
+type SourceTypeUrl = 'URL';
+type SourceTypeMic = 'MIC';
+type SourceType = SourceTypeLocal | SourceTypeUrl | SourceTypeMic;
+
 interface ScrollBarProperties{
     width: number;
     trackBgColor: string;

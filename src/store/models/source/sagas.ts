@@ -1,20 +1,19 @@
 import { fork, take, put, call, cancel, takeEvery } from 'redux-saga/effects';
 import {
-    ACTION_LOAD_FILE_FROM_LOCAL,
-    ACTION_LOAD_FILE_FROM_URL,
     LoadFileFromURLAction,
     LoadFileFromLocalAction,
     ACTION_CANCEL_LOAD_FILE,
-    ACTION_LOAD_FILE_FROM_LOCAL_COMPLETE,
-    ACTION_LOAD_FILE_FROM_URL_COMPLETE,
     ACTION_LOAD_FILE_FAILED,
+    ACTION_LOAD_SOURCE_SUCCESS,
+    ACTION_LOAD_FROM_LOCAL,
+    ACTION_LOAD_FROM_URL,
 } from './types';
 import { loadFromLocal, loadFromUrl } from '../../../utils/loader';
 
 function* doImportFromLocal(action: LoadFileFromLocalAction) {
     try {
         const buf = yield loadFromLocal(action.payload);
-        yield put({ type: `source/${ACTION_LOAD_FILE_FROM_LOCAL_COMPLETE}`, payload: buf });
+        yield put({ type: `source/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: buf });
     } catch (e) {
         yield put({ type: `source/${ACTION_LOAD_FILE_FAILED}`, payload: e });
     }
@@ -23,7 +22,7 @@ function* doImportFromLocal(action: LoadFileFromLocalAction) {
 function* doImportFromURL(action: LoadFileFromURLAction) {
     try {
         const buf = yield loadFromUrl(action.payload);
-        yield put({ type: `source/${ACTION_LOAD_FILE_FROM_URL_COMPLETE}`, payload: buf });
+        yield put({ type: `source/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: buf });
     } catch (e) {
         yield put({ type: `source/${ACTION_LOAD_FILE_FAILED}`, payload: e });
     }
@@ -42,9 +41,9 @@ function* importFromUrl(action: LoadFileFromURLAction) {
 }
 
 export function* importLocalSaga() {
-    yield takeEvery(`source/${ACTION_LOAD_FILE_FROM_LOCAL}`, importFromLocal);
+    yield takeEvery(`source/${ACTION_LOAD_FROM_LOCAL}`, importFromLocal);
 }
 
 export function* importUrlSaga() {
-    yield takeEvery(`source/${ACTION_LOAD_FILE_FROM_URL}`, importFromUrl);
+    yield takeEvery(`source/${ACTION_LOAD_FROM_URL}`, importFromUrl);
 }

@@ -25,7 +25,7 @@ export default {
     CATEGORY_ALL: '所有分类',
 
     FILTER_BY_EFFECT_CATEGORY: '根据效果分类过滤',
-    NEW: '新建',
+    LOAD_SOURCE_FROM: '加载音频源',
     SECOND: '秒',
     SKIP_NEXT: '跳转至结束结束位置',
     SKIP_PREVIOUS: '跳转至开始位置',

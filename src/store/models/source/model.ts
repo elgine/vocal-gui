@@ -1,14 +1,13 @@
 import { RematchDispatch } from '@rematch/core';
 import {
     SourceState,
-    ACTION_LOAD_FILE_FROM_LOCAL,
-    ACTION_LOAD_FILE_FROM_URL,
-    ACTION_LOAD_FILE_FROM_LOCAL_COMPLETE,
-    ACTION_LOAD_FILE_FROM_URL_COMPLETE,
-    ACTION_LOAD_FILE_FAILED,
     REDUCER_SET_INFO,
     REDUCER_SET_LOADING,
-    REDUCER_SET_BUFFER
+    REDUCER_SET_BUFFER,
+    ACTION_LOAD_SOURCE,
+    ACTION_LOAD_FAILED,
+    ACTION_LOAD_FROM_LOCAL,
+    ACTION_LOAD_FROM_URL
 } from './types';
 import { UNDEFINED_STRING } from '../../../constant';
 
@@ -36,27 +35,26 @@ export default {
         }
     },
     effects: (dispatch: RematchDispatch) => ({
-        [ACTION_LOAD_FILE_FROM_URL](payload: string, rootState: any) {
+        [ACTION_LOAD_SOURCE](payload: {type: SourceType; url?: string; file?: File}) {
+            if (payload.type === 'LOCAL') {
+                dispatch.source[ACTION_LOAD_FROM_LOCAL](payload.file);
+            } else if (payload.type === 'URL') {
+                dispatch.source[ACTION_LOAD_FROM_URL](payload.url);
+            }
+        },
+        [ACTION_LOAD_FROM_URL](payload: string, rootState: any) {
             dispatch.source[REDUCER_SET_INFO]({
                 title: payload.substring(payload.lastIndexOf('/'))
             });
             dispatch.source[REDUCER_SET_LOADING](true);
         },
-        [ACTION_LOAD_FILE_FROM_LOCAL](payload: File, rootState: any) {
+        [ACTION_LOAD_FROM_LOCAL](payload: File, rootState: any) {
             dispatch.source[REDUCER_SET_INFO]({
                 title: payload.name.substring(payload.name.lastIndexOf('/'))
             });
             dispatch.source[REDUCER_SET_LOADING](true);
         },
-        [ACTION_LOAD_FILE_FROM_LOCAL_COMPLETE](payload: AudioBuffer, rootState: any) {
-            dispatch.source[REDUCER_SET_BUFFER](payload);
-            dispatch.source[REDUCER_SET_LOADING](false);
-        },
-        [ACTION_LOAD_FILE_FROM_URL_COMPLETE](payload: AudioBuffer, rootState: any) {
-            dispatch.source[REDUCER_SET_BUFFER](payload);
-            dispatch.source[REDUCER_SET_LOADING](false);
-        },
-        [ACTION_LOAD_FILE_FAILED](payload: Error, rootState: any) {
+        [ACTION_LOAD_FAILED](payload: Error, rootState: any) {
             dispatch.source[REDUCER_SET_LOADING](false);
         }
     })

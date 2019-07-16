@@ -1,88 +1,137 @@
 import React, { useContext, useRef, useState } from 'react';
 import {
-    Button, ButtonGroup, Menu, MenuItem, TextField,
-    Dialog, DialogActions, DialogContentText, DialogContent, DialogTitle
+    Button, Menu, MenuItem, TextField,
+    Dialog, DialogActions, DialogContentText, DialogContent, DialogTitle,
+    List, ListItemAvatar, ListItemText
 } from '@material-ui/core';
-import { ButtonGroupProps } from '@material-ui/core/ButtonGroup';
-import { ArrowDropDown, CloudUpload, Link, Mic } from '@material-ui/icons';
-import UploadButton from './UploadButton';
+import { DialogProps } from '@material-ui/core/Dialog';
+import { MenuProps } from '@material-ui/core/Menu';
+import { ButtonProps } from '@material-ui/core/Button';
+import { CloudUpload, Link, Mic } from '@material-ui/icons';
 import { getLang, LangContext } from '../lang';
 import { SUPPORT_MIME } from '../constant';
 
-export enum SourceType{
-    LOCAL = 'local',
-    URL = 'url',
-    MIC = 'mic'
+export interface UploadedProps extends Omit<React.HtmlHTMLAttributes<{}>, 'onChange'>{
+    accept?: string;
+    multiple?: boolean;
+    onChange?: (v: FileList) => void;
 }
 
-export interface LoadButtonProps extends ButtonGroupProps{
+export const Uploaded = ({ accept, multiple, children, onChange, ...others }: UploadedProps) => {
+    return (
+        <label {...others}>
+            {children}
+            <input type="file" onChange={(e) => e.target.files && onChange && onChange(e.target.files)}
+                accept={accept} multiple={multiple} hidden
+            />
+        </label>
+    );
+};
+
+export interface LoadMethodPanelProps extends Omit<MenuProps, 'onClose'>{
+    onTrigger?: (type: SourceType, ...args: any[]) => void;
+    onClose?: Function;
+}
+
+export const LoadMethodPanel = ({ onTrigger, onClose, ...others }: LoadMethodPanelProps) => {
+    const lang = useContext(LangContext);
+    const [url, setUrl] = useState('');
+    const [showUrlDialog, setShowUrlDialog] = useState(false);
+    const onUrlBtnClick = () => {
+        setShowUrlDialog(true);
+    };
+    const onTriggerWrapped = (type: SourceType, ...args: any[]) => {
+        onTrigger && onTrigger(type, ...args);
+        setShowUrlDialog(false);
+        onClose && onClose();
+    };
+    const onMicBtnClcik = () => onTriggerWrapped('MIC');
+    const onLocalFileListChange = (v: FileList) => onTriggerWrapped('LOCAL', v[0]);
+    const onLinkDialogCommit = () => onTriggerWrapped('URL', url);
+    return (
+        <React.Fragment>
+            <Menu anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+                {...others}>
+                <List>
+                    <Uploaded accept={SUPPORT_MIME} onChange={onLocalFileListChange}>
+                        <MenuItem button>
+                            <ListItemAvatar>
+                                <CloudUpload />
+                            </ListItemAvatar>
+                            <ListItemText primary={getLang('LOAD_FROM_LOCAL', lang)} />
+                        </MenuItem>
+                    </Uploaded>
+                    <MenuItem button onClick={onUrlBtnClick}>
+                        <ListItemAvatar>
+                            <Link />
+                        </ListItemAvatar>
+                        <ListItemText primary={getLang('LOAD_FROM_URL', lang)} />
+                    </MenuItem>
+                    <MenuItem button onClick={onMicBtnClcik}>
+                        <ListItemAvatar>
+                            <Mic />
+                        </ListItemAvatar>
+                        <ListItemText primary={getLang('LOAD_FROM_MIC', lang)} />
+                    </MenuItem>
+                </List>
+            </Menu>
+            <UrlDialog url={url} onUrlChange={setUrl} open={showUrlDialog} onClose={() => setShowUrlDialog(false)}
+                onConfirm={onLinkDialogCommit}
+            />
+        </React.Fragment>
+    );
+};
+
+export interface UrlDialogProps extends Omit<DialogProps, 'onClose'>{
+    url?: string;
+    onUrlChange?: (v: string) => void;
+    onConfirm?: () => void;
+    onClose?: () => void;
+}
+
+export const UrlDialog = ({ url, onUrlChange, onConfirm, onClose, ...others }: UrlDialogProps) => {
+    const lang = useContext(LangContext);
+    return (
+        <Dialog onClose={onClose} {...others}>
+            <DialogTitle>{getLang('SOURCE_URL', lang)}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {
+                        getLang('ENTER_URL_DESC', lang)
+                    }
+                </DialogContentText>
+                <TextField value={url} placeholder={getLang('SOURCE_URL', lang)}
+                    onChange={(e) => onUrlChange && onUrlChange(e.target.value)}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose}>
+                    {getLang('CANCEL', lang)}
+                </Button>
+                <Button onClick={onConfirm} color="primary">
+                    {getLang('CONFIRM', lang)}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};
+
+export interface LoadButtonProps extends ButtonProps{
     onTrigger?: (type: SourceType, val?: File | string) => void;
 }
 
-export default ({ onTrigger, ...others }: LoadButtonProps) => {
-    const lang = useContext(LangContext);
-    const dropdownBtnRef = useRef<HTMLButtonElement>(null);
-    const [showOtherWays, setShowOtherWays] = useState(false);
-    const [showLinkDialog, setShowLinkDialog] = useState(false);
-    const [url, setUrl] = useState('');
-    const onClickLink = () => setShowLinkDialog(true);
-    const onClickMic = () => onTrigger && onTrigger(SourceType.MIC);
-    const onLinkDialogCommit = () => onTrigger && onTrigger(SourceType.URL, url);
-    const onUpload = (fl: FileList) => onTrigger && onTrigger(SourceType.LOCAL, fl[0]);
+export default ({ onTrigger, children, ...others }: LoadButtonProps) => {
+    const btnRef = useRef<HTMLButtonElement>(null);
+    const [showMethodPanel, setShowMethodPanel] = useState(false);
     return (
-        <React.Fragment>
-            <ButtonGroup color="primary" variant="outlined" {...others}>
-                <UploadButton accept={SUPPORT_MIME} onChange={onUpload}>
-                    <CloudUpload fontSize="small" />
-                    &nbsp;
-                    {
-                        getLang('LOAD_FROM_LOCAL', lang)
-                    }
-                </UploadButton>
-                <Button ref={dropdownBtnRef} onClick={() => setShowOtherWays(true)}>
-                    <ArrowDropDown />
-                </Button>
-            </ButtonGroup>
-            <Menu open={showOtherWays} onClose={() => setShowOtherWays(false)}
-                anchorEl={dropdownBtnRef.current}
-                anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}>
-                <MenuItem onClick={onClickLink}>
-                    <Link fontSize="small" />
-                    &nbsp;
-                    {
-                        getLang('LOAD_FROM_URL', lang)
-                    }
-                </MenuItem>
-                <MenuItem onClick={onClickMic}>
-                    <Mic fontSize="small" />
-                    &nbsp;
-                    {
-                        getLang('LOAD_FROM_MIC', lang)
-                    }
-                </MenuItem>
-            </Menu>
-            <Dialog open={showLinkDialog} onClose={() => setShowLinkDialog(false)}>
-                <DialogTitle>{getLang('SOURCE_URL', lang)}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        {
-                            getLang('ENTER_URL_DESC', lang)
-                        }
-                    </DialogContentText>
-                    <TextField value={url} placeholder={getLang('SOURCE_URL', lang)}
-                        onChange={(e) => setUrl(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setShowLinkDialog(false)}>
-                        {getLang('CANCEL', lang)}
-                    </Button>
-                    <Button onClick={onLinkDialogCommit} color="primary">
-                        {getLang('CONFIRM', lang)}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </React.Fragment>
+        <Button ref={btnRef} onClick={() => setShowMethodPanel(true)} {...others}>
+            {children}
+            <LoadMethodPanel anchorEl={btnRef.current}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                open={showMethodPanel} onClose={() => setShowMethodPanel(false)}
+            />
+        </Button>
     );
 };

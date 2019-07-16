@@ -4,7 +4,9 @@ import {
     ACTION_SCALE_TIME,
     ACTION_SOURCE_CHANGE,
     REDUCER_SET_DURATION,
-    REDUCER_SET_SCALE_TIME
+    REDUCER_SET_SCALE_TIME,
+    ACTION_CLIP_REGION_CHANGE,
+    REDUCER_SET_CLIP_REGION
 } from './types';
 import { TIME_UNITS } from '../../../constant';
 import calcProperTimeUnits from './calcProperTimeUnits';
@@ -13,7 +15,11 @@ const initialState: TimelineState = {
     pixelsPerMSec: 0.01,
     duration: 0,
     scaleTime: 1,
-    timeUnits: TIME_UNITS
+    timeUnits: TIME_UNITS,
+    clipRegion: {
+        start: 0,
+        end: 0
+    }
 };
 
 const timelineModel: ModelConfig<TimelineState> = {
@@ -27,14 +33,21 @@ const timelineModel: ModelConfig<TimelineState> = {
         [REDUCER_SET_DURATION](state: TimelineState, payload: number) {
             state.duration = payload;
             return state;
+        },
+        [REDUCER_SET_CLIP_REGION](state: TimelineState, payload: {start: number; end: number}) {
+            state.clipRegion = payload;
+            return state;
         }
     },
     effects: (dispatch: RematchDispatch) => ({
-        [ACTION_SCALE_TIME](payload: number, rootState: any) {
+        [ACTION_SCALE_TIME](payload: number) {
             dispatch.timeline[REDUCER_SET_SCALE_TIME](payload);
         },
         [ACTION_SOURCE_CHANGE](payload: any, rootState: any) {
             dispatch.timeline[REDUCER_SET_DURATION](rootState.source.audioBuffer);
+        },
+        [ACTION_CLIP_REGION_CHANGE](payload: {start: number; end: number}) {
+            dispatch.timeline[REDUCER_SET_CLIP_REGION](payload);
         }
     })
 };

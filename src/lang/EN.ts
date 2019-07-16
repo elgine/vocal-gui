@@ -25,7 +25,7 @@ export default {
     CATEGORY_ALL: 'All category',
 
     FILTER_BY_EFFECT_CATEGORY: 'Filter by effect category',
-    NEW: 'New',
+    LOAD_SOURCE_FROM: 'Load source from',
     SECOND: 'Seconds',
     SKIP_NEXT: 'Skip to end position',
     SKIP_PREVIOUS: 'Skip previous to start position',
