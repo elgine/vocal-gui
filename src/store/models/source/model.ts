@@ -48,6 +48,7 @@ export default {
         [ACTION_LOAD_SOURCE_SUCCESS](payload: AudioBuffer) {
             dispatch.source[REDUCER_SET_BUFFER](payload);
             dispatch.source[REDUCER_SET_LOADING](false);
+            dispatch.player[ACTION_SOURCE_CHANGE](payload);
             dispatch.timeline[ACTION_SOURCE_CHANGE](payload);
         },
         [ACTION_LOAD_FROM_URL](payload: string, rootState: any) {

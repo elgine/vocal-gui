@@ -37,7 +37,7 @@ export interface PlayerControlsProps extends Omit<ToolbarProps, 'onVolumeChange'
     onSkipNext: () => void;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(({
+export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
     repeat, playing, volume, playbackSpeed, currentTime,
     onRepeatChange, onPlayingChange, onVolumeChange, onSkipPrevious,
     onSkipNext,
@@ -76,4 +76,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(({
             </Toolbar>
         </React.Fragment>
     );
-});
+}, (prevProps: PlayerControlsProps, nextProps: PlayerControlsProps) => {
+    return prevProps.volume === nextProps.volume &&
+        prevProps.repeat === nextProps.repeat &&
+        prevProps.playing === nextProps.playing;
+}));

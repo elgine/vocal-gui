@@ -12,7 +12,7 @@ export interface WaveformProps extends Omit<React.CanvasHTMLAttributes<{}>, 'onC
     onThumbChange?: (canvases: HTMLCollection) => void;
 }
 
-export default ({ pixelsPerMSec, duration, height, buffer, color, onThumbChange, style, ...others }: WaveformProps) => {
+export default React.memo(({ pixelsPerMSec, duration, height, buffer, color, onThumbChange, style, ...others }: WaveformProps) => {
     const h = height || 256;
     const ppms = pixelsPerMSec || 0.05;
     const d  = duration || 0;
@@ -72,4 +72,8 @@ export default ({ pixelsPerMSec, duration, height, buffer, color, onThumbChange,
             }}></div>
         </div>
     );
-};
+}, (prevProps: WaveformProps, nextProps: WaveformProps) => {
+    return prevProps.height === nextProps.height && prevProps.pixelsPerMSec === nextProps.pixelsPerMSec &&
+        prevProps.duration === nextProps.duration && prevProps.buffer === nextProps.buffer &&
+        prevProps.color === nextProps.color && prevProps.onThumbChange === nextProps.onThumbChange;
+});

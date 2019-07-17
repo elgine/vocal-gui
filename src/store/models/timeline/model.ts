@@ -36,8 +36,8 @@ const timelineModel: ModelConfig<TimelineState> = {
         },
         [REDUCER_SET_DURATION](state: TimelineState, payload: number) {
             state.duration = payload;
-            state.clipRegion.start = payload * 0.25;
-            state.clipRegion.end = payload * 0.75;
+            state.clipRegion.start = 0;
+            state.clipRegion.end = payload;
             return state;
         },
         [REDUCER_SET_CLIP_REGION](state: TimelineState, payload: {start: number; end: number}) {
@@ -58,7 +58,15 @@ const timelineModel: ModelConfig<TimelineState> = {
         [ACTION_SOURCE_CHANGE](payload: AudioBuffer) {
             dispatch.timeline[REDUCER_SET_DURATION](payload.duration * 1000);
         },
-        [ACTION_CLIP_REGION_CHANGE](payload: {start: number; end: number}) {
+        [ACTION_CLIP_REGION_CHANGE](payload: {start: number; end: number}, rootState: any) {
+            const timeline = rootState.timeline;
+            if (payload.end < payload.start) {
+                let temp = payload.start;
+                payload.start = payload.end;
+                payload.end = temp;
+            }
+            payload.start = clamp(payload.start, 0, timeline.duration);
+            payload.end = clamp(payload.end, 0, timeline.duration);
             dispatch.timeline[REDUCER_SET_CLIP_REGION](payload);
         }
     })

@@ -3,7 +3,7 @@ import { Tooltip, IconButton, Toolbar, Grid, Box, Zoom, Button, Menu, MenuItem, 
 import { BoxProps } from '@material-ui/core/Box';
 import { GridProps } from '@material-ui/core/Grid';
 import { AudiotrackTwoTone, FilterList, ArrowBack }  from '@material-ui/icons';
-import { withTheme, Theme, makeStyles } from '@material-ui/core/styles';
+import { Theme, makeStyles } from '@material-ui/core/styles';
 import { EFFECTS, EFFECT_LANG_MAP, EffectType, EFFECT_CATEGORY_MAP, EFFECT_CATEGORIES } from '../processor/effectType';
 import { getLang, LangContext } from '../lang';
 import { fade } from '../utils/color';
@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme: Theme) => {
     };
 });
 
-const EffectItem = withTheme(({ selected, title, theme, className, ...others }: EffectItemProps & {theme: Theme}) => {
-    const classes = useStyles(theme);
+const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) => {
+    const classes = useStyles();
     return (
         <Grid item className={combineClassNames(classes.root, selected ? 'selected' : '', className)} {...others}>
             <Box textAlign="center" py={1}>
@@ -50,7 +50,7 @@ const EffectItem = withTheme(({ selected, title, theme, className, ...others }: 
             </Box>
         </Grid>
     );
-});
+};
 
 const TOOLBAR_HEIGHT = 64;
 const TOOLBAR_STYLE: React.CSSProperties = {

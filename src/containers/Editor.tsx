@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, Theme, withTheme } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import combineClassNames from '../utils/combineClassNames';
 import PlayerControls from './PlayerControls';
 import TimelinePanel from './TimelinePanel';
@@ -36,8 +36,8 @@ export interface EditorProps extends React.HTMLAttributes<{}>{
 
 }
 
-export default withTheme(({ theme, className, ...others }: EditorProps & {theme: Theme}) => {
-    const classes = useStyles(theme);
+export default React.memo(({ className, ...others }: EditorProps) => {
+    const classes = useStyles();
     return (
         <div className={combineClassNames(
             classes.root,
@@ -47,4 +47,4 @@ export default withTheme(({ theme, className, ...others }: EditorProps & {theme:
             <PlayerControls className={classes.playerControls} />
         </div>
     );
-});
+}, () => true);

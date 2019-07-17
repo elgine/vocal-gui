@@ -7,6 +7,7 @@ export const REDUCER_SET_PLAYBACK_SPEED = 'REDUCER_SET_PLAYBACK_SPEED';
 export const REDUCER_SET_EFFECT = 'REDUCER_SET_EFFECT';
 export const REDUCER_SET_EFFECT_OPTIONS = 'REDUCER_SET_EFFECT_OPTIONS';
 export const REDUCER_SET_REPEAT = 'REDUCER_SET_REPEAT';
+export const REDUCER_SET_DURATION = 'REDUCER_SET_DURATION';
 
 export const ACTION_SKIP_PREVIOUS = 'ACTION_SKIP_PREVIOUS';
 export const ACTION_SKIP_NEXT = 'ACTION_SKIP_NEXT';
@@ -19,11 +20,13 @@ export const ACTION_SET_VOLUME = 'ACTION_SET_VOLUME';
 export const ACTION_START_PLAYING = 'ACTION_START_PLAYING';
 export const ACTION_STOP_PLAYING = 'ACTION_STOP_PLAYING';
 export const ACTION_SET_PLAYBACK_SPEED = 'ACTION_SET_PLAYBACK_SPEED';
+export const ACTION_SOURCE_CHANGE = 'ACTION_SOURCE_CHANGE';
 
 export interface PlayerState{
     repeat: boolean;
     playing: boolean;
     currentTime: number;
+    duration: number;
     volume: number;
     playbackSpeed: number;
 }

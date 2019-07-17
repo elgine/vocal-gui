@@ -2,9 +2,9 @@ import { init } from '@rematch/core';
 import immerPlugin from '@rematch/immer';
 import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
-import createWorkerMiddleware from "./middlewares/workerMiddleware";
+import createWorkerMiddleware from './middlewares/workerMiddleware';
 import { importUrlSaga, importLocalSaga } from './models/source/sagas';
-import workers from "../workers";
+import workers from '../workers';
 import models from './models';
 
 const saga = createSagaMiddleware();

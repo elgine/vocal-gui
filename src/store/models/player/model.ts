@@ -1,16 +1,18 @@
 import { RematchDispatch } from '@rematch/core';
+import { clamp } from 'lodash';
 import {
     ACTION_SEEK, PlayerState, ACTION_SET_VOLUME, ACTION_SET_PLAYBACK_SPEED,
     ACTION_PLAY, ACTION_STOP, ACTION_SWITCH_REPEAT, ACTION_SWITCH_PLAYING,
-    ACTION_SKIP_PREVIOUS, ACTION_SKIP_NEXT,
+    ACTION_SKIP_PREVIOUS, ACTION_SKIP_NEXT, ACTION_SOURCE_CHANGE,
     REDUCER_SET_CURRENT_TIME, REDUCER_SET_VOLUME, REDUCER_SET_PLAYBACK_SPEED,
-    REDUCER_SET_PLAYING, REDUCER_SET_REPEAT
+    REDUCER_SET_PLAYING, REDUCER_SET_REPEAT, REDUCER_SET_DURATION
 } from './types';
 
 const initialState: PlayerState = {
     repeat: false,
     playing: false,
     currentTime: 0,
+    duration: 0,
     volume: 1,
     playbackSpeed: 1
 };
@@ -18,6 +20,10 @@ const initialState: PlayerState = {
 export default {
     state: initialState,
     reducers: {
+        [REDUCER_SET_DURATION](state: PlayerState, payload: number) {
+            state.duration = payload;
+            return state;
+        },
         [REDUCER_SET_REPEAT](state: PlayerState, payload: boolean) {
             state.repeat = payload;
             return state;
@@ -27,7 +33,7 @@ export default {
             return state;
         },
         [REDUCER_SET_CURRENT_TIME](state: PlayerState, payload: number) {
-            state.currentTime = payload;
+            state.currentTime = clamp(payload, 0, state.duration);
             return state;
         },
         [REDUCER_SET_VOLUME](state: PlayerState, payload: number) {
@@ -40,6 +46,9 @@ export default {
         }
     },
     effects: (dispatch: RematchDispatch) => ({
+        [ACTION_SOURCE_CHANGE](payload: AudioBuffer) {
+            dispatch.player[REDUCER_SET_DURATION](payload.duration * 1000);
+        },
         [ACTION_SKIP_PREVIOUS](payload: any, rootState: any) {
             dispatch.player[ACTION_SEEK](rootState.timeline.clipRegion.start);
         },

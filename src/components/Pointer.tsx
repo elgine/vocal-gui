@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { contrast } from '../utils/color';
 
 export interface PointerProps extends React.HTMLAttributes<{}>{
@@ -15,20 +15,28 @@ export interface PointerProps extends React.HTMLAttributes<{}>{
     onCloseLabel?: () => void;
 }
 
-const useStyles = makeStyles({
-    root: {
-        position: 'absolute',
-        width: '1px'
-    },
-    triangle: {
-        position: 'absolute',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        marginLeft: '-0.5px'
-    }
+const useStyles = makeStyles((theme: Theme) => {
+    return {
+        root: {
+            position: 'absolute',
+            width: '1px',
+            '&.primary': {
+                backgroundColor: theme.palette.primary[theme.palette.type]
+            },
+            '&.secondary': {
+                backgroundColor: theme.palette.secondary[theme.palette.type]
+            }
+        },
+        triangle: {
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            marginLeft: '-0.5px'
+        }
+    };
 });
 
-export default ({ showLabel, onCloseLabel, label, hideHead, headSize, headShape, headPos, color, left, style, ...others }: PointerProps) => {
+export default React.memo(({ showLabel, onCloseLabel, label, hideHead, headSize, headShape, headPos, color, left, style, ...others }: PointerProps) => {
     const hs = headSize || 10;
     const hp = headPos || 'top';
     const c = color || '#ffc401';
@@ -81,4 +89,19 @@ export default ({ showLabel, onCloseLabel, label, hideHead, headSize, headShape,
             </div>
         </Tooltip>
     );
-};
+}, (prevProps: PointerProps, nextProps: PointerProps) => {
+    return prevProps.color === nextProps.color && prevProps.left === nextProps.left &&
+        prevProps.hideHead === nextProps.hideHead && prevProps.headSize === nextProps.headSize &&
+        prevProps.headPos === nextProps.headPos && prevProps.label === nextProps.label &&
+        prevProps.showLabel === nextProps.showLabel && prevProps.headShape === nextProps.headShape &&
+        prevProps.onCloseLabel === nextProps.onCloseLabel;
+    // color?: string;
+    // left?: string | number;
+    // hideHead?: boolean;
+    // headSize?: number;
+    // headPos?: 'top' | 'bottom';
+    // label?: string;
+    // showLabel?: boolean;
+    // headShape?: 'triangle' | 'circular';
+    // onCloseLabel?: () => void;
+});

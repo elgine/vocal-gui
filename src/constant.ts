@@ -19,3 +19,5 @@ export const ZOOM_MAXIMUM = 4;
 
 export const VOLUME_MINIMUM = 0;
 export const VOLUME_MAXIMUM = 1;
+
+export const ENTER_KEY_CODE = 13;

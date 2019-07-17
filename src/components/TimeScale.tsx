@@ -100,7 +100,7 @@ export interface TimeScaleProps extends React.HTMLAttributes<{}>{
     dialLen?: number;
 }
 
-export default ({ pixelsPerMSec, offset, height, colors, timeUnits, duration, dialLen, style, children, ...others }: React.PropsWithChildren<TimeScaleProps>) => {
+export default React.memo(({ pixelsPerMSec, offset, height, colors, timeUnits, duration, dialLen, style, children, ...others }: React.PropsWithChildren<TimeScaleProps>) => {
     const sl = offset || 0;
     const us = timeUnits || TIME_UNITS;
     const d = duration || 20000;
@@ -156,4 +156,9 @@ export default ({ pixelsPerMSec, offset, height, colors, timeUnits, duration, di
             {children}
         </div>
     );
-};
+}, (prevProps: TimeScaleProps, nextProps: TimeScaleProps) => {
+    return prevProps.timeUnits === nextProps.timeUnits && prevProps.pixelsPerMSec === nextProps.pixelsPerMSec &&
+        prevProps.duration === nextProps.duration && prevProps.colors === nextProps.colors &&
+        prevProps.height === nextProps.height && prevProps.offset === nextProps.offset &&
+        prevProps.dialLen === nextProps.dialLen;
+});

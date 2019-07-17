@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, useRef } from 'react';
 import throttle from 'lodash/throttle';
 import distance from '../utils/distance';
 import { DELTA_FOR_DRAG_DETECTION } from '../constant';
@@ -12,7 +12,7 @@ const mouseCoordHandler = (e: React.MouseEvent|MouseEvent, corrector?: (v: Point
 };
 
 function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number) {
-    const thi = throttleInterval || 30;
+    const thi = throttleInterval || 33;
     const [hasDown, setHasDown] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [downPos, setDownPos] = useState({ x: 0, y: 0 });
@@ -23,7 +23,7 @@ function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number)
         setHasDown(true);
         setIsDragging(false);
         setDownPos(mouseCoordHandler(e, corrector));
-        setLastPos({ x: curPos.x, y: curPos.y });
+        setLastPos({ ...curPos });
         setCurPos(mouseCoordHandler(e, corrector));
     };
     useLayoutEffect(() => {
@@ -51,7 +51,7 @@ function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number)
         if (hasDown && !isDragging && distance(curPos, downPos) >= DELTA_FOR_DRAG_DETECTION) {
             setIsDragging(true);
         }
-        setLastPos({ x: curPos.x, y: curPos.y });
+        setLastPos({ ...curPos });
     }, [hasDown, isDragging, curPos, downPos]);
     return {
         onMouseDown,
