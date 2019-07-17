@@ -17,10 +17,10 @@ interface EffectItemProps extends GridProps{
     selected?: boolean;
 }
 
-const useStyles = (theme: Theme) => {
+const useStyles = makeStyles((theme: Theme) => {
     const primary = theme.palette.primary.main;
     const faded = fade(primary, 0.12);
-    return makeStyles({
+    return {
         root: {
             borderRadius: `${theme.shape.borderRadius}px`,
             border: '1px solid transparent',
@@ -33,11 +33,11 @@ const useStyles = (theme: Theme) => {
                 borderColor: primary
             }
         }
-    });
-};
+    };
+});
 
 const EffectItem = withTheme(({ selected, title, theme, className, ...others }: EffectItemProps & {theme: Theme}) => {
-    const classes = useStyles(theme)();
+    const classes = useStyles(theme);
     return (
         <Grid item className={combineClassNames(classes.root, selected ? 'selected' : '', className)} {...others}>
             <Box textAlign="center" py={1}>

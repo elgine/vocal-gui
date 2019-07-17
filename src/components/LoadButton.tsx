@@ -92,8 +92,22 @@ export interface UrlDialogProps extends Omit<DialogProps, 'onClose'>{
 
 export const UrlDialog = ({ url, onUrlChange, onConfirm, onClose, ...others }: UrlDialogProps) => {
     const lang = useContext(LangContext);
+    const [error, setError] = useState(false);
+    const onUrlInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value;
+        onUrlChange && onUrlChange(val);
+        if (/((ht|f)tps?:)\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g.test(val)) {
+            setError(false);
+        } else {
+            setError(true);
+        }
+    };
+    const onClickConfirm = () => {
+        if (error) return;
+        onConfirm && onConfirm();
+    };
     return (
-        <Dialog onClose={onClose} {...others}>
+        <Dialog fullWidth maxWidth="sm" onClose={onClose} {...others}>
             <DialogTitle>{getLang('SOURCE_URL', lang)}</DialogTitle>
             <DialogContent>
                 <DialogContentText>
@@ -101,15 +115,18 @@ export const UrlDialog = ({ url, onUrlChange, onConfirm, onClose, ...others }: U
                         getLang('ENTER_URL_DESC', lang)
                     }
                 </DialogContentText>
-                <TextField value={url} placeholder={getLang('SOURCE_URL', lang)}
-                    onChange={(e) => onUrlChange && onUrlChange(e.target.value)}
+                <TextField fullWidth value={url}
+                    label="Required"
+                    error={error}
+                    placeholder={getLang('SOURCE_URL', lang)}
+                    onChange={onUrlInputChange}
                 />
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>
                     {getLang('CANCEL', lang)}
                 </Button>
-                <Button onClick={onConfirm} color="primary">
+                <Button onClick={onClickConfirm} color="primary">
                     {getLang('CONFIRM', lang)}
                 </Button>
             </DialogActions>

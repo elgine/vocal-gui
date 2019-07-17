@@ -9,6 +9,17 @@ Int32Array | Uint32Array |
 BigInt64Array | BigUint64Array |
 Float32Array | Float64Array;
 
+type MessageTypeSuccess = 'SUCCESS';
+type MessageTypeError = 'ERROR';
+type MessageTypeInfo = 'INFO';
+type MessageTypeWarning = 'WARNING';
+type MessageType = MessageTypeSuccess | MessageTypeError | MessageTypeInfo | MessageTypeWarning;
+
+interface Message{
+    msgType: MessageType;
+    msg: string;
+}
+
 type SourceTypeLocal = 'LOCAL';
 type SourceTypeUrl = 'URL';
 type SourceTypeMic = 'MIC';

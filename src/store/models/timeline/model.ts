@@ -36,8 +36,8 @@ const timelineModel: ModelConfig<TimelineState> = {
         },
         [REDUCER_SET_DURATION](state: TimelineState, payload: number) {
             state.duration = payload;
-            state.clipRegion.start = 0;
-            state.clipRegion.end = payload;
+            state.clipRegion.start = payload * 0.25;
+            state.clipRegion.end = payload * 0.75;
             return state;
         },
         [REDUCER_SET_CLIP_REGION](state: TimelineState, payload: {start: number; end: number}) {

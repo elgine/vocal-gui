@@ -3,28 +3,28 @@ import {
     LoadFileFromURLAction,
     LoadFileFromLocalAction,
     ACTION_CANCEL_LOAD_FILE,
-    ACTION_LOAD_FILE_FAILED,
     ACTION_LOAD_SOURCE_SUCCESS,
     ACTION_LOAD_FROM_LOCAL,
     ACTION_LOAD_FROM_URL,
+    ACTION_LOAD_FAILED,
 } from './types';
 import { loadFromLocal, loadFromUrl } from '../../../utils/loader';
 
 function* doImportFromLocal(action: LoadFileFromLocalAction) {
     try {
-        const buf = yield loadFromLocal(action.payload);
+        const buf = yield call(loadFromLocal, action.payload);
         yield put({ type: `source/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: buf });
     } catch (e) {
-        yield put({ type: `source/${ACTION_LOAD_FILE_FAILED}`, payload: e });
+        yield put({ type: `source/${ACTION_LOAD_FAILED}`, payload: e });
     }
 }
 
 function* doImportFromURL(action: LoadFileFromURLAction) {
     try {
-        const buf = yield loadFromUrl(action.payload);
+        const buf = yield call(loadFromUrl, action.payload);
         yield put({ type: `source/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: buf });
     } catch (e) {
-        yield put({ type: `source/${ACTION_LOAD_FILE_FAILED}`, payload: e });
+        yield put({ type: `source/${ACTION_LOAD_FAILED}`, payload: e });
     }
 }
 

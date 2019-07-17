@@ -1,29 +1,45 @@
 
+const handleRequestError = (req: XMLHttpRequest) => {
+    return new Error(typeof req.responseText === 'object' ? (req.responseText as any).message : req.responseText);
+};
+
 export const getAudioBufferFromUrl = (url: string): Promise<AudioBuffer> => {
     return new Promise((resolve, reject) => {
-        let req = new XMLHttpRequest();
-        req.onload = () => {
-            let arrayBuffer = req.response as ArrayBuffer;
-            let ctx = new AudioContext();
-            ctx.decodeAudioData(arrayBuffer, resolve, reject);
-        };
-        req.onerror = reject;
-        req.responseType = 'arraybuffer';
-        req.open('GET', url);
+        try {
+            let req = new XMLHttpRequest();
+            req.onload = () => {
+                let arrayBuffer = req.response as ArrayBuffer;
+                let ctx = new AudioContext();
+                ctx.decodeAudioData(arrayBuffer, resolve, reject);
+            };
+            req.onerror = (e) => {
+                console.log(e);
+                reject(handleRequestError(req));
+            };
+            req.responseType = 'arraybuffer';
+            req.open('GET', url);
+            req.send();
+        } catch (e) {
+            reject(e);
+        }
     });
 };
 
 export const getAudioBufferFromFile = (file: File | Blob): Promise<AudioBuffer> => {
     return new Promise((resolve, reject) => {
-        if (!AudioContext) { reject(new Error('Do not support we audio api')) }
-        else {
-            let ctx = new AudioContext();
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                this.result instanceof ArrayBuffer && ctx.decodeAudioData(this.result, resolve, reject);
-            };
-            reader.onerror = (e) => reject(e);
-            reader.readAsArrayBuffer(file);
+        try {
+            if (!AudioContext) { reject(new Error('Do not support we audio api')) }
+            else {
+                let ctx = new AudioContext();
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    this.result instanceof ArrayBuffer && ctx.decodeAudioData(this.result, resolve, reject);
+                };
+                reader.onerror = reject;
+                reader.readAsArrayBuffer(file);
+            }
+        } catch (e) {
+            reject(e);
         }
     });
 };

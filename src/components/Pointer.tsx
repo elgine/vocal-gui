@@ -18,18 +18,18 @@ export interface PointerProps extends React.HTMLAttributes<{}>{
 const useStyles = makeStyles({
     root: {
         position: 'absolute',
-        width: '1px',
-        transform: 'translateX(-50%)'
+        width: '1px'
     },
     triangle: {
         position: 'absolute',
         left: '50%',
-        transform: 'translateX(-50%)'
+        transform: 'translateX(-50%)',
+        marginLeft: '-0.5px'
     }
 });
 
 export default ({ showLabel, onCloseLabel, label, hideHead, headSize, headShape, headPos, color, left, style, ...others }: PointerProps) => {
-    const hs = headSize || 8;
+    const hs = headSize || 10;
     const hp = headPos || 'top';
     const c = color || '#ffc401';
     const s = headShape || 'triangle';

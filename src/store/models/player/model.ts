@@ -41,10 +41,10 @@ export default {
     },
     effects: (dispatch: RematchDispatch) => ({
         [ACTION_SKIP_PREVIOUS](payload: any, rootState: any) {
-            dispatch.player[ACTION_SEEK](rootState.timeline.region.start);
+            dispatch.player[ACTION_SEEK](rootState.timeline.clipRegion.start);
         },
         [ACTION_SKIP_NEXT](payload: any, rootState: any) {
-            dispatch.player[ACTION_SEEK](rootState.timeline.region.end);
+            dispatch.player[ACTION_SEEK](rootState.timeline.clipRegion.end);
         },
         [ACTION_SWITCH_REPEAT](payload: any, rootState: any) {
             if (rootState.player.repeat) {

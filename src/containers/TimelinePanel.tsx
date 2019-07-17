@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useLayoutEffect, useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import TimeScale from '../components/TimeScale';
 import { Box, CircularProgress } from '@material-ui/core';
@@ -11,12 +11,19 @@ import { SourceState, ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import LoadButton from '../components/LoadButton';
 import ControlBar from './ControlBar';
 import useMovement from '../hooks/useMovement';
+import Pointer from '../components/Pointer';
 import { LangContext, getLang } from '../lang';
+import { fade, contrast } from '../utils/color';
+import { PlayerState } from '../store/models/player/types';
+import ClipRegion from '../components/ClipRegion';
+import useResize from '../hooks/useResize';
 
-const mapStateToProps = ({ timeline, source }: {timeline: TimelineState; source: SourceState}) => {
+const mapStateToProps = ({ timeline, player, source }: {timeline: TimelineState; player: PlayerState; source: SourceState}) => {
     return {
-        source,
-        timeline
+        currentTime: player.currentTime,
+        audioBuffer: source.audioBuffer,
+        loading: source.loading,
+        ...timeline
     };
 };
 
@@ -31,53 +38,46 @@ const mapDispatchToProps = (dispatch: any) => {
 };
 
 const CONTROL_BAR_HEIGHT = 64;
+const RATIO_OF_PAGE_WIDTH = 0.7;
 
-const useStyles = (theme: Theme) => {
-    return makeStyles({
-        root: {
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            overflow: 'auto hidden',
-            paddingTop: `${CONTROL_BAR_HEIGHT}px`,
-        },
-        controlBar: {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: `${CONTROL_BAR_HEIGHT}px`
-        },
-        main: {
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            boxSizing: 'border-box',
-            overflow: 'auto',
-            marginBottom: `${theme.spacing(2)}px`
-        },
-        content: {
-            position: 'relative',
-            minWidth: '100%',
-            display: 'inline-block',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.6)'
-        },
-        timeScale: {
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.25)'
-        },
-        thumb: {
-            position: 'relative'
-        }
-    });
-};
+const useStyles = makeStyles({
+    root: {
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        overflow: 'auto hidden'
+    },
+    controlBar: {
+        height: `${CONTROL_BAR_HEIGHT}px`
+    },
+    main: {
+        position: 'relative',
+        width: '100%',
+        boxSizing: 'border-box',
+        overflow: 'auto',
+        height: `calc(100% - ${CONTROL_BAR_HEIGHT}px)`
+    },
+    content: {
+        position: 'relative',
+        minWidth: '100%',
+        maxHeight: '100%',
+        display: 'inline-block'
+    },
+    timeScale: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.25)'
+    },
+    thumb: {
+        position: 'relative'
+    }
+});
 
-export interface TimelinePanelProps extends React.HTMLAttributes<{}>{
-    timeline: TimelineState;
-    source: SourceState;
+export interface TimelinePanelProps extends React.HTMLAttributes<{}>, TimelineState{
+    currentTime: number;
+    loading?: boolean;
+    audioBuffer?: AudioBuffer;
     timeScaleHeight?: number;
     waveHeight?: number;
     onClipRegionChange: (v: {start: number; end: number}) => void;
@@ -88,23 +88,27 @@ export interface TimelinePanelProps extends React.HTMLAttributes<{}>{
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
-    timeline, source, theme, className, timeScaleHeight, waveHeight,
+    theme, className, timeScaleHeight, waveHeight, pixelsPerMSec,
+    currentTime, timeUnits, duration, zoom, audioBuffer, loading, clipRegion,
     onClipRegionChange, onLoadSource, onZoom, onZoomIn, onZoomOut,
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
+    const primary = theme.palette.primary[theme.palette.type];
     const lang = useContext(LangContext);
     const [cliping, setCliping] = useState(false);
-    const classes = useStyles(theme)();
     const tsh = timeScaleHeight || 40;
     const wh = waveHeight || 128;
-    const { timeUnits, pixelsPerMSec, duration, zoom } = timeline;
+    const showRegion = clipRegion.start !== clipRegion.end;
+    const classes = useStyles();
     const sourceBuffers: Float32Array[] = [];
-    const sourceDuration = source.audioBuffer ? source.audioBuffer.duration * 1000 : 0;
-    if (source.audioBuffer) {
-        for (let i = 0; i < source.audioBuffer.numberOfChannels; i++) {
-            sourceBuffers.push(source.audioBuffer.getChannelData(i));
+    const sourceDuration = audioBuffer ? audioBuffer.duration * 1000 : 0;
+    const channels = audioBuffer ? audioBuffer.numberOfChannels : 0;
+    if (audioBuffer) {
+        for (let i = 0; i < channels; i++) {
+            sourceBuffers.push(audioBuffer.getChannelData(i));
         }
     }
+
     const timeScaleMoveHook = useMovement();
     const timeScaleMouseDown = timeScaleMoveHook.onMouseDown;
     const timeScaleHasDown = timeScaleMoveHook.hasDown;
@@ -118,16 +122,41 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
             onClipRegionChange({ start, end });
         }
     }, [timeScaleHasDown, timeScaleIsDragging, timeScaleDownPos.x, timeScaleCurPos.x]);
+
+    // Auto-scroll if current time pointer is outside view
+    const pointerLeft = currentTime * pixelsPerMSec;
+    const pageSize = useResize(null);
+    const mainRef = useRef<HTMLDivElement>(null);
+    useLayoutEffect(() => {
+        if (mainRef.current && (pointerLeft % pageSize.width) / pageSize.width > RATIO_OF_PAGE_WIDTH) {
+            mainRef.current.scrollLeft = pointerLeft - pageSize.width * (1 - RATIO_OF_PAGE_WIDTH);
+        }
+    }, [pointerLeft, pageSize.width]);
+    const mainStyle: React.CSSProperties = {
+        paddingTop: `${tsh}px`,
+        backgroundColor: contrast(theme.palette.text.primary)
+    };
+    const timeScaleStyle: React.CSSProperties = {
+        boxSizing: 'border-box',
+        borderBottom: `1px solid ${theme.palette.divider}`,
+    };
+    const clipRegionStyle: React.CSSProperties = {
+        height: `${wh * channels}px`
+    };
+    const waveformStyle: React.CSSProperties = {
+        borderBottom: `1px solid ${fade(theme.palette.divider, 0.65)}`,
+    };
     return (
         <div className={combineClassNames(
             classes.root,
             className
         )} {...others}>
-            <ControlBar className={classes.controlBar} cliping={cliping}
+            <ControlBar className={classes.controlBar}
+                clipRegion={clipRegion} cliping={cliping}
                 onLoadSource={onLoadSource} onClipingChange={setCliping}
                 zoom={zoom} onZoom={onZoom} onZoomIn={onZoomIn} onZoomOut={onZoomOut}
             />
-            <div className={classes.main} style={{ paddingTop: `${tsh}px` }}>
+            <div ref={mainRef} className={classes.main} style={mainStyle}>
                 <TimeScale
                     className={classes.timeScale}
                     timeUnits={timeUnits}
@@ -135,35 +164,54 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                     duration={duration}
                     height={tsh}
                     onMouseDown={timeScaleMouseDown}
+                    style={timeScaleStyle}
                 />
-                <div className={classes.content}>
-                    {
-                        source.loading ? (
-                            <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                                <CircularProgress />
-                            </Box>
+                {
+                    loading ? (
+                        <Box height="100%" display="flex" alignItems="center" justifyContent="center">
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        channels > 0 ? (
+                            <div className={classes.content}>
+                                {
+                                    sourceBuffers.map((b, i) => (
+                                        <Waveform key={i} color="#fff" style={waveformStyle} height={wh}
+                                            pixelsPerMSec={pixelsPerMSec} duration={sourceDuration} buffer={b}
+                                        />
+                                    ))
+                                }
+                                {
+                                    showRegion ? <ClipRegion pixelsPerMSec={pixelsPerMSec} region={clipRegion} style={clipRegionStyle} /> : undefined
+                                }
+                            </div>
                         ) : (
-                            sourceBuffers.length > 0 ? (
-                                sourceBuffers.map((b, i) => (
-                                    <Waveform key={i} height={wh} pixelsPerMSec={pixelsPerMSec} duration={sourceDuration} buffer={b} />
-                                ))
-                            ) : (
-                                <Box height="100%" display="flex" flexDirection="column"
-                                    alignItems="center" justifyContent="center">
-                                    <LoadButton color="primary" variant="contained" onLoadSource={onLoadSource}>
-                                        <OpenInNew />
+                            <Box height="100%" display="flex" flexDirection="column"
+                                alignItems="center" justifyContent="center">
+                                <LoadButton color="primary" variant="contained" onLoadSource={onLoadSource}>
+                                    <OpenInNew />
                                         &nbsp;
-                                        {
-                                            getLang('LOAD_SOURCE_FROM', lang)
-                                        }
+                                    {
+                                        getLang('LOAD_SOURCE_FROM', lang)
+                                    }
                                         ...
-                                        <ArrowDropDown />
-                                    </LoadButton>
-                                </Box>
-                            )
+                                    <ArrowDropDown />
+                                </LoadButton>
+                            </Box>
                         )
-                    }
-                </div>
+                    )
+                }
+                {
+                    showRegion ? (
+                        <React.Fragment>
+                            <Pointer headShape="circular" color={primary} left={clipRegion.start * pixelsPerMSec} />
+                            <Pointer headShape="circular" color={primary} left={clipRegion.end * pixelsPerMSec} />
+                        </React.Fragment>
+                    ) : undefined
+                }
+                {
+                    audioBuffer ? <Pointer headShape="circular" left={pointerLeft} /> : undefined
+                }
             </div>
         </div>
     );

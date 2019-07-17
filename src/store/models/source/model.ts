@@ -12,6 +12,7 @@ import {
 } from './types';
 import { UNDEFINED_STRING } from '../../../constant';
 import { ACTION_SOURCE_CHANGE } from '../timeline/types';
+import { ACTION_SHOW_MESSAGE } from '../message/type';
 
 const initialState: SourceState = {
     loading: false,
@@ -63,6 +64,11 @@ export default {
         },
         [ACTION_LOAD_FAILED](payload: Error, rootState: any) {
             dispatch.source[REDUCER_SET_LOADING](false);
+            console.log(payload);
+            dispatch.message[ACTION_SHOW_MESSAGE]({
+                msg: payload.message,
+                msgType: 'ERROR'
+            });
         }
     })
 };

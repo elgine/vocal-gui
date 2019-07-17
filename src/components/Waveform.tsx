@@ -28,17 +28,12 @@ export default ({ pixelsPerMSec, duration, height, buffer, color, onThumbChange,
             let canvasIndex = -1;
             let canvas: HTMLCanvasElement;
             let ctx: CanvasRenderingContext2D | null = null;
-            let stroked = false;
             if (psr <= 0) return;
             for (let i = 0, p = 0; i < bufCount; i += psr, p++) {
                 const val = clamp(buffer[i], -1, 1);
                 const y = (1 - val) * 0.5 * h;
                 if (p === 0 || p >= CANVAS_MAX_WIDTH) {
                     p %= CANVAS_MAX_WIDTH;
-                    if (i !== 0 && ctx) {
-                        ctx.stroke();
-                        stroked = true;
-                    }
                     if (++canvasIndex >= canvases.length) {
                         canvas = document.createElement('canvas');
                         containerRef.current.appendChild(canvas);
@@ -52,21 +47,17 @@ export default ({ pixelsPerMSec, duration, height, buffer, color, onThumbChange,
                     ctx = canvas.getContext('2d');
                     if (!ctx) continue;
                     ctx.clearRect(0, 0, CANVAS_MAX_WIDTH, h);
-                    ctx.strokeStyle = c;
-                    ctx.beginPath();
-                    ctx.moveTo(p, y);
-                    stroked = false;
-                } else {
-                    if (!ctx) continue;
-                    ctx.lineTo(p, y);
+                    ctx.fillStyle = c;
                 }
+                if (!ctx) continue;
+                ctx.fillRect(p, y, 1, h - 2 * y);
             }
             if (thumbRef.current) {
                 onThumbChange && onThumbChange(canvases);
             }
-            if (ctx && !stroked) {
-                ctx.stroke();
-            }
+            // if (ctx && !stroked) {
+            //     ctx.stroke();
+            // }
         }
     }, [containerRef.current, buffer, ppms, d, h, c, thumbRef.current, onThumbChange]);
     return (

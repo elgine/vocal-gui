@@ -17,8 +17,8 @@ import { ZOOM_MINIMUM, ZOOM_MAXIMUM } from '../constant';
 
 export interface ControlBarProps extends ToolbarProps{
     cliping?: boolean;
+    clipRegion?: {start: number; end: number};
     onClipingChange?: (v: boolean) => void;
-    region?: {start: number; end: number};
     onRegionChange?: (v: {start: number; end: number}) => void;
     onLoadSource?: (v: {type: SourceType; value?: string| File}) => void;
     onUndo?: () => void;
@@ -32,25 +32,25 @@ export interface ControlBarProps extends ToolbarProps{
 }
 
 export default ({
-    cliping, onClipingChange, region, zoom, zoomMin, zoomMax,
+    cliping, clipRegion, onClipingChange, zoom, zoomMin, zoomMax,
     onRegionChange, onRedo, onUndo, onZoomIn, onZoomOut, onZoom,
     onLoadSource,
     ...others
 }: ControlBarProps) => {
     const lang = useContext(LangContext);
-    const r = region || { start: 0, end: 0 };
+    const r = clipRegion || { start: 0, end: 0 };
     const onZoomSliderChange = (e: React.ChangeEvent<{}>, v: number | number[]) => {
         onZoom && onZoom(typeof v === 'number' ? v : v[0]);
     };
     const onRegionStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let v = 0;
         if (/^\d+(\.{0,1}\d+){0,1}$/.test(e.target.value)) { v = Number(e.target.value) }
-        onRegionChange && onRegionChange({ start: v, end: r.end });
+        onRegionChange && onRegionChange({ start: v * 1000, end: r.end });
     };
     const onRegionEndChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let v = 0;
         if (/^\d+(\.{0,1}\d+){0,1}$/.test(e.target.value)) { v = Number(e.target.value) }
-        onRegionChange && onRegionChange({ end: v, start: r.start });
+        onRegionChange && onRegionChange({ end: v * 1000, start: r.start });
     };
     const onPointerClcik = () => {
         onClipingChange && onClipingChange(false);
@@ -95,12 +95,12 @@ export default ({
                     <Box px={1} display="flex" alignItems="center">
                         <TextField InputProps={{
                             endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
-                        }} placeholder={getLang('START_TIME', lang)} onChange={onRegionStartChange}
+                        }} placeholder={getLang('START_TIME', lang)} value={r.start * 0.001} onChange={onRegionStartChange}
                         />
                         <Box px={2}><ArrowRightAlt /></Box>
                         <TextField InputProps={{
                             endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
-                        }} placeholder={getLang('END_TIME', lang)} onChange={onRegionEndChange}
+                        }} placeholder={getLang('END_TIME', lang)} value={r.end * 0.001} onChange={onRegionEndChange}
                         />
                     </Box>
                 </Collapse>

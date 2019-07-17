@@ -39,6 +39,7 @@ export default ({ value, onChange }: VolumeProps) => {
             <Box ml={1}>
                 <Slider step={(VOLUME_MAXIMUM - VOLUME_MINIMUM) * 0.1}
                     min={VOLUME_MINIMUM} max={VOLUME_MAXIMUM} value={v}
+                    valueLabelDisplay="auto"
                     onChange={onValChange} style={{ minWidth: '120px' }}
                 />
             </Box>
