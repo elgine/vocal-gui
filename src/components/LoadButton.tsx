@@ -10,6 +10,7 @@ import { ButtonProps } from '@material-ui/core/Button';
 import { CloudUpload, Link, Mic } from '@material-ui/icons';
 import { getLang, LangContext } from '../lang';
 import { SUPPORT_MIME } from '../constant';
+import RecordPanel from './RecordPanel';
 
 export interface UploadedProps extends Omit<React.HtmlHTMLAttributes<{}>, 'onChange'>{
     accept?: string;
@@ -36,6 +37,7 @@ export const LoadMethodPanel = ({ onLoadSource, onClose, ...others }: LoadMethod
     const lang = useContext(LangContext);
     const [url, setUrl] = useState('');
     const [showUrlDialog, setShowUrlDialog] = useState(false);
+    const [showMicDialog, setShowMicDialog] = useState(false);
     const onUrlBtnClick = () => {
         setShowUrlDialog(true);
     };
@@ -44,7 +46,10 @@ export const LoadMethodPanel = ({ onLoadSource, onClose, ...others }: LoadMethod
         setShowUrlDialog(false);
         onClose && onClose({}, 'backdropClick');
     };
-    const onMicBtnClcik = () => onTrigger('MIC');
+    const onMicBtnClcik = () => {
+        // onTrigger('MIC');
+        setShowMicDialog(true);
+    };
     const onLocalFileListChange = (v: FileList) => onTrigger('LOCAL', v[0]);
     const onLinkDialogCommit = () => onTrigger('URL', url);
     return (
@@ -79,6 +84,9 @@ export const LoadMethodPanel = ({ onLoadSource, onClose, ...others }: LoadMethod
             <UrlDialog url={url} onUrlChange={setUrl} open={showUrlDialog} onClose={() => setShowUrlDialog(false)}
                 onConfirm={onLinkDialogCommit}
             />
+            <Dialog open={showMicDialog} onClose={() => setShowMicDialog(false)}>
+                <RecordPanel />
+            </Dialog>
         </React.Fragment>
     );
 };

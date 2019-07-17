@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect, useContext } from 'react';
-import { Box, Toolbar, Typography, Fab, IconButton, CircularProgress, Tooltip } from '@material-ui/core';
+import { Box, Toolbar, Typography, Fab, IconButton, CircularProgress, Tooltip, Button } from '@material-ui/core';
 import { PlayArrow, Close, Done, Stop } from '@material-ui/icons';
-import RecorderWaveform from '../components/RecorderWaveform';
+import RecorderWaveform from './RecorderWaveform';
 import { getLang, LangContext } from '../lang';
 import { toTimeString } from '../utils/time';
 import { getRecorder } from '../processor';
@@ -25,29 +25,29 @@ const RecordControls = React.memo(({ recording, complete, saving, onToggleBtnCli
         }
     }, [complete]);
     return (
-        <Toolbar style={{ justifyContent: 'space-between' }}>
-            <Tooltip title={getLang('CLOSE_RECORD', lang)}>
-                <IconButton onClick={onCloseClick}>
-                    <Close />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title={recording ? getLang('STOP_RECORD', lang) : getLang('START_RECORD', lang)}>
+        <Toolbar style={{ justifyContent: 'flex-end' }}>
+            {/* <Tooltip title={recording ? getLang('STOP_RECORD', lang) : getLang('START_RECORD', lang)}>
                 <Fab color="secondary" onClick={onToggleBtnClick}>
                     {
                         recording ? <Stop /> : <PlayArrow />
                     }
                 </Fab>
-            </Tooltip>
-            <Tooltip title={getLang('SAVE_RECORD', lang)}>
-                <div>
-                    <IconButton ref={saveBtnRef} disabled={saving || !complete} color="primary"
-                        onClick={onSaveClick}>
-                        {
-                            saving ? <CircularProgress color="primary" size="small" /> : <Done />
-                        }
-                    </IconButton>
-                </div>
-            </Tooltip>
+            </Tooltip> */}
+            <Button onClick={onCloseClick}>
+                {
+                    getLang('DISCARD_RECORD', lang)
+                }
+            </Button>
+            <Button variant="contained" color="primary" ref={saveBtnRef}
+                disabled={saving || !complete}
+                onClick={onSaveClick}>
+                {
+                    saving ? <CircularProgress color="primary" size="small" /> : (<Done />)
+                }
+                {
+                    getLang('SAVE_RECORD', lang)
+                }
+            </Button>
         </Toolbar>
     );
 }, (prevProps: RecordControlsProps, nextProps: RecordControlsProps) => {

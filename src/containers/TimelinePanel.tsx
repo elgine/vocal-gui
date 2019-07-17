@@ -6,7 +6,7 @@ import { Box, CircularProgress } from '@material-ui/core';
 import { makeStyles, Theme, withTheme } from '@material-ui/core/styles';
 import { OpenInNew, ArrowDropDown } from '@material-ui/icons';
 import Waveform from '../components/Waveform';
-import { TimelineState, ACTION_CLIP_REGION_CHANGE, ACTION_ZOOM, ACTION_ZOOM_IN, ACTION_ZOOM_OUT } from '../store/models/timeline/types';
+import { TimelineState, ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
 import combineClassNames from '../utils/combineClassNames';
 import { SourceState, ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import LoadButton from '../components/LoadButton';
@@ -17,7 +17,6 @@ import { LangContext, getLang } from '../lang';
 import { fade, contrast } from '../utils/color';
 import { PlayerState, ACTION_SEEK } from '../store/models/player/types';
 import ClipRegion from '../components/ClipRegion';
-import useResize from '../hooks/useResize';
 
 const mapStateToProps = ({ timeline, player, source }: {timeline: TimelineState; player: PlayerState; source: SourceState}) => {
     return {
@@ -32,10 +31,7 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onSeek: dispatch.player[ACTION_SEEK],
         onClipRegionChange: dispatch.timeline[ACTION_CLIP_REGION_CHANGE],
-        onLoadSource: dispatch.source[ACTION_LOAD_SOURCE],
-        onZoom: dispatch.timeline[ACTION_ZOOM],
-        onZoomIn: dispatch.timeline[ACTION_ZOOM_IN],
-        onZoomOut: dispatch.timeline[ACTION_ZOOM_OUT]
+        onLoadSource: dispatch.source[ACTION_LOAD_SOURCE]
     };
 };
 
@@ -82,22 +78,19 @@ const useStyles = makeStyles((theme: Theme) => {
 
 export interface TimelinePanelProps extends React.HTMLAttributes<{}>, TimelineState{
     currentTime: number;
-    loading?: boolean;
+    loading: boolean;
     audioBuffer?: AudioBuffer;
     timeScaleHeight?: number;
     waveHeight?: number;
     onSeek: (v: number) => void;
     onClipRegionChange: (v: {start: number; end: number}) => void;
     onLoadSource: (v: {type: SourceType; value?: string | File}) => void;
-    onZoom: (v: number) => void;
-    onZoomIn: () => void;
-    onZoomOut: () => void;
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
     theme, className, timeScaleHeight, waveHeight, pixelsPerMSec,
     currentTime, timeUnits, duration, zoom, audioBuffer, loading, clipRegion,
-    onClipRegionChange, onLoadSource, onZoom, onZoomIn, onZoomOut, onSeek,
+    onClipRegionChange, onLoadSource, onSeek,
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
     const primary = theme.palette.primary[theme.palette.type];
@@ -217,38 +210,35 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                     onClick={onTimeScaleClick}
                 />
                 {
-                    loading ? (
-                        <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                            <CircularProgress />
-                        </Box>
+                    !loading && channels > 0 ? (
+                        <div className={classes.content}>
+                            {
+                                sourceBuffers.map((b, i) => (
+                                    <Waveform key={i} color="#fff" className={classes.waveform} height={wh}
+                                        pixelsPerMSec={pixelsPerMSec} duration={sourceDuration} buffer={b}
+                                    />
+                                ))
+                            }
+                            {
+                                showRegion ? <ClipRegion pixelsPerMSec={pixelsPerMSec} region={clipRegion} style={clipRegionStyle} /> : undefined
+                            }
+                        </div>
                     ) : (
-                        channels > 0 ? (
-                            <div className={classes.content}>
-                                {
-                                    sourceBuffers.map((b, i) => (
-                                        <Waveform key={i} color="#fff" className={classes.waveform} height={wh}
-                                            pixelsPerMSec={pixelsPerMSec} duration={sourceDuration} buffer={b}
-                                        />
-                                    ))
-                                }
-                                {
-                                    showRegion ? <ClipRegion pixelsPerMSec={pixelsPerMSec} region={clipRegion} style={clipRegionStyle} /> : undefined
-                                }
-                            </div>
-                        ) : (
-                            <Box height="100%" display="flex" flexDirection="column"
-                                alignItems="center" justifyContent="center">
-                                <LoadButton color="primary" variant="contained" onLoadSource={onLoadSource}>
-                                    <OpenInNew />
-                                        &nbsp;
-                                    {
-                                        getLang('LOAD_SOURCE_FROM', lang)
-                                    }
-                                        ...
-                                    <ArrowDropDown />
-                                </LoadButton>
-                            </Box>
-                        )
+                        <Box position="absolute" bottom="50%" width="100%" textAlign="center">
+                            {
+                                loading ? <CircularProgress /> : (
+                                    <LoadButton color="primary" variant="contained" onLoadSource={onLoadSource}>
+                                        <OpenInNew />
+                                    &nbsp;
+                                        {
+                                            getLang('LOAD_SOURCE_FROM', lang)
+                                        }
+                                    ...
+                                        <ArrowDropDown />
+                                    </LoadButton>
+                                )
+                            }
+                        </Box>
                     )
                 }
                 {

@@ -35,6 +35,7 @@ export default {
     ENTER_URL_DESC: 'Please enter the audio link in order to download and edit the source',
     CLOSE_RECORD: 'Exit recording',
     START_RECORD: 'Start recording',
+    DISCARD_RECORD: 'Discard recording',
     STOP_RECORD: 'Stop recording',
     SAVE_RECORD: 'Save recording',
     RECORD: 'Record',

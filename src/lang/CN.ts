@@ -34,6 +34,7 @@ export default {
     SOURCE_URL: '源文件链接',
     ENTER_URL_DESC: '请输入正确的链接地址',
     CLOSE_RECORD: '退出录音',
+    DISCARD_RECORD: '丢弃录音',
     START_RECORD: '开始录音',
     STOP_RECORD: '停止录音',
     SAVE_RECORD: '保存录音',
