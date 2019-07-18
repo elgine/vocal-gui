@@ -35,7 +35,7 @@ export default class Recorder {
     private _mediaNode!: MediaStreamAudioSourceNode;
     private _chunks: Float32Array[] = [];
     private _duration: number = 0;
-    private _buffer!: AudioBuffer;
+    private _buffer: AudioBuffer|null = null;
 
     async init(bufferSize?: number) {
         this.clear();
@@ -84,6 +84,8 @@ export default class Recorder {
 
     dispose() {
         this.stop();
+        this.clear();
+        this._buffer = null;
         if (this._mediaStream) {
             this._mediaStream.getAudioTracks()[0].stop();
             this._mediaStream = undefined;

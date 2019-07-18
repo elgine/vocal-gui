@@ -27,10 +27,12 @@ export interface RenderTask{
 export default class Renderer {
 
     public readonly offlineAudioCtx: OfflineAudioContext;
+    public readonly options: OfflineAudioContextOptions;
     private _rendering: boolean = false;
     private _tasks: Dictionary<RenderTask> = {};
 
     constructor(options: OfflineAudioContextOptions) {
+        this.options = options;
         this.offlineAudioCtx = new OfflineAudioContext(options);
         if (!this.offlineAudioCtx) {
             throw new Error('Can not initialize OfflineAudioContext, please upgrade your browser to support');

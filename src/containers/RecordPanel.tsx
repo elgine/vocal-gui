@@ -72,7 +72,7 @@ export default React.memo(withTheme(({
         setState(RecorderState.SAVING);
         await recorder.save();
         setState(RecorderState.COMPLETE);
-        onConfirm && onConfirm(recorder.buffer);
+        recorder.buffer && onConfirm && onConfirm(recorder.buffer);
     }, [onConfirm, onStop]);
 
     const onPlayChange = useCallback((v: boolean) => {
