@@ -13,7 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import combineClassNames from '../utils/combineClassNames';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
-    SUCESS: {
+    SUCCESS: {
         backgroundColor: green[600],
     },
     ERROR: {
@@ -39,7 +39,7 @@ const useSnackbarContentStyles = makeStyles(theme => ({
 }));
 
 const variantIcon = {
-    SUCESS: CheckCircleIcon,
+    SUCCESS: CheckCircleIcon,
     WARNING: WarningIcon,
     ERROR: ErrorIcon,
     INFO: InfoIcon,

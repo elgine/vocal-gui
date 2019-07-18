@@ -15,7 +15,7 @@ export default ({ value, onChange, ...others }: PlayButtonProps) => {
         onChange && onChange(!value);
     };
     return (
-        <Tooltip title={getLang(value ? 'STOP' : 'PLAY', lang)}>
+        <Tooltip title={getLang(value ? 'STOP' : 'START', lang)}>
             <div>
                 <IconButton {...others} onClick={onClick}>
                     {

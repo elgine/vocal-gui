@@ -20,12 +20,7 @@ const useStyles = makeStyles((theme: Theme) => {
         root: {
             position: 'absolute',
             width: '1px',
-            '&.primary': {
-                backgroundColor: theme.palette.primary[theme.palette.type]
-            },
-            '&.secondary': {
-                backgroundColor: theme.palette.secondary[theme.palette.type]
-            }
+            cursor: 'ew-resize'
         },
         triangle: {
             position: 'absolute',
@@ -95,13 +90,4 @@ export default React.memo(({ showLabel, onCloseLabel, label, hideHead, headSize,
         prevProps.headPos === nextProps.headPos && prevProps.label === nextProps.label &&
         prevProps.showLabel === nextProps.showLabel && prevProps.headShape === nextProps.headShape &&
         prevProps.onCloseLabel === nextProps.onCloseLabel;
-    // color?: string;
-    // left?: string | number;
-    // hideHead?: boolean;
-    // headSize?: number;
-    // headPos?: 'top' | 'bottom';
-    // label?: string;
-    // showLabel?: boolean;
-    // headShape?: 'triangle' | 'circular';
-    // onCloseLabel?: () => void;
 });

@@ -60,15 +60,15 @@ export default React.memo(({ color, sampleRate, style, ...others }: RecorderWave
         // Cache
         offscreenCtx.clearRect(0, 0, offscreenCanvas.width, offscreenCanvas.height);
         offscreenCtx.drawImage(canvas, 0, 0);
-    }, [canvasRef.current, offscreenRef.current]);
+    }, []);
     const onAudioDataProcess = useCallback((buffer: AudioBuffer) => drawWaveform(buffer.getChannelData(0)), [drawWaveform]);
 
     useEffect(() => {
-        recorder && recorder.onProcess.on(onAudioDataProcess);
+        recorder.onProcess.on(onAudioDataProcess);
         return () => {
-            recorder && recorder.onProcess.off(onAudioDataProcess);
+            recorder.onProcess.off(onAudioDataProcess);
         };
-    }, [recorder, onAudioDataProcess]);
+    }, [onAudioDataProcess]);
     return (
         <canvas ref={canvasRef} style={{ width: '100%', height: '100%', ...style }} {...others}></canvas>
     );

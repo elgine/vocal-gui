@@ -9,6 +9,11 @@ Int32Array | Uint32Array |
 BigInt64Array | BigUint64Array |
 Float32Array | Float64Array;
 
+type ExportFormatMP3 = 'MP3';
+type ExportFormatWAV = 'WAV';
+type ExportFormatM4A = 'M4A';
+type ExportFormat = ExportFormatMP3 | ExportFormatWAV | ExportFormatM4A;
+
 type MessageTypeSuccess = 'SUCCESS';
 type MessageTypeError = 'ERROR';
 type MessageTypeInfo = 'INFO';

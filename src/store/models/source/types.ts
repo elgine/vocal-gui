@@ -10,6 +10,7 @@ export const ACTION_LOAD_FAILED = 'ACTION_LOAD_FAILED';
 export const ACTION_LOAD_FROM_LOCAL = 'ACTION_LOAD_FILE_FROM_LOCAL';
 export const ACTION_LOAD_FROM_URL = 'ACTION_LOAD_FILE_FROM_URL';
 export const ACTION_CANCEL_LOAD_FILE = 'ACTION_CANCEL_LOAD_FILE';
+export const ACTION_LOAD_FROM_MIC = 'ACTION_LOAD_FROM_MIC';
 
 export interface LoadFileFromURLAction extends Action{
     payload: string;

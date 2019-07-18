@@ -30,10 +30,10 @@ export const Uploaded = ({ accept, multiple, children, onChange, ...others }: Up
 };
 
 export interface LoadMethodPanelProps extends MenuProps{
-    onLoadSource?: (v: {type: SourceType; value?: string | File}) => void;
+    onLoadSource?: (v: {type: SourceType; value?: string | File | AudioBuffer}) => void;
 }
 
-export const LoadMethodPanel = ({ onLoadSource, onClose, ...others }: LoadMethodPanelProps) => {
+export const LoadMethodPanel = ({ onLoadSource, ...others }: LoadMethodPanelProps) => {
     const lang = useContext(LangContext);
     const [url, setUrl] = useState('');
     const [showUrlDialog, setShowUrlDialog] = useState(false);
@@ -41,22 +41,19 @@ export const LoadMethodPanel = ({ onLoadSource, onClose, ...others }: LoadMethod
     const onUrlBtnClick = () => {
         setShowUrlDialog(true);
     };
-    const onTrigger = (type: SourceType, value?: string | File) => {
-        onLoadSource && onLoadSource({ type, value });
+    const onTrigger = (type: SourceType, value?: string | File | AudioBuffer) => {
         setShowUrlDialog(false);
-        onClose && onClose({}, 'backdropClick');
+        setShowMicDialog(false);
+        onLoadSource && onLoadSource({ type, value });
     };
-    const onMicBtnClcik = () => {
-        // onTrigger('MIC');
-        setShowMicDialog(true);
-    };
+    const onMicBtnClcik = () => setShowMicDialog(true);
+    const onMicDialogCommit = (v: AudioBuffer) => onTrigger('MIC', v);
     const onLocalFileListChange = (v: FileList) => onTrigger('LOCAL', v[0]);
     const onLinkDialogCommit = () => onTrigger('URL', url);
     return (
         <React.Fragment>
             <Menu anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
                 transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-                onClose={onClose}
                 {...others}>
                 <List>
                     <Uploaded accept={SUPPORT_MIME} onChange={onLocalFileListChange}>
@@ -84,9 +81,9 @@ export const LoadMethodPanel = ({ onLoadSource, onClose, ...others }: LoadMethod
             <UrlDialog url={url} onUrlChange={setUrl} open={showUrlDialog} onClose={() => setShowUrlDialog(false)}
                 onConfirm={onLinkDialogCommit}
             />
-            <Dialog open={showMicDialog} onClose={() => setShowMicDialog(false)}>
-                <RecordPanel />
-            </Dialog>
+            <RecordPanel open={showMicDialog} onClose={() => setShowMicDialog(false)}
+                onConfirm={onMicDialogCommit}
+            />
         </React.Fragment>
     );
 };
@@ -143,22 +140,32 @@ export const UrlDialog = ({ url, onUrlChange, onConfirm, onClose, ...others }: U
 };
 
 export interface LoadButtonProps extends ButtonProps{
-    onLoadSource?: (v: {type: SourceType; value?: File | string}) => void;
+    onLoadSource?: (v: {type: SourceType; value?: File | string | AudioBuffer}) => void;
 }
 
 export default ({ onLoadSource, children, ...others }: LoadButtonProps) => {
     const btnRef = useRef<HTMLButtonElement>(null);
     const [showMethodPanel, setShowMethodPanel] = useState(false);
+    const onLoadSourceWrapped = (v: any) => {
+        setShowMethodPanel(false);
+        onLoadSource && onLoadSource(v);
+    };
+    const onBtnClick = () => {
+        setShowMethodPanel(true);
+    };
+    const onClose = () => {
+        setShowMethodPanel(false);
+    };
     return (
         <React.Fragment>
-            <Button ref={btnRef} onClick={() => setShowMethodPanel(true)} {...others}>
+            <Button ref={btnRef} onClick={onBtnClick} {...others}>
                 {children}
             </Button>
             <LoadMethodPanel anchorEl={btnRef.current}
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                onLoadSource={onLoadSource} open={showMethodPanel}
-                onClose={() => setShowMethodPanel(false)}
+                onLoadSource={onLoadSourceWrapped} open={showMethodPanel}
+                onClose={onClose}
             />
         </React.Fragment>
     );

@@ -1,13 +1,19 @@
-export const REDUCER_SET_RECORDING = 'REDUCER_SET_RECORDING';
-export const REDUCER_SET_SAVING = 'REDUCER_SET_SAVING';
+export const REDUCER_SET_STATE = 'REDUCER_SET_STATE';
 
+export const ACTION_INIT_RECORDING = 'ACTION_INIT_RECORDING';
 export const ACTION_START_RECORDING = 'ACTION_START_RECORDING';
 export const ACTION_STOP_RECORDING = 'ACTION_STOP_RECORDING';
 export const ACTION_SAVE_RECORDING = 'ACTION_SAVE_RECORDING';
-export const ACTION_SAVE_RECORDING_SUCCESS = 'ACTION_SAVE_RECORDING_SUCCESS';
-export const ACTION_CANCEL_SAVING_RECORDING = 'ACTION_CANCEL_SAVING_RECORDING';
+export const ACTION_DISCARD_RECORDING = 'ACTION_DISCARD_RECORDING';
+
+export enum RecorderStateMachine{
+    UNINITED,
+    FREE,
+    RECORDING,
+    SAVING,
+    COMPLETE
+}
 
 export interface RecorderState{
-    recording: boolean;
-    saving: boolean;
+    state: RecorderStateMachine;
 }

@@ -38,11 +38,14 @@ export default {
         }
     },
     effects: (dispatch: RematchDispatch) => ({
-        [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File}) {
+        [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}, rootState: any) {
+            if (!payload.value) return;
             if (payload.type === 'LOCAL') {
                 dispatch.source[ACTION_LOAD_FROM_LOCAL](payload.value);
             } else if (payload.type === 'URL') {
                 dispatch.source[ACTION_LOAD_FROM_URL](payload.value);
+            } else {
+                dispatch.source[ACTION_LOAD_SOURCE_SUCCESS](payload.value);
             }
         },
         [ACTION_LOAD_SOURCE_SUCCESS](payload: AudioBuffer) {
@@ -65,7 +68,6 @@ export default {
         },
         [ACTION_LOAD_FAILED](payload: Error, rootState: any) {
             dispatch.source[REDUCER_SET_LOADING](false);
-            console.log(payload);
             dispatch.message[ACTION_SHOW_MESSAGE]({
                 msg: payload.message,
                 msgType: 'ERROR'

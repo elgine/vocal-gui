@@ -9,7 +9,7 @@ import Waveform from '../components/Waveform';
 import { TimelineState, ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
 import combineClassNames from '../utils/combineClassNames';
 import { SourceState, ACTION_LOAD_SOURCE } from '../store/models/source/types';
-import LoadButton from '../components/LoadButton';
+import LoadButton from './LoadButton';
 import ControlBar from './ControlBar';
 import useMovement from '../hooks/useMovement';
 import Pointer from '../components/Pointer';
@@ -36,7 +36,6 @@ const mapDispatchToProps = (dispatch: any) => {
 };
 
 const CONTROL_BAR_HEIGHT = 64;
-const RATIO_OF_PAGE_WIDTH = 0.7;
 
 const useStyles = makeStyles((theme: Theme) => {
     return {
@@ -84,7 +83,7 @@ export interface TimelinePanelProps extends React.HTMLAttributes<{}>, TimelineSt
     waveHeight?: number;
     onSeek: (v: number) => void;
     onClipRegionChange: (v: {start: number; end: number}) => void;
-    onLoadSource: (v: {type: SourceType; value?: string | File}) => void;
+    onLoadSource: (v: {type: SourceType; value?: string | File | AudioBuffer}) => void;
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({

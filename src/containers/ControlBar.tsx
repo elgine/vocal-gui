@@ -9,14 +9,14 @@ import {
 } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
 import { getLang, LangContext } from '../lang';
-import LoadButton from '../components/LoadButton';
+import LoadButton from './LoadButton';
 import ClipRegionInput from './ClipRegionControls';
 import ZoomControls from './ZoomControls';
 import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
 
 export interface ControlBarProps extends ToolbarProps{
-    onLoadSource: (v: {type: SourceType; value?: string| File}) => void;
+    onLoadSource: (v: {type: SourceType; value?: string| File | AudioBuffer}) => void;
     onUndo: () => void;
     onRedo: () => void;
 }
