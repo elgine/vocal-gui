@@ -84,10 +84,4 @@ export default React.memo(({ showLabel, onCloseLabel, label, hideHead, headSize,
             </div>
         </Tooltip>
     );
-}, (prevProps: PointerProps, nextProps: PointerProps) => {
-    return prevProps.color === nextProps.color && prevProps.left === nextProps.left &&
-        prevProps.hideHead === nextProps.hideHead && prevProps.headSize === nextProps.headSize &&
-        prevProps.headPos === nextProps.headPos && prevProps.label === nextProps.label &&
-        prevProps.showLabel === nextProps.showLabel && prevProps.headShape === nextProps.headShape &&
-        prevProps.onCloseLabel === nextProps.onCloseLabel;
 });
