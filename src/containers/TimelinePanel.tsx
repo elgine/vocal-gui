@@ -10,7 +10,6 @@ import { TimelineState, ACTION_CLIP_REGION_CHANGE } from '../store/models/timeli
 import combineClassNames from '../utils/combineClassNames';
 import { SourceState, ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import LoadButton from './LoadButton';
-import ControlBar from './ControlBar';
 import useMovement from '../hooks/useMovement';
 import Pointer from '../components/Pointer';
 import { LangContext, getLang } from '../lang';
@@ -35,25 +34,21 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const CONTROL_BAR_HEIGHT = 64;
-
 const useStyles = makeStyles((theme: Theme) => {
     return {
         root: {
             position: 'relative',
             width: '100%',
             height: '100%',
-            overflow: 'auto hidden'
-        },
-        controlBar: {
-            height: `${CONTROL_BAR_HEIGHT}px`
+            overflow: 'auto hidden',
+            boxSizing: 'border-box'
         },
         main: {
             position: 'relative',
             width: '100%',
+            height: '100%',
             boxSizing: 'border-box',
             overflow: 'auto',
-            height: `calc(100% - ${CONTROL_BAR_HEIGHT}px)`,
             backgroundColor: contrast(theme.palette.text.primary)
         },
         content: {
@@ -198,7 +193,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
             classes.root,
             className
         )} {...others}>
-            <ControlBar />
             <div ref={mainRef} className={classes.main} style={mainStyle}>
                 <TimeScale
                     className={classes.timeScale}

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import {
-    Toolbar, IconButton, Tooltip,
+    Toolbar, IconButton, Tooltip, Dialog,
 } from '@material-ui/core';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import {
@@ -14,6 +14,7 @@ import ClipRegionInput from './ClipRegionControls';
 import ZoomControls from './ZoomControls';
 import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
+import ExportButton from './ExportButton';
 
 export interface ControlBarProps extends ToolbarProps{
     onLoadSource: (v: {type: SourceType; value?: string| File | AudioBuffer}) => void;
@@ -58,6 +59,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
                     <Redo />
                 </IconButton>
             </Tooltip>
+            <ExportButton />
             <Placeholder textAlign="center">
                 <ClipRegionInput />
             </Placeholder>
