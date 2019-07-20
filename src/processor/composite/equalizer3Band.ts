@@ -74,3 +74,30 @@ export default class Equalizer3Band extends Composite {
         this._hi.disconnect();
     }
 }
+
+export const equalizer3BandDefaultOptions = {
+    lowshelfGain: Equalizer3Band.LOWSHELF_GAIN_DEFAULT,
+    peakingGain: Equalizer3Band.PEAKING_GAIN_DEFAULT,
+    highshelfGain: Equalizer3Band.HIGHSHELF_GAIN_DEFAULT
+};
+
+export const equalizer3BandDescriptor = {
+    lowshelfGain: {
+        min: Equalizer3Band.LOWSHELF_GAIN_MIN,
+        max: Equalizer3Band.LOWSHELF_GAIN_MAX,
+        key: 'lowshelfGain',
+        title: 'LOWSHELF_GAIN'
+    },
+    peakingGain: {
+        min: Equalizer3Band.PEAKING_GAIN_MIN,
+        max: Equalizer3Band.PEAKING_GAIN_MAX,
+        key: 'peakingGain',
+        title: 'PEAKING_GAIN'
+    },
+    highshelfGain: {
+        min: Equalizer3Band.HIGHSHELF_GAIN_MIN,
+        max: Equalizer3Band.HIGHSHELF_GAIN_MAX,
+        key: 'highshelfGain',
+        title: 'HIGHSHELF_GAIN'
+    }
+};

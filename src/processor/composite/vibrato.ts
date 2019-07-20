@@ -69,6 +69,27 @@ export default class Vibrato extends Composite {
     }
 }
 
+export const vibratoDescriptor = {
+    vibratoDelay: {
+        min: Vibrato.VIBRATO_DELAY_MIN,
+        max: Vibrato.VIBRATO_DELAY_MAX,
+        key: 'vibratoDelay',
+        title: 'VIBRATO_DELAY'
+    },
+    vibratoDepth: {
+        min: Vibrato.VIBRATO_DEPTH_MIN,
+        max: Vibrato.VIBRATO_DEPTH_MAX,
+        key: 'vibratoDepth',
+        title: 'VIBRATO_DEPTH'
+    },
+    vibratoSpeed: {
+        min: Vibrato.VIBRATO_SPEED_MIN,
+        max: Vibrato.VIBRATO_SPEED_MAX,
+        key: 'vibratoSpeed',
+        title: 'VIBRATO_SPEED'
+    }
+};
+
 export const vibrartoDefaultOptions = {
     vibratoDelay: Vibrato.VIBRATO_DELAY_DEFAULT,
     vibratoDepth: Vibrato.VIBRATO_DEPTH_DEFAULT,

@@ -1,11 +1,11 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions } from './effect';
-import AutoWah, { AutoWahOptions, autoWahDefaultOptions } from '../composite/autoWah';
+import AutoWah, { AutoWahOptions, autoWahDefaultOptions, autoWahDescriptor } from '../composite/autoWah';
 
 export interface UnderWaterOptions extends AutoWahOptions, EffectOptions{
     lowpassFreq: number;
     inputGain: number;
-    underWaterBackgroundGain: number;
+    underWaterBgGain: number;
 }
 
 export default class UnderWater extends Effect {
@@ -18,9 +18,9 @@ export default class UnderWater extends Effect {
     static INPUT_GAIN_MIN = 0.0;
     static INPUT_GAIN_MAX = 4.0;
 
-    static UNDER_WATER_BACKGROUND_GAIN_DEFAULT = 0.3;
-    static UNDER_WATER_BACKGROUND_GAIN_MIN = 0.0;
-    static UNDER_WATER_BACKGROUND_GAIN_MAX = 4.0;
+    static UNDER_WATER_BG_GAIN_DEFAULT = 0.3;
+    static UNDER_WATER_BG_GAIN_MIN = 0.0;
+    static UNDER_WATER_BG_GAIN_MAX = 4.0;
 
     private _inputGain: GainNode;
     private _lowpass: BiquadFilterNode;
@@ -49,7 +49,7 @@ export default class UnderWater extends Effect {
         this.set({
             lowpassFreq: UnderWater.LOWPASS_FREQ_DEFAULT,
             inputGain: UnderWater.INPUT_GAIN_DEFAULT,
-            underWaterBackgroundGain: UnderWater.UNDER_WATER_BACKGROUND_GAIN_DEFAULT
+            underWaterBgGain: UnderWater.UNDER_WATER_BG_GAIN_DEFAULT
         });
     }
 
@@ -62,8 +62,8 @@ export default class UnderWater extends Effect {
         if (options.inputGain !== undefined) {
             this._inputGain.gain.value = clamp(options.inputGain, UnderWater.INPUT_GAIN_MIN, UnderWater.INPUT_GAIN_MAX);
         }
-        if (options.underWaterBackgroundGain !== undefined) {
-            this._underWaterGain.gain.value = clamp(options.underWaterBackgroundGain, UnderWater.UNDER_WATER_BACKGROUND_GAIN_MIN, UnderWater.UNDER_WATER_BACKGROUND_GAIN_MAX);
+        if (options.underWaterBgGain !== undefined) {
+            this._underWaterGain.gain.value = clamp(options.underWaterBgGain, UnderWater.UNDER_WATER_BG_GAIN_MIN, UnderWater.UNDER_WATER_BG_GAIN_MAX);
         }
     }
 
@@ -82,9 +82,31 @@ export default class UnderWater extends Effect {
     }
 }
 
+export const underWaterDescriptor = {
+    lowpassFreq: {
+        min: UnderWater.LOWPASS_FREQ_MIN,
+        max: UnderWater.LOWPASS_FREQ_MAX,
+        key: 'lowpassFreq',
+        title: 'LOWPASS_FREQ'
+    },
+    inputGain: {
+        min: UnderWater.INPUT_GAIN_MIN,
+        max: UnderWater.INPUT_GAIN_MAX,
+        key: 'inputGain',
+        title: 'INPUT_GAIN'
+    },
+    underWaterBgGain: {
+        min: UnderWater.UNDER_WATER_BG_GAIN_MIN,
+        max: UnderWater.UNDER_WATER_BG_GAIN_MAX,
+        key: 'underWaterBgGain',
+        title: 'UNDER_WATER_BG_GAIN'
+    },
+    ...autoWahDescriptor
+};
+
 export const underWaterDefaultOptions = {
     lowpassFreq: UnderWater.LOWPASS_FREQ_DEFAULT,
     inputGain: UnderWater.INPUT_GAIN_DEFAULT,
-    underWaterBackgroundGain: UnderWater.UNDER_WATER_BACKGROUND_GAIN_DEFAULT,
+    underWaterBgGain: UnderWater.UNDER_WATER_BG_GAIN_DEFAULT,
     ...autoWahDefaultOptions
 };

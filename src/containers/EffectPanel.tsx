@@ -1,8 +1,8 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { Tooltip, IconButton, Toolbar, Grid, Box, Zoom, Button, Menu, MenuItem, Typography, Slide, Fade, Divider, Slider, FormControl, FormLabel } from '@material-ui/core';
-import { BoxProps } from '@material-ui/core/Box';
+import { connect } from 'react-redux';
+import { Tooltip, Toolbar, Grid, Box, Button, Menu, MenuItem, Typography } from '@material-ui/core';
 import { GridProps } from '@material-ui/core/Grid';
-import { AudiotrackTwoTone, FilterList, ArrowBack }  from '@material-ui/icons';
+import { AudiotrackTwoTone, FilterList }  from '@material-ui/icons';
 import { Theme, makeStyles } from '@material-ui/core/styles';
 import { EFFECTS, EFFECT_LANG_MAP, EffectType, EFFECT_CATEGORY_MAP, EFFECT_CATEGORIES } from '../processor/effectType';
 import { getLang, LangContext } from '../lang';
@@ -54,17 +54,29 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
 };
 
 export interface EffectPanelProps{
-    // effect?: EffectType;
-    // onEffectChange?: (v: EffectType) => void;
+    effect: EffectType;
+    onEffectChange: (v: EffectType) => void;
+    effectOptions: any;
+    onEffectOptionsChange: (v: any) => void;
 }
 
-export default ({ ...others }: EffectPanelProps) => {
+const mapStateToProps = (state: any) => {
+    return {};
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(({
+    effect, effectOptions,
+    onEffectChange, onEffectOptionsChange
+}: EffectPanelProps) => {
     const lang = useContext(LangContext);
     const filterBtnRef = useRef<HTMLButtonElement>(null);
     const [showFilterList, setShowFilterList] = useState(false);
     const [effectCategory, setEffectCategory] = useState(EMPTY_STRING);
     const [currentEffectsVM, setCurrentEffectsVM] = useState<EffectType[]>([]);
-    const [effect, setEffect] = useState(EffectType.NONE);
     const onCategoryitemClick = (v: string) => {
         if (effectCategory === v) return;
         setEffectCategory(v);
@@ -72,9 +84,9 @@ export default ({ ...others }: EffectPanelProps) => {
     };
     const onEffectItemClick = (v: EffectType) => {
         if (v === effect) {
-            setEffect(EffectType.NONE);
+            onEffectChange(EffectType.NONE);
         } else {
-            setEffect(v);
+            onEffectChange(v);
         }
     };
     useEffect(() => {
@@ -134,8 +146,8 @@ export default ({ ...others }: EffectPanelProps) => {
                 </Typography>
             </Toolbar>
             <Box pl={6} pr={2} py={1}>
-                <EffectPropertyPane />
+                <EffectPropertyPane value={effectOptions} onChange={onEffectOptionsChange} />
             </Box>
         </React.Fragment>
     );
-};
+});

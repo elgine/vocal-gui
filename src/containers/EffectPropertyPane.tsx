@@ -49,7 +49,7 @@ export interface EffectPropertyPaneProps{
     onChange?: (v: any) => void;
 }
 
-export default ({ type, ...others }: any) => {
+export default ({ type, ...others }: EffectPropertyPaneProps) => {
     let Comp: React.ComponentType<any>|null = null;
     if (type === EffectType.ALIEN) {
         Comp = AlienProperties;

@@ -58,6 +58,21 @@ export default class Alien extends Effect {
     }
 }
 
+export const alienDescriptor = {
+    lfoFreq: {
+        key: 'lfoFreq',
+        title: 'LFO_FREQ',
+        min: Alien.LFO_FREQ_MIN,
+        max: Alien.LFO_FREQ_MAX
+    },
+    lfoGain: {
+        key: 'lfoGain',
+        title: 'LFO_GAIN',
+        min: Alien.LFO_GAIN_MIN,
+        max: Alien.LFO_GAIN_MAX
+    }
+};
+
 export const alienDefaultOptions = {
     lfoFreq: Alien.LFO_FREQ_DEFAULT,
     lfoGain: Alien.LFO_GAIN_DEFAULT

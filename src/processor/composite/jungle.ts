@@ -174,6 +174,15 @@ export default class Jungle extends Composite {
     }
 }
 
+export const jungleDescriptor = {
+    pitchOffset: {
+        min: Jungle.PITCH_OFFSET_MIN,
+        max: Jungle.PITCH_OFFSET_MAX,
+        key: 'pitchOffset',
+        title: 'PITCH_OFFSET'
+    }
+};
+
 export const jungleDefaultOptions = {
     pitchOffset: 1
 };

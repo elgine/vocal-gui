@@ -51,6 +51,15 @@ export default class Male extends Effect {
     }
 }
 
+export const maleDescriptor = {
+    lowpassFreq: {
+        min: Male.LOWPASS_FREQ_MIN,
+        max: Male.LOWPASS_FREQ_MAX,
+        key: 'lowpassFreq',
+        title: 'LOWPASS_FREQ'
+    }
+};
+
 export const maleDefaultOptions = {
     lowpassFreq: Male.LOWPASS_FREQ_DEFAULT,
     ...jungleDefaultOptions

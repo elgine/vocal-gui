@@ -4,6 +4,10 @@ export interface EffectOptions{
 
 export default class Effect {
 
+    static GAIN_DEFAULT = 1;
+    static GAIN_MIN = 0;
+    static GAIN_MAX = 4;
+
     protected _audioContext: BaseAudioContext;
     protected _gain: GainNode;
 
@@ -38,3 +42,16 @@ export default class Effect {
         return this._gain;
     }
 }
+
+export const effectDescriptor = {
+    gain: {
+        min: Effect.GAIN_MIN,
+        max: Effect.GAIN_MAX,
+        key: 'gain',
+        title: 'GAIN'
+    }
+};
+
+export const effectDefaultOptions = {
+    gain: Effect.GAIN_DEFAULT
+};

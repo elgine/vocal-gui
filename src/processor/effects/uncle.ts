@@ -1,6 +1,6 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions } from './effect';
-import Jungle, { JungleOptions, jungleDefaultOptions } from '../composite/jungle';
+import Jungle, { JungleOptions, jungleDefaultOptions, jungleDescriptor } from '../composite/jungle';
 
 export interface UncleOptions extends JungleOptions, EffectOptions{
     lowpassFreq: number;
@@ -46,6 +46,16 @@ export default class Uncle extends Effect {
         return this._lowpass;
     }
 }
+
+export const uncleDescriptor = {
+    lowpassFreq: {
+        min: Uncle.LOWPASS_FREQ_MIN,
+        max: Uncle.LOWPASS_FREQ_MAX,
+        key: 'lowpassFreq',
+        title: 'LOWPASS_FREQ'
+    },
+    ...jungleDescriptor
+};
 
 export const uncleDefaultOptions = {
     lowpassFreq: Uncle.LOWPASS_FREQ_DEFAULT,

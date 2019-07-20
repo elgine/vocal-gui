@@ -1,7 +1,7 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions } from './effect';
-import { PhaseVocoderOptions, phaseVocoderDefaultOptions } from '../dsp/phaseVocoder';
-import Vibrato, { VibratoOptions, vibrartoDefaultOptions } from '../composite/vibrato';
+import { PhaseVocoderOptions, phaseVocoderDefaultOptions, phaseVocoderDescriptor } from '../dsp/phaseVocoder';
+import Vibrato, { VibratoOptions, vibrartoDefaultOptions, vibratoDescriptor } from '../composite/vibrato';
 import PhaseVocoderNode from '../phaseVocoderNode';
 
 export interface OldMaleOptions extends PhaseVocoderOptions, VibratoOptions, EffectOptions{
@@ -61,6 +61,17 @@ export default class OldMale extends Effect {
         return this._lowpass;
     }
 }
+
+export const oldMaleDescriptor = {
+    lowpassFreq: {
+        min: OldMale.LOWPASS_FREQ_MIN,
+        max: OldMale.LOWPASS_FREQ_MAX,
+        key: 'lowpassFreq',
+        title: 'LOWPASS_FREQ'
+    },
+    ...phaseVocoderDescriptor,
+    ...vibratoDescriptor
+};
 
 export const oldMaleDefaultOptions = {
     lowpassFreq: OldMale.LOWPASS_FREQ_DEFAULT,

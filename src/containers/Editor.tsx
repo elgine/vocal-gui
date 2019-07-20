@@ -87,7 +87,7 @@ export default ({ className, ...others }: EditorProps) => {
             <div className={combineClassNames(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
                 <Slide direction="left" in={openEffectPanel}>
                     <div className={classes.effectPanel}>
-                        <EffectPanel />
+                        {/* <EffectPanel /> */}
                     </div>
                 </Slide>
                 <TimelinePanel />

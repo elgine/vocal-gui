@@ -1,7 +1,5 @@
 export default {
     GAIN: '增益',
-    OSC_FREQ: '振荡器频率',
-    OSC_GAIN: '',
 
     ALIEN: '外星人',
     ASTRONAUT: '宇航员',

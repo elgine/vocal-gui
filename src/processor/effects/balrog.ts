@@ -187,6 +187,75 @@ export default class Balrog extends Effect {
     }
 }
 
+export const balrogDescriptor = {
+    lfoFreq: {
+        min: Balrog.LFO_FREQ_MIN,
+        max: Balrog.LFO_FREQ_MAX,
+        key: 'lfoFreq',
+        title: 'LFO_FREQ'
+    },
+    lfoGain: {
+        min: Balrog.LFO_GAIN_MIN,
+        max: Balrog.LFO_GAIN_MAX,
+        key: 'lfoGain',
+        title: 'LFO_GAIN'
+    },
+    delay: {
+        min: Balrog.DELAY_MIN,
+        max: Balrog.DELAY_MAX,
+        key: 'delay',
+        title: 'DELAY'
+    },
+    highshelfFreq: {
+        min: Balrog.HIGHSHELF_FREQ_MIN,
+        max: Balrog.HIGHSHELF_FREQ_MAX,
+        key: 'highshelfFreq',
+        title: 'HIGHSHELF_FREQ'
+    },
+    highshelfGain: {
+        min: Balrog.HIGHSHELF_GAIN_MIN,
+        max: Balrog.HIGHSHELF_GAIN_MAX,
+        key: 'highshelfGain',
+        title: 'HIGHSHELF_GAIN'
+    },
+    lowpassFreq: {
+        min: Balrog.LOWPASS_FREQ_MIN,
+        max: Balrog.LOWPASS_FREQ_MAX,
+        key: 'lowpassFreq',
+        title: 'LOWPASS_FREQ'
+    },
+    compressorThreshold: {
+        min: Balrog.COMPRESSOR_THRESHOLD_MIN,
+        max: Balrog.COMPRESSOR_THRESHOLD_MAX,
+        key: 'compressorThreshold',
+        title: 'COMPRESSOR_THRESHOLD'
+    },
+    compressorRatio: {
+        min: Balrog.COMPRESSOR_RATIO_MIN,
+        max: Balrog.COMPRESSOR_RATIO_MAX,
+        key: 'compressorRatio',
+        title: 'COMPRESSOR_RATIO'
+    },
+    echoGain: {
+        min: Balrog.ECHO_GAIN_MIN,
+        max: Balrog.ECHO_GAIN_MAX,
+        key: 'echoGain',
+        title: 'ECHO_GAIN'
+    },
+    mainGain: {
+        min: Balrog.MAIN_GAIN_MIN,
+        max: Balrog.MAIN_GAIN_MAX,
+        key: 'mainGain',
+        title: 'MAIN_GAIN'
+    },
+    fireGain: {
+        min: Balrog.FIRE_GAIN_MIN,
+        max: Balrog.FIRE_GAIN_MAX,
+        key: 'fireGain',
+        title: 'FIRE_GAIN'
+    }
+};
+
 export const balrogDefaultOptions = {
     lfoFreq: Balrog.LFO_FREQ_DEFAULT,
     lfoGain: Balrog.LFO_GAIN_DEFAULT,

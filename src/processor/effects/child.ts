@@ -1,19 +1,18 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions } from './effect';
-import Equalizer3Band, { Equalizer3BandOptions } from '../composite/equalizer3Band';
+import Equalizer3Band, { Equalizer3BandOptions, equalizer3BandDescriptor, equalizer3BandDefaultOptions } from '../composite/equalizer3Band';
 import PhaseVocoderNode from '../phaseVocoderNode';
 
 export interface ChildOptions extends Equalizer3BandOptions, EffectOptions{
     highpassFreq: number;
     pitch: number;
-    tempo: number;
 }
 
 export default class Child extends Effect {
 
-    static HIGHPASS_DEFAULT = 500.0;
-    static HIGHPASS_MIN = 120;
-    static HIGHPASS_MAX = 500;
+    static HIGHPASS_FREQ_DEFAULT = 500.0;
+    static HIGHPASS_FREQ_MIN = 120;
+    static HIGHPASS_FREQ_MAX = 500;
 
     static LOWSHELF_GAIN_DEFAULT = Equalizer3Band.LOWSHELF_GAIN_DEFAULT;
     static LOWSHELF_GAIN_MIN = Equalizer3Band.LOWSHELF_GAIN_MIN;
@@ -52,7 +51,7 @@ export default class Child extends Effect {
     set(options: AnyOf<ChildOptions>) {
         super.set(options);
         if (options.highpassFreq !== undefined) {
-            this._highpass.frequency.value = clamp(options.highpassFreq, Child.HIGHPASS_MIN, Child.HIGHPASS_MAX);
+            this._highpass.frequency.value = clamp(options.highpassFreq, Child.HIGHPASS_FREQ_MIN, Child.HIGHPASS_FREQ_MAX);
         }
         this._equalizer.set(options);
         if (options.pitch !== undefined) {
@@ -72,10 +71,24 @@ export default class Child extends Effect {
     }
 }
 
+export const childDescriptor = {
+    highpassFreq: {
+        min: Child.HIGHPASS_FREQ_MIN,
+        max: Child.HIGHPASS_FREQ_MAX,
+        key: 'highpassFreq',
+        title: 'HIGHPASS_FREQ'
+    },
+    pitch: {
+        min: Child.PITCH_MIN,
+        max: Child.PITCH_MAX,
+        key: 'pitch',
+        title: 'PITCH'
+    },
+    ...equalizer3BandDescriptor
+};
+
 export const childDefaultOptions = {
-    highpassFreq: Child.HIGHPASS_DEFAULT,
+    highpassFreq: Child.HIGHPASS_FREQ_DEFAULT,
     pitch: Child.PITCH_DEFAULT,
-    lowshelfGain: Equalizer3Band.LOWSHELF_GAIN_DEFAULT,
-    highshelfGain: Equalizer3Band.HIGHSHELF_GAIN_DEFAULT,
-    peakingGain: Equalizer3Band.PEAKING_GAIN_DEFAULT
+    ...equalizer3BandDefaultOptions
 };

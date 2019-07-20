@@ -1,3 +1,4 @@
+import { clamp } from 'lodash';
 import OverlapAdd from './overlapAdd';
 import { WindowType } from '../window';
 import fft from './fft';
@@ -11,6 +12,14 @@ export interface PhaseVocoderOptions{
 }
 
 export default class PhaseVocoder extends OverlapAdd {
+
+    static PITCH_DEFAULT =1;
+    static PITCH_MIN = 0.5;
+    static PITCH_MAX = 2;
+
+    static TEMPO_DEFAULT = 1;
+    static TEMPO_MIN = 0.5;
+    static TEMPO_MAX = 2;
 
     private _omega: Float32Array;
     private _real: Float32Array;
@@ -35,6 +44,15 @@ export default class PhaseVocoder extends OverlapAdd {
         this._newPhase = new Float32Array(this._frameSize);
         this._out = new Float32Array(this._frameSize * 2);
         this._updateOmega();
+    }
+
+    set(v: AnyOf<PhaseVocoderOptions>) {
+        if (v.pitch) {
+            this.pitch = clamp(v.pitch, PhaseVocoder.PITCH_MIN, PhaseVocoder.PITCH_MAX);
+        }
+        if (v.tempo) {
+            this.tempo = clamp(v.tempo, PhaseVocoder.TEMPO_MIN, PhaseVocoder.TEMPO_MAX);
+        }
     }
 
     set overlap(v: number) {
@@ -136,6 +154,12 @@ export default class PhaseVocoder extends OverlapAdd {
         this._stretch = this._hopS / this._hopA;
     }
 }
+
+export const phaseVocoderDescriptor = {
+    pitch: {
+        min: PhaseVocoder.PITCH
+    }
+};
 
 export const phaseVocoderDefaultOptions = {
     pitch: 1,
