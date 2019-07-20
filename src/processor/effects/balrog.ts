@@ -1,5 +1,5 @@
 import { clamp } from 'lodash';
-import Effect, { EffectOptions } from './effect';
+import Effect, { EffectOptions, effectDefaultOptions, effectDescriptor } from './effect';
 
 export interface BalrogOptions extends EffectOptions{
     lfoFreq: number;
@@ -253,7 +253,8 @@ export const balrogDescriptor = {
         max: Balrog.FIRE_GAIN_MAX,
         key: 'fireGain',
         title: 'FIRE_GAIN'
-    }
+    },
+    ...effectDescriptor
 };
 
 export const balrogDefaultOptions = {
@@ -267,5 +268,6 @@ export const balrogDefaultOptions = {
     compressorRatio: Balrog.COMPRESSOR_RATIO_DEFAULT,
     echoGain: Balrog.ECHO_GAIN_DEFAULT,
     mainGain: Balrog.MAIN_GAIN_DEFAULT,
-    fireGain: Balrog.FIRE_GAIN_DEFAULT
+    fireGain: Balrog.FIRE_GAIN_DEFAULT,
+    ...effectDefaultOptions
 };

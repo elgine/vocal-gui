@@ -1,5 +1,5 @@
 import { clamp } from 'lodash';
-import Effect, { EffectOptions } from './effect';
+import Effect, { EffectOptions, effectDescriptor, effectDefaultOptions } from './effect';
 import { PhaseVocoderOptions, phaseVocoderDefaultOptions, phaseVocoderDescriptor } from '../dsp/phaseVocoder';
 import Vibrato, { VibratoOptions, vibrartoDefaultOptions, vibratoDescriptor } from '../composite/vibrato';
 import PhaseVocoderNode from '../phaseVocoderNode';
@@ -70,11 +70,13 @@ export const oldFemaleDescriptor = {
         title: 'HIGHPASS_FREQ'
     },
     ...phaseVocoderDescriptor,
-    ...vibratoDescriptor
+    ...vibratoDescriptor,
+    ...effectDescriptor
 };
 
 export const oldFemaleDefaultOptions = {
     highpassFreq: OldFemale.HIGHPASS_FREQ_DEFAULT,
     ...phaseVocoderDefaultOptions,
-    ...vibrartoDefaultOptions
+    ...vibrartoDefaultOptions,
+    ...effectDefaultOptions
 };

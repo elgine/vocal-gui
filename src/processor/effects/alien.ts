@@ -1,4 +1,4 @@
-import Effect, { EffectOptions } from './effect';
+import Effect, { EffectOptions, effectDefaultOptions, effectDescriptor } from './effect';
 
 export interface AlienOptions extends EffectOptions{
     lfoFreq: number;
@@ -70,10 +70,12 @@ export const alienDescriptor = {
         title: 'LFO_GAIN',
         min: Alien.LFO_GAIN_MIN,
         max: Alien.LFO_GAIN_MAX
-    }
+    },
+    ...effectDescriptor
 };
 
 export const alienDefaultOptions = {
     lfoFreq: Alien.LFO_FREQ_DEFAULT,
-    lfoGain: Alien.LFO_GAIN_DEFAULT
+    lfoGain: Alien.LFO_GAIN_DEFAULT,
+    ...effectDefaultOptions
 };

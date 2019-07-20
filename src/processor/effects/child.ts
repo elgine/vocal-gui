@@ -1,5 +1,5 @@
 import { clamp } from 'lodash';
-import Effect, { EffectOptions } from './effect';
+import Effect, { EffectOptions, effectDefaultOptions, effectDescriptor } from './effect';
 import Equalizer3Band, { Equalizer3BandOptions, equalizer3BandDescriptor, equalizer3BandDefaultOptions } from '../composite/equalizer3Band';
 import PhaseVocoderNode from '../phaseVocoderNode';
 
@@ -84,11 +84,13 @@ export const childDescriptor = {
         key: 'pitch',
         title: 'PITCH'
     },
-    ...equalizer3BandDescriptor
+    ...equalizer3BandDescriptor,
+    ...effectDescriptor
 };
 
 export const childDefaultOptions = {
     highpassFreq: Child.HIGHPASS_FREQ_DEFAULT,
     pitch: Child.PITCH_DEFAULT,
-    ...equalizer3BandDefaultOptions
+    ...equalizer3BandDefaultOptions,
+    ...effectDefaultOptions
 };

@@ -1,6 +1,6 @@
 import { clamp } from 'lodash';
-import Effect, { EffectOptions } from './effect';
-import Jungle, { JungleOptions, jungleDefaultOptions } from '../composite/jungle';
+import Effect, { EffectOptions, effectDescriptor, effectDefaultOptions } from './effect';
+import Jungle, { JungleOptions, jungleDefaultOptions, jungleDescriptor } from '../composite/jungle';
 
 export interface MaleOptions extends JungleOptions, EffectOptions{
     lowpassFreq: number;
@@ -57,10 +57,13 @@ export const maleDescriptor = {
         max: Male.LOWPASS_FREQ_MAX,
         key: 'lowpassFreq',
         title: 'LOWPASS_FREQ'
-    }
+    },
+    ...jungleDescriptor,
+    ...effectDescriptor
 };
 
 export const maleDefaultOptions = {
     lowpassFreq: Male.LOWPASS_FREQ_DEFAULT,
-    ...jungleDefaultOptions
+    ...jungleDefaultOptions,
+    ...effectDefaultOptions
 };

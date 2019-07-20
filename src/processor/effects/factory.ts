@@ -1,4 +1,4 @@
-import Effect from './effect';
+import Effect, { effectDefaultOptions } from './effect';
 import { EffectType } from '../effectType';
 import Alien, { alienDefaultOptions } from './alien';
 import Robot1 from './robot1';
@@ -75,7 +75,7 @@ export const createEffectOptions = (type: EffectType) => {
         case EffectType.OLD_MALE: options = maleDefaultOptions; break;
         case EffectType.UNCLE: options = uncleDefaultOptions; break;
         case EffectType.UNDER_WATER: options = underWaterDefaultOptions; break;
+        default: options = effectDefaultOptions; break;
     }
-    options.gain = 1;
     return options;
 };

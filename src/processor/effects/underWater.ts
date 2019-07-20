@@ -1,5 +1,5 @@
 import { clamp } from 'lodash';
-import Effect, { EffectOptions } from './effect';
+import Effect, { EffectOptions, effectDescriptor, effectDefaultOptions } from './effect';
 import AutoWah, { AutoWahOptions, autoWahDefaultOptions, autoWahDescriptor } from '../composite/autoWah';
 
 export interface UnderWaterOptions extends AutoWahOptions, EffectOptions{
@@ -101,12 +101,14 @@ export const underWaterDescriptor = {
         key: 'underWaterBgGain',
         title: 'UNDER_WATER_BG_GAIN'
     },
-    ...autoWahDescriptor
+    ...autoWahDescriptor,
+    ...effectDescriptor
 };
 
 export const underWaterDefaultOptions = {
     lowpassFreq: UnderWater.LOWPASS_FREQ_DEFAULT,
     inputGain: UnderWater.INPUT_GAIN_DEFAULT,
     underWaterBgGain: UnderWater.UNDER_WATER_BG_GAIN_DEFAULT,
-    ...autoWahDefaultOptions
+    ...autoWahDefaultOptions,
+    ...effectDefaultOptions
 };

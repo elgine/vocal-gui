@@ -1,5 +1,5 @@
-import Effect, { EffectOptions } from './effect';
-import Jungle, { JungleOptions, jungleDescriptor } from '../composite/jungle';
+import Effect, { EffectOptions, effectDefaultOptions, effectDescriptor } from './effect';
+import Jungle, { JungleOptions, jungleDescriptor, jungleDefaultOptions } from '../composite/jungle';
 
 export interface FemaleOptions extends JungleOptions, EffectOptions{
 }
@@ -44,9 +44,11 @@ export default class Female extends Effect {
 }
 
 export const femaleDescriptor = {
-    ...jungleDescriptor
+    ...jungleDescriptor,
+    ...effectDescriptor
 };
 
 export const femaleDefaultOptions = {
-    pitchOffset: 1
+    ...jungleDefaultOptions,
+    ...effectDefaultOptions
 };

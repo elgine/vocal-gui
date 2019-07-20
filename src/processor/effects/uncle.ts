@@ -1,5 +1,5 @@
 import { clamp } from 'lodash';
-import Effect, { EffectOptions } from './effect';
+import Effect, { EffectOptions, effectDescriptor, effectDefaultOptions } from './effect';
 import Jungle, { JungleOptions, jungleDefaultOptions, jungleDescriptor } from '../composite/jungle';
 
 export interface UncleOptions extends JungleOptions, EffectOptions{
@@ -54,10 +54,12 @@ export const uncleDescriptor = {
         key: 'lowpassFreq',
         title: 'LOWPASS_FREQ'
     },
-    ...jungleDescriptor
+    ...jungleDescriptor,
+    ...effectDescriptor
 };
 
 export const uncleDefaultOptions = {
     lowpassFreq: Uncle.LOWPASS_FREQ_DEFAULT,
-    ...jungleDefaultOptions
+    ...jungleDefaultOptions,
+    ...effectDefaultOptions
 };
