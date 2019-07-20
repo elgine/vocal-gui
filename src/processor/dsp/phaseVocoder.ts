@@ -157,7 +157,16 @@ export default class PhaseVocoder extends OverlapAdd {
 
 export const phaseVocoderDescriptor = {
     pitch: {
-        min: PhaseVocoder.PITCH
+        min: PhaseVocoder.PITCH_MIN,
+        max: PhaseVocoder.PITCH_MAX,
+        key: 'pitch',
+        title: 'PITCH'
+    },
+    tempo: {
+        min: PhaseVocoder.TEMPO_MIN,
+        max: PhaseVocoder.TEMPO_MAX,
+        key: 'tempo',
+        title: 'TEMPO'
     }
 };
 

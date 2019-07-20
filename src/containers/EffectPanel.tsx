@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useContext, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Tooltip, Toolbar, Grid, Box, Button, Menu, MenuItem, Typography } from '@material-ui/core';
 import { GridProps } from '@material-ui/core/Grid';
@@ -11,6 +11,9 @@ import combineClassNames from '../utils/combineClassNames';
 import Placeholder from '../components/Placeholder';
 import { EMPTY_STRING } from '../constant';
 import EffectPropertyPane from './EffectPropertyPane';
+import { EffectState, ACTION_SWITCH_EFFECT, ACTION_CHANGE_EFFECT_OPTIONS } from '../store/models/effect/type';
+import { getEffectDescriptor } from '../processor/effects/factory';
+import { BoxProps } from '@material-ui/core/Box';
 
 interface EffectItemProps extends GridProps{
     title?: string;
@@ -60,12 +63,65 @@ export interface EffectPanelProps{
     onEffectOptionsChange: (v: any) => void;
 }
 
-const mapStateToProps = (state: any) => {
-    return {};
+const mapStateToProps = (state: {effect: EffectState}) => {
+    return {
+        ...state.effect
+    };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
-    return {};
+    return {
+        onEffectChange: dispatch.effect[ACTION_SWITCH_EFFECT],
+        onEffectOptionsChange: dispatch.effect[ACTION_CHANGE_EFFECT_OPTIONS]
+    };
+};
+
+interface PaneProps extends React.HTMLAttributes<{}>{
+    header?: React.ReactNode;
+    height?: string | number;
+}
+
+const TOOLBAR_HEIGHT = 64;
+const usePaneStyles = makeStyles((theme: Theme) => ({
+    root: {
+        position: 'relative',
+        paddingTop: `${TOOLBAR_HEIGHT}px`,
+        boxSizing: 'border-box'
+    },
+    toolbar: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: `${TOOLBAR_HEIGHT}px`
+    },
+    content: {
+        height: '100%',
+        overflow: 'hidden auto',
+        boxSizing: 'border-box',
+        padding: `0 ${theme.spacing(2)}px`
+    }
+}));
+
+const Pane = ({ header, children, className, style, height, ...others }: PaneProps) => {
+    const classes = usePaneStyles();
+    const combinedClassName = combineClassNames(classes.root, className);
+    let combinedStyle: React.CSSProperties = {
+        ...style
+    };
+    if (height) {
+        combinedStyle.height = typeof height === 'string' ? height : `${height}px`;
+    }
+    return (
+        <div className={combinedClassName} style={combinedStyle} {...others}>
+            <Toolbar className={classes.toolbar}>
+                {header}
+            </Toolbar>
+            <div className={classes.content}>
+                {children}
+            </div>
+        </div>
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(({
@@ -77,6 +133,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(({
     const [showFilterList, setShowFilterList] = useState(false);
     const [effectCategory, setEffectCategory] = useState(EMPTY_STRING);
     const [currentEffectsVM, setCurrentEffectsVM] = useState<EffectType[]>([]);
+    const descriptor = useMemo(() => getEffectDescriptor(effect), [effect]);
     const onCategoryitemClick = (v: string) => {
         if (effectCategory === v) return;
         setEffectCategory(v);
@@ -109,24 +166,25 @@ export default connect(mapStateToProps, mapDispatchToProps)(({
                     ))
                 }
             </Menu>
-            <Toolbar variant="dense">
-                <Typography variant="subtitle1">
-                    {
-                        getLang('EFFECT_LIST', lang)
-                    }
-                </Typography>
-                <Placeholder />
-                <Tooltip title={getLang('FILTER_BY_EFFECT_CATEGORY', lang)}>
-                    <Button ref={filterBtnRef} onClick={() => setShowFilterList(true)}>
-                        <FilterList />
-                            &nbsp;
+            <Pane header={
+                <React.Fragment>
+                    <Typography variant="subtitle1">
                         {
-                            getLang(effectCategory === EMPTY_STRING ? 'CATEGORY_ALL' : effectCategory, lang)
+                            getLang('EFFECT_LIST', lang)
                         }
-                    </Button>
-                </Tooltip>
-            </Toolbar>
-            <Box px={2} py={1} maxHeight="50%" overflow="hidden auto">
+                    </Typography>
+                    <Placeholder />
+                    <Tooltip title={getLang('FILTER_BY_EFFECT_CATEGORY', lang)}>
+                        <Button ref={filterBtnRef} onClick={() => setShowFilterList(true)}>
+                            <FilterList />
+                            &nbsp;
+                            {
+                                getLang(effectCategory === EMPTY_STRING ? 'CATEGORY_ALL' : effectCategory, lang)
+                            }
+                        </Button>
+                    </Tooltip>
+                </React.Fragment>
+            } height="50%">
                 <Grid container>
                     {
                         currentEffectsVM.map((e) => (
@@ -137,17 +195,24 @@ export default connect(mapStateToProps, mapDispatchToProps)(({
                         ))
                     }
                 </Grid>
-            </Box>
-            <Toolbar variant="dense">
-                <Typography variant="subtitle1">
-                    {
-                        getLang('EFFECT_PROPERTIES', lang)
-                    }
-                </Typography>
-            </Toolbar>
-            <Box pl={6} pr={2} py={1}>
-                <EffectPropertyPane value={effectOptions} onChange={onEffectOptionsChange} />
-            </Box>
+            </Pane>
+            <Pane header={
+                <React.Fragment>
+                    <Typography variant="subtitle1">
+                        {
+                            getLang('EFFECT_PROPERTIES', lang)
+                        }
+                    </Typography>
+                </React.Fragment>
+            } height="50%">
+                <Box pl={2}>
+                    <EffectPropertyPane
+                        descriptor={descriptor}
+                        value={effectOptions}
+                        onChange={onEffectOptionsChange}
+                    />
+                </Box>
+            </Pane>
         </React.Fragment>
     );
 });

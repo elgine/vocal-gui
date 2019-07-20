@@ -11,7 +11,7 @@ import EffectPanel from './EffectPanel';
 
 const PLAYER_CONTROLS_HEIGHT = 64;
 const CONTROL_BAR_HEIGHT = 64;
-const EFFECT_DRAWER_WIDTH = 400;
+const EFFECT_DRAWER_WIDTH = 420;
 
 const useStyles = makeStyles((theme: Theme) => {
     const contrastC = theme.palette.getContrastText(theme.palette.background.default);
@@ -87,7 +87,7 @@ export default ({ className, ...others }: EditorProps) => {
             <div className={combineClassNames(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
                 <Slide direction="left" in={openEffectPanel}>
                     <div className={classes.effectPanel}>
-                        {/* <EffectPanel /> */}
+                        <EffectPanel />
                     </div>
                 </Slide>
                 <TimelinePanel />

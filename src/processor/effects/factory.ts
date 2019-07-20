@@ -1,20 +1,20 @@
-import Effect, { effectDefaultOptions } from './effect';
+import Effect, { effectDefaultOptions, effectDescriptor } from './effect';
 import { EffectType } from '../effectType';
-import Alien, { alienDefaultOptions } from './alien';
+import Alien, { alienDefaultOptions, alienDescriptor } from './alien';
 import Robot1 from './robot1';
 import Robot2 from './robot2';
 import Astronaut from './astronaut';
-import Uncle, { uncleDefaultOptions } from './uncle';
-import Female, { femaleDefaultOptions } from './female';
-import Child, { childDefaultOptions } from './child';
-import Male, { maleDefaultOptions } from './male';
-import OldMale from './oldMale';
-import OldFemale, { oldFemaleDefaultOptions } from './oldFemale';
+import Uncle, { uncleDefaultOptions, uncleDescriptor } from './uncle';
+import Female, { femaleDefaultOptions, femaleDescriptor } from './female';
+import Child, { childDefaultOptions, childDescriptor } from './child';
+import Male, { maleDefaultOptions, maleDescriptor } from './male';
+import OldMale, { oldMaleDescriptor } from './oldMale';
+import OldFemale, { oldFemaleDefaultOptions, oldFemaleDescriptor } from './oldFemale';
 import Transformer from './transformer';
-import Balrog, { balrogDefaultOptions } from './balrog';
+import Balrog, { balrogDefaultOptions, balrogDescriptor } from './balrog';
 import Cave from './cave';
 import BroadRoom from './broadRoom';
-import UnderWater, { underWaterDefaultOptions } from './underWater';
+import UnderWater, { underWaterDefaultOptions, underWaterDescriptor } from './underWater';
 import Hall from './hall';
 import Muffler from './muffler';
 import Telephone from './telephone';
@@ -63,7 +63,22 @@ export const createEffect = async (type: EffectType, ctx: BaseAudioContext) => {
     return effect;
 };
 
-export const getEffectDescriptor = (type: EffectType) => {};
+export const getEffectDescriptor = (type: EffectType) => {
+    let descriptor: any = {};
+    switch (type) {
+        case EffectType.ALIEN: descriptor = alienDescriptor; break;
+        case EffectType.BALROG: descriptor = balrogDescriptor; break;
+        case EffectType.CHILD: descriptor = childDescriptor; break;
+        case EffectType.FEMALE: descriptor = femaleDescriptor; break;
+        case EffectType.MALE: descriptor = maleDescriptor; break;
+        case EffectType.OLD_FEMALE: descriptor = oldFemaleDescriptor; break;
+        case EffectType.OLD_MALE: descriptor = oldMaleDescriptor; break;
+        case EffectType.UNCLE: descriptor = uncleDescriptor; break;
+        case EffectType.UNDER_WATER: descriptor = underWaterDescriptor; break;
+        default: descriptor = effectDescriptor; break;
+    }
+    return descriptor;
+};
 
 export const getEffectOptions = (type: EffectType) => {
     let options: any = {};
