@@ -7,12 +7,11 @@ import {
     ACTION_CHANGE_EFFECT_OPTIONS
 } from './type';
 import { EffectType } from '../../../processor/effectType';
-import { effectDefaultOptions } from '../../../processor/effects/effect';
-import { createEffectOptions } from '../../../processor/effects/factory';
+import { getEffectOptions } from '../../../processor/effects/factory';
 
 const initialState: EffectState = {
     effect: EffectType.NONE,
-    effectOptions: effectDefaultOptions
+    effectOptions: getEffectOptions(EffectType.NONE)
 };
 
 export default {
@@ -30,7 +29,7 @@ export default {
     effects: (dispatch: RematchDispatch) => ({
         [ACTION_SWITCH_EFFECT](payload: EffectType) {
             dispatch.effect[REDUCER_SET_EFFECT](payload);
-            dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](createEffectOptions(payload));
+            dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](getEffectOptions(payload));
         },
         [ACTION_CHANGE_EFFECT_OPTIONS](payload: any) {
             dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](payload);

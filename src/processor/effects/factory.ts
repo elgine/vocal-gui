@@ -63,7 +63,9 @@ export const createEffect = async (type: EffectType, ctx: BaseAudioContext) => {
     return effect;
 };
 
-export const createEffectOptions = (type: EffectType) => {
+export const getEffectDescriptor = (type: EffectType) => {};
+
+export const getEffectOptions = (type: EffectType) => {
     let options: any = {};
     switch (type) {
         case EffectType.ALIEN: options = alienDefaultOptions; break;
