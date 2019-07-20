@@ -1,4 +1,6 @@
 export default {
+    GAIN: 'Gain',
+
     ALIEN: 'Alien',
     ASTRONAUT: 'Astronaut',
     BALROG: 'Balrog',
@@ -43,6 +45,9 @@ export default {
     MORE: 'More',
     CLIP: 'Set clip region',
     POINTER: 'Pointer',
+    NO_EFFECT_SELECTED: 'No effect selected',
+    EFFECT_PROPERTIES: 'Effect properties',
+    EFFECT_LIST: 'Effect list',
     APPLY_EFFECT: 'Apply effect',
     EXPORT: 'Export',
     EXPORT_FORMAT: 'Export format',

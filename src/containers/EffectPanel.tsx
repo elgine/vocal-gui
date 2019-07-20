@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { Tooltip, IconButton, Toolbar, Grid, Box, Zoom, Button, Menu, MenuItem, Typography, Slide, Fade } from '@material-ui/core';
+import { Tooltip, IconButton, Toolbar, Grid, Box, Zoom, Button, Menu, MenuItem, Typography, Slide, Fade, Divider, Slider, FormControl, FormLabel } from '@material-ui/core';
 import { BoxProps } from '@material-ui/core/Box';
 import { GridProps } from '@material-ui/core/Grid';
 import { AudiotrackTwoTone, FilterList, ArrowBack }  from '@material-ui/icons';
@@ -10,6 +10,7 @@ import { fade } from '../utils/color';
 import combineClassNames from '../utils/combineClassNames';
 import Placeholder from '../components/Placeholder';
 import { EMPTY_STRING } from '../constant';
+import EffectPropertyPane from './EffectPropertyPane';
 
 interface EffectItemProps extends GridProps{
     title?: string;
@@ -52,12 +53,7 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
     );
 };
 
-const TOOLBAR_HEIGHT = 64;
-const TOOLBAR_STYLE: React.CSSProperties = {
-    position: 'absolute', top: 0, left: 0, zIndex: 1, width: '100%', height: `${TOOLBAR_HEIGHT}px`
-};
-
-export interface EffectPanelProps extends Omit<BoxProps, 'onChange'>{
+export interface EffectPanelProps{
     // effect?: EffectType;
     // onEffectChange?: (v: EffectType) => void;
 }
@@ -65,7 +61,6 @@ export interface EffectPanelProps extends Omit<BoxProps, 'onChange'>{
 export default ({ ...others }: EffectPanelProps) => {
     const lang = useContext(LangContext);
     const filterBtnRef = useRef<HTMLButtonElement>(null);
-    const [showDetail, setShowDetail] = useState(false);
     const [showFilterList, setShowFilterList] = useState(false);
     const [effectCategory, setEffectCategory] = useState(EMPTY_STRING);
     const [currentEffectsVM, setCurrentEffectsVM] = useState<EffectType[]>([]);
@@ -80,14 +75,13 @@ export default ({ ...others }: EffectPanelProps) => {
             setEffect(EffectType.NONE);
         } else {
             setEffect(v);
-            setShowDetail(true);
         }
     };
     useEffect(() => {
         setCurrentEffectsVM(EFFECTS.filter((e) => effectCategory === EMPTY_STRING || EFFECT_CATEGORY_MAP[e] === effectCategory));
     }, [effectCategory]);
     return (
-        <Box position="relative" pt={`${TOOLBAR_HEIGHT}px`} px={2} pb={2} {...others}>
+        <React.Fragment>
             <Menu anchorEl={filterBtnRef.current} open={showFilterList} onClose={() => setShowFilterList(false)}>
                 <MenuItem onClick={() => onCategoryitemClick(EMPTY_STRING)}>
                     {getLang('CATEGORY_ALL', lang)}
@@ -103,40 +97,45 @@ export default ({ ...others }: EffectPanelProps) => {
                     ))
                 }
             </Menu>
-            <Toolbar style={TOOLBAR_STYLE}>
-                <Fade in={showDetail}>
-                    <IconButton onClick={() => setShowDetail(false)}>
-                        <ArrowBack />
-                    </IconButton>
-                </Fade>
+            <Toolbar variant="dense">
+                <Typography variant="subtitle1">
+                    {
+                        getLang('EFFECT_LIST', lang)
+                    }
+                </Typography>
                 <Placeholder />
-                <Zoom in={!showDetail}>
-                    <Tooltip title={getLang('FILTER_BY_EFFECT_CATEGORY', lang)}>
-                        <Button ref={filterBtnRef} onClick={() => setShowFilterList(true)}>
-                            <FilterList />
+                <Tooltip title={getLang('FILTER_BY_EFFECT_CATEGORY', lang)}>
+                    <Button ref={filterBtnRef} onClick={() => setShowFilterList(true)}>
+                        <FilterList />
                             &nbsp;
-                            {
-                                getLang(effectCategory === EMPTY_STRING ? 'CATEGORY_ALL' : effectCategory, lang)
-                            }
-                        </Button>
-                    </Tooltip>
-                </Zoom>
+                        {
+                            getLang(effectCategory === EMPTY_STRING ? 'CATEGORY_ALL' : effectCategory, lang)
+                        }
+                    </Button>
+                </Tooltip>
             </Toolbar>
-            <Grid container>
-                {
-                    currentEffectsVM.map((e) => (
-                        <EffectItem key={e} xs={3} selected={effect === e}
-                            title={getLang(EFFECT_LANG_MAP[e], lang)}
-                            onClick={() => onEffectItemClick(e)}
-                        />
-                    ))
-                }
-            </Grid>
-            <Slide direction="right" in={showDetail} timeout={400}>
-                <Box position="absolute" top="0" left="0" width="100%" minHeight="100%" bgcolor="background.paper">
-
-                </Box>
-            </Slide>
-        </Box>
+            <Box px={2} py={1} maxHeight="50%" overflow="hidden auto">
+                <Grid container>
+                    {
+                        currentEffectsVM.map((e) => (
+                            <EffectItem key={e} xs={3} selected={effect === e}
+                                title={getLang(EFFECT_LANG_MAP[e], lang)}
+                                onClick={() => onEffectItemClick(e)}
+                            />
+                        ))
+                    }
+                </Grid>
+            </Box>
+            <Toolbar variant="dense">
+                <Typography variant="subtitle1">
+                    {
+                        getLang('EFFECT_PROPERTIES', lang)
+                    }
+                </Typography>
+            </Toolbar>
+            <Box pl={6} pr={2} py={1}>
+                <EffectPropertyPane />
+            </Box>
+        </React.Fragment>
     );
 };

@@ -1,4 +1,8 @@
 export default {
+    GAIN: '增益',
+    OSC_FREQ: '振荡器频率',
+    OSC_GAIN: '',
+
     ALIEN: '外星人',
     ASTRONAUT: '宇航员',
     BALROG: '炎魔',
@@ -23,7 +27,6 @@ export default {
     TOOL: '工具',
     ENVIRONMENT: '环境',
     CATEGORY_ALL: '所有分类',
-
     FILTER_BY_EFFECT_CATEGORY: '根据效果分类过滤',
     LOAD_SOURCE_FROM: '加载音频源',
     SECOND: '秒',
@@ -43,6 +46,9 @@ export default {
     MORE: '更多',
     CLIP: '设置截取区域',
     POINTER: '指针',
+    NO_EFFECT_SELECTED: '没选中效果',
+    EFFECT_PROPERTIES: '效果属性',
+    EFFECT_LIST: '效果列表',
     APPLY_EFFECT: '应用效果',
     EXPORT: '导出',
     EXPORT_FORMAT: '导出格式',

@@ -11,6 +11,7 @@ import Grow from '../components/Placeholder';
 import { SkipNext, SkipPrevious, Tune } from '@material-ui/icons';
 import { getLang, LangContext } from '../lang';
 import { PlayerState, ACTION_SWITCH_REPEAT, ACTION_SWITCH_PLAYING, ACTION_SET_VOLUME, ACTION_SKIP_PREVIOUS, ACTION_SKIP_NEXT } from '../store/models/player/types';
+import ToggleButton from '../components/ToggleButton';
 
 const mapStateToProps = ({ player }: {player: PlayerState}) => {
     return {
@@ -34,11 +35,12 @@ export interface PlayerControlsProps extends Omit<ToolbarProps, 'onVolumeChange'
     onVolumeChange: (v: number) => void;
     onSkipPrevious: () => void;
     onSkipNext: () => void;
-    onToggleEffectPanel: () => void;
+    showEffectPanel?: boolean;
+    onToggleEffectPanel: (v: boolean) => void;
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
-    repeat, playing, volume, playbackSpeed, currentTime,
+    repeat, playing, volume, playbackSpeed, currentTime, showEffectPanel,
     onRepeatChange, onPlayingChange, onVolumeChange, onSkipPrevious,
     onSkipNext, onToggleEffectPanel,
     ...others
@@ -61,18 +63,19 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
                 </Tooltip>
                 <RepeatButton value={repeat} onChange={onRepeatChange} />
             </Grow>
-            <Button onClick={onToggleEffectPanel}>
+            <ToggleButton value={showEffectPanel} onChange={onToggleEffectPanel}>
                 <Tune />
                 &nbsp;
                 {
                     getLang('APPLY_EFFECT', lang)
                 }
-            </Button>
+            </ToggleButton>
         </Toolbar>
     );
 }, (prevProps: PlayerControlsProps, nextProps: PlayerControlsProps) => {
     return prevProps.volume === nextProps.volume &&
         prevProps.repeat === nextProps.repeat &&
         prevProps.playing === nextProps.playing &&
+        prevProps.showEffectPanel === nextProps.showEffectPanel &&
         prevProps.onToggleEffectPanel === nextProps.onToggleEffectPanel;
 }));

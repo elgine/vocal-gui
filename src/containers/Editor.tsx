@@ -75,8 +75,8 @@ export default ({ className, ...others }: EditorProps) => {
     const classes = useStyles();
     const matches = useMediaQuery('(min-width: 600px)');
     const [openEffectPanel, setOpenEffectPanel] = useState(false);
-    const onToggleEffectPanel = () => {
-        setOpenEffectPanel(!openEffectPanel);
+    const onToggleEffectPanel = (v: boolean) => {
+        setOpenEffectPanel(v);
     };
     return (
         <div className={combineClassNames(
@@ -93,6 +93,7 @@ export default ({ className, ...others }: EditorProps) => {
                 <TimelinePanel />
             </div>
             <PlayerControls className={classes.playerControls}
+                showEffectPanel={openEffectPanel}
                 onToggleEffectPanel={onToggleEffectPanel}
             />
         </div>

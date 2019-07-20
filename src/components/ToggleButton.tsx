@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { IconButtonProps } from '@material-ui/core/IconButton';
 
 export interface ToggleButtonProps extends Omit<IconButtonProps, 'value' | 'onChange'>{
@@ -13,6 +13,6 @@ export default React.forwardRef(({ value, onChange, onClick, ...others }: Toggle
         onChange && onChange(!value);
     };
     return (
-        <IconButton ref={ref} color={value ? 'primary' : 'default'} onClick={onBtnClick} {...others} />
+        <Button ref={ref} color={value ? 'primary' : 'default'} onClick={onBtnClick} {...others} />
     );
 });
