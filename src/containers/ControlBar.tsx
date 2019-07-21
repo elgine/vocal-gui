@@ -15,6 +15,7 @@ import ZoomControls from './ZoomControls';
 import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
 import ExportButton from './ExportButton';
+import TimeInput from '../components/TimeInput';
 
 export interface ControlBarProps extends ToolbarProps{
     onLoadSource: (v: {type: SourceType; value?: string| File | AudioBuffer}) => void;

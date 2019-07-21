@@ -1,14 +1,14 @@
 import React, { useContext, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import {
-    Toolbar, IconButton, Tooltip, Chip, Popper, TextField, Paper
+    Toolbar, IconButton, Tooltip
 } from '@material-ui/core';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import Volume from '../components/Volume';
 import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
 import Grow from '../components/Placeholder';
-import { AvTimer, SkipNext, SkipPrevious, Tune } from '@material-ui/icons';
+import { SkipNext, SkipPrevious, Tune } from '@material-ui/icons';
 import { getLang, LangContext } from '../lang';
 import {
     PlayerState,
@@ -20,7 +20,7 @@ import {
     ACTION_SEEK
 } from '../store/models/player/types';
 import ToggleButton from '../components/ToggleButton';
-import { toTimeString } from '../utils/time';
+import TimeInput from '../components/TimeInput';
 
 const mapStateToProps = ({ player }: {player: PlayerState}) => {
     return {
@@ -57,11 +57,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
     ...others
 }: PlayerControlsProps) => {
     const lang = useContext(LangContext);
-    const [editCurrentTime, setEditCurrentTime] = useState(false);
-    const currentTimeRef = useRef<any>(null);
-    const onCurrentTimeChipClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        setEditCurrentTime(!editCurrentTime);
-    };
     return (
         <Toolbar {...others}>
             <Volume value={volume} onChange={onVolumeChange} />
@@ -78,12 +73,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
                     </IconButton>
                 </Tooltip>
                 <RepeatButton value={repeat} onChange={onRepeatChange} />
-                <Chip innerRef={currentTimeRef} onClick={onCurrentTimeChipClick} label={`${getLang('CURRENT_TIME', lang)}: ${toTimeString(currentTime)}${getLang('SECOND', lang)}`} />
-                <Popper anchorEl={currentTimeRef.current} open={editCurrentTime}>
-                    <Paper>
-                        <TextField />
-                    </Paper>
-                </Popper>
+                <TimeInput label={`${getLang('CURRENT_TIME', lang)}: `} value={currentTime} onChange={onSeek} />
             </Grow>
             <ToggleButton value={showEffectPanel} onChange={onToggleEffectPanel}>
                 <Tune />

@@ -6,6 +6,7 @@ import { ArrowRightAlt } from '@material-ui/icons';
 import { LangContext, getLang } from '../lang';
 import { ENTER_KEY_CODE } from '../constant';
 import { ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
+import TimeInput from '../components/TimeInput';
 
 export interface ClipRegionControlsProps extends BoxProps{
     start: number;
@@ -81,34 +82,22 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
         maxWidth: '120px'
     };
     return (
-        <Tooltip title={getLang('CLIP', lang)}>
-            <Box>
-                <Collapse in={!disabled} timeout={500}>
-                    <Box display="inline-flex" alignItems="center" {...others}>
-                        <Chip label={
-                            <React.Fragment>
-                                {getLang('CLIP', lang)}:&nbsp;
-                                {startVal}
-                                {getLang('SECOND', lang)}
-                                <Box px={1}><ArrowRightAlt /></Box>
-                                {endVal}
-                                {getLang('SECOND', lang)}
-                            </React.Fragment>
-                        }
-                        />
-                        {/* <TextField style={textFieldStyle} disabled={disabled} InputProps={{
-                            endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
-                        }} placeholder={getLang('START_TIME', lang)} value={startVal} onChange={onRegionStartChange} onKeyDown={onRegionStartKeyDown} onBlur={onRegionStartSubmit}
-                        />
-                        <Box px={1}><ArrowRightAlt /></Box>
-                        <TextField style={textFieldStyle} disabled={disabled} InputProps={{
-                            endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
-                        }} placeholder={getLang('END_TIME', lang)} value={endVal} onChange={onRegionEndChange} onKeyDown={onRegionEndKeyDown} onBlur={onRegionEndSubmit}
-                        /> */}
-                    </Box>
-                </Collapse>
-            </Box>
-        </Tooltip>
+        <Box>
+            <Collapse in={!disabled} timeout={500}>
+                <Box display="inline-flex" alignItems="center" {...others}>
+                    <TimeInput label={`${getLang('CLIP', lang)}: `} value={[start, end]} />
+                    {/* <TextField style={textFieldStyle} disabled={disabled} InputProps={{
+                        endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
+                    }} placeholder={getLang('START_TIME', lang)} value={startVal} onChange={onRegionStartChange} onKeyDown={onRegionStartKeyDown} onBlur={onRegionStartSubmit}
+                    />
+                    <Box px={1}><ArrowRightAlt /></Box>
+                    <TextField style={textFieldStyle} disabled={disabled} InputProps={{
+                        endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
+                    }} placeholder={getLang('END_TIME', lang)} value={endVal} onChange={onRegionEndChange} onKeyDown={onRegionEndKeyDown} onBlur={onRegionEndSubmit}
+                    /> */}
+                </Box>
+            </Collapse>
+        </Box>
     );
 }, (prevProps: ClipRegionControlsProps, nextProps: ClipRegionControlsProps) => {
     return prevProps.start === nextProps.start &&
