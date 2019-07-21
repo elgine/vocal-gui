@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { TextField, InputAdornment, Tooltip, Collapse, Box } from '@material-ui/core';
+import { TextField, InputAdornment, Tooltip, Collapse, Box, Chip } from '@material-ui/core';
 import { BoxProps } from '@material-ui/core/Box';
 import { ArrowRightAlt } from '@material-ui/icons';
 import { LangContext, getLang } from '../lang';
@@ -85,7 +85,18 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
             <Box>
                 <Collapse in={!disabled} timeout={500}>
                     <Box display="inline-flex" alignItems="center" {...others}>
-                        <TextField style={textFieldStyle} disabled={disabled} InputProps={{
+                        <Chip label={
+                            <React.Fragment>
+                                {getLang('CLIP', lang)}:&nbsp;
+                                {startVal}
+                                {getLang('SECOND', lang)}
+                                <Box px={1}><ArrowRightAlt /></Box>
+                                {endVal}
+                                {getLang('SECOND', lang)}
+                            </React.Fragment>
+                        }
+                        />
+                        {/* <TextField style={textFieldStyle} disabled={disabled} InputProps={{
                             endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
                         }} placeholder={getLang('START_TIME', lang)} value={startVal} onChange={onRegionStartChange} onKeyDown={onRegionStartKeyDown} onBlur={onRegionStartSubmit}
                         />
@@ -93,7 +104,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
                         <TextField style={textFieldStyle} disabled={disabled} InputProps={{
                             endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
                         }} placeholder={getLang('END_TIME', lang)} value={endVal} onChange={onRegionEndChange} onKeyDown={onRegionEndKeyDown} onBlur={onRegionEndSubmit}
-                        />
+                        /> */}
                     </Box>
                 </Collapse>
             </Box>

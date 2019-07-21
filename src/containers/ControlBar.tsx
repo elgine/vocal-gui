@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import {
-    Toolbar, IconButton, Tooltip, Dialog,
+    Toolbar, IconButton, Tooltip, Button, Chip
 } from '@material-ui/core';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import {
-    Undo, Redo, OpenInNew, ArrowDropDown
+    Undo, Redo, OpenInNew, ArrowDropDown, List
 } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
 import { getLang, LangContext } from '../lang';
@@ -49,6 +49,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
                     </LoadButton>
                 </div>
             </Tooltip>
+            <ExportButton />
             <Tooltip title={getLang('UNDO', lang)}>
                 <IconButton onClick={onUndo}>
                     <Undo />
@@ -59,7 +60,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
                     <Redo />
                 </IconButton>
             </Tooltip>
-            <ExportButton />
             <Placeholder textAlign="center">
                 <ClipRegionInput />
             </Placeholder>

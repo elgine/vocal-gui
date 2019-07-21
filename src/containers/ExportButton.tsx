@@ -9,8 +9,8 @@ export default () => {
     const [showExport, setShowExport] = useState(false);
     return (
         <React.Fragment>
-            <Tooltip title={getLang('EXPORT', lang)}>
-                <IconButton onClick={() => setShowExport(true)}>
+            <Tooltip title={getLang('EXPORT', lang)} onClick={() => setShowExport(true)}>
+                <IconButton>
                     <Export />
                 </IconButton>
             </Tooltip>
