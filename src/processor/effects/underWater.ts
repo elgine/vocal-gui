@@ -1,6 +1,7 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions, effectDescriptor, effectDefaultOptions } from './effect';
 import AutoWah, { AutoWahOptions, autoWahDefaultOptions, autoWahDescriptor } from '../composite/autoWah';
+import { EffectType } from '../effectType';
 
 export interface UnderWaterOptions extends AutoWahOptions, EffectOptions{
     lowpassFreq: number;
@@ -21,6 +22,8 @@ export default class UnderWater extends Effect {
     static UNDER_WATER_BG_GAIN_DEFAULT = 0.3;
     static UNDER_WATER_BG_GAIN_MIN = 0.0;
     static UNDER_WATER_BG_GAIN_MAX = 4.0;
+
+    readonly type: EffectType = EffectType.UNDER_WATER;
 
     private _inputGain: GainNode;
     private _lowpass: BiquadFilterNode;

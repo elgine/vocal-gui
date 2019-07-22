@@ -1,10 +1,13 @@
 import Effect, { EffectOptions, effectDefaultOptions, effectDescriptor } from './effect';
 import Jungle, { JungleOptions, jungleDescriptor, jungleDefaultOptions } from '../composite/jungle';
+import { EffectType } from '../effectType';
 
 export interface FemaleOptions extends JungleOptions, EffectOptions{
 }
 
 export default class Female extends Effect {
+
+    readonly type: EffectType = EffectType.FEMALE;
 
     private _jungle: Jungle;
     private _compressor: DynamicsCompressorNode;

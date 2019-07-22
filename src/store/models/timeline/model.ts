@@ -13,6 +13,7 @@ import {
 } from './types';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT, ZOOM_MAXIMUM, ZOOM_MINIMUM } from '../../../constant';
 import calcProperTimeUnits from './calcProperTimeUnits';
+import { getPlayer } from '../../../processor';
 
 const initialState: TimelineState = {
     pixelsPerMSec: 0.01,
@@ -33,8 +34,6 @@ const timelineModel: ModelConfig<TimelineState> = {
         },
         [REDUCER_SET_DURATION](state: TimelineState, payload: number) {
             state.duration = payload;
-            state.clipRegion[0] = 0;
-            state.clipRegion[1] = payload;
             return state;
         },
         [REDUCER_SET_CLIP_REGION](state: TimelineState, payload: number[]) {
@@ -54,6 +53,10 @@ const timelineModel: ModelConfig<TimelineState> = {
         },
         [ACTION_SOURCE_CHANGE](payload: AudioBuffer) {
             dispatch.timeline[REDUCER_SET_DURATION](payload.duration * 1000);
+            dispatch.timeline[ACTION_CLIP_REGION_CHANGE]([
+                0,
+                payload.duration * 1000
+            ]);
         },
         [ACTION_CLIP_REGION_CHANGE](payload: number[], rootState: any) {
             const timeline = rootState.timeline;
@@ -64,6 +67,8 @@ const timelineModel: ModelConfig<TimelineState> = {
             }
             payload[0] = clamp(payload[0], 0, timeline.duration);
             payload[1] = clamp(payload[1], 0, timeline.duration);
+            const player = getPlayer();
+            player.setRegion(payload);
             dispatch.timeline[REDUCER_SET_CLIP_REGION](payload);
         }
     })

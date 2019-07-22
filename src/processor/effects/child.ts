@@ -2,6 +2,7 @@ import { clamp } from 'lodash';
 import Effect, { EffectOptions, effectDefaultOptions, effectDescriptor } from './effect';
 import Equalizer3Band, { Equalizer3BandOptions, equalizer3BandDescriptor, equalizer3BandDefaultOptions } from '../composite/equalizer3Band';
 import PhaseVocoderNode from '../phaseVocoderNode';
+import { EffectType } from '../effectType';
 
 export interface ChildOptions extends Equalizer3BandOptions, EffectOptions{
     highpassFreq: number;
@@ -29,6 +30,8 @@ export default class Child extends Effect {
     static PITCH_DEFAULT = 1.5;
     static PITCH_MIN = 0.5;
     static PITCH_MAX = 2.0;
+
+    readonly type: EffectType = EffectType.CHILD;
 
     private _phaseVocoder: PhaseVocoderNode;
     private _equalizer: Equalizer3Band;

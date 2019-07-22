@@ -1,6 +1,9 @@
 import Effect from './effect';
+import { EffectType } from '../effectType';
 
 export default class Robot2 extends Effect {
+
+    readonly type: EffectType = EffectType.ROBOT2;
 
     private _osc1: OscillatorNode;
     private _osc2: OscillatorNode;

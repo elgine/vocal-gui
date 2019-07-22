@@ -28,7 +28,12 @@ const createAudioBuffer = (ctx: AudioContext, duration: number, chunks: Float32A
 export default class Recorder {
 
     public readonly onProcess: Signal = new Signal();
-    private _bufferSize: number = 1024;
+
+    /**
+     * `onaudioprocess` will be triggered when ScriptProcessor's buffer is capcable.
+     * If too small, GC will trigger frequently, because of `onaudioprocess` event
+     */
+    private _bufferSize: number = 2048;
     private _audioContext!: AudioContext;
     private _mediaStream?: MediaStream;
     private _scriptor!: ScriptProcessorNode;
@@ -39,7 +44,7 @@ export default class Recorder {
 
     async init(bufferSize?: number) {
         this.clear();
-        this._bufferSize = bufferSize || 1024;
+        this._bufferSize = bufferSize || this._bufferSize;
         this._audioContext = new AudioContext();
         if (!this._audioContext) throw new Error('Can not initialize AudioContext');
         if (!this._mediaStream) {

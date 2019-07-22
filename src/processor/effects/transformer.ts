@@ -1,7 +1,10 @@
 import Effect from './effect';
 import Jungle from '../composite/jungle';
+import { EffectType } from '../effectType';
 
 export default class Transformer extends Effect {
+
+    readonly type: EffectType = EffectType.TRANSFORMER;
 
     private _input: GainNode;
     private _jungle1: Jungle;

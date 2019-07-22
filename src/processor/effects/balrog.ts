@@ -1,5 +1,6 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions, effectDefaultOptions, effectDescriptor } from './effect';
+import { EffectType } from '../effectType';
 
 export interface BalrogOptions extends EffectOptions{
     lfoFreq: number;
@@ -60,6 +61,8 @@ export default class Balrog extends Effect {
     static FIRE_GAIN_DEFAULT = 0.3;
     static FIRE_GAIN_MIN = 0.0;
     static FIRE_GAIN_MAX = 4.0;
+
+    readonly type: EffectType = EffectType.BALROG;
 
     private _filter: BiquadFilterNode;
     private _compressor: DynamicsCompressorNode;

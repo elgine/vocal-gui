@@ -1,7 +1,10 @@
 import Effect from './effect';
 import { buildCurve } from '../dsp/createBuffer';
+import { EffectType } from '../effectType';
 
 export default class Megaphone extends Effect {
+
+    readonly type: EffectType = EffectType.MEGAPHONE;
 
     private _compressor: DynamicsCompressorNode;
     private _distortion: WaveShaperNode;

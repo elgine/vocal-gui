@@ -1,4 +1,5 @@
 import Effect, { EffectOptions, effectDefaultOptions, effectDescriptor } from './effect';
+import { EffectType } from '../effectType';
 
 export interface AlienOptions extends EffectOptions{
     lfoFreq: number;
@@ -14,6 +15,8 @@ export default class Alien extends Effect {
     static LFO_GAIN_DEFAULT = 0.05;
     static LFO_GAIN_MIN = 0.0;
     static LFO_GAIN_MAX = 4.0;
+
+    readonly type: EffectType = EffectType.ALIEN;
 
     private _delay: DelayNode;
     private _osc: OscillatorNode;

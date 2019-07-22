@@ -1,3 +1,5 @@
+import { EffectType } from '../effectType';
+
 export interface EffectOptions{
     gain: number;
 }
@@ -7,6 +9,8 @@ export default class Effect {
     static GAIN_DEFAULT = 1;
     static GAIN_MIN = 0;
     static GAIN_MAX = 4;
+
+    readonly type: EffectType = EffectType.NONE;
 
     protected _audioContext: BaseAudioContext;
     protected _gain: GainNode;

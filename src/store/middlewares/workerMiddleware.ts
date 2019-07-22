@@ -7,7 +7,8 @@ import { AnyAction, Dispatch } from 'redux';
 export default (workers: Dictionary<Worker>) => {
     return (store: any) => {
         return (next: Dispatch<AnyAction>) => {
-            for(let k in workers){
+            /* eslint-disable guard-for-in */
+            for (let k in workers) {
                 workers[k].addEventListener('message', (e: MessageEvent) => next(e.data));
             }
             return (action: AnyAction) => {

@@ -1,6 +1,9 @@
 import Effect from './effect';
+import { EffectType } from '../effectType';
 
 export default class Telephone extends Effect {
+
+    readonly type: EffectType = EffectType.TELEPHONE;
 
     private _b1: BiquadFilterNode;
     private _b2: BiquadFilterNode;

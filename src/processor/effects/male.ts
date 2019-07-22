@@ -1,6 +1,7 @@
 import { clamp } from 'lodash';
 import Effect, { EffectOptions, effectDescriptor, effectDefaultOptions } from './effect';
 import Jungle, { JungleOptions, jungleDefaultOptions, jungleDescriptor } from '../composite/jungle';
+import { EffectType } from '../effectType';
 
 export interface MaleOptions extends JungleOptions, EffectOptions{
     lowpassFreq: number;
@@ -11,6 +12,8 @@ export default class Male extends Effect {
     static LOWPASS_FREQ_DEFAULT = 4000.0;
     static LOWPASS_FREQ_MIN = 2000;
     static LOWPASS_FREQ_MAX = 20000;
+
+    readonly type: EffectType = EffectType.MALE;
 
     private _lowpass: BiquadFilterNode;
     private _jungle: Jungle;

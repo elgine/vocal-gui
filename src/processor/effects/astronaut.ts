@@ -1,7 +1,10 @@
 import Effect from './effect';
 import { buildCurve } from '../dsp/createBuffer';
+import { EffectType } from '../effectType';
 
 export default class Astronaut extends Effect {
+
+    readonly type: EffectType = EffectType.ASTRONAUT;
 
     private _b1: BiquadFilterNode;
     private _b2: BiquadFilterNode;

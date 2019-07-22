@@ -3,6 +3,7 @@ import Effect, { EffectOptions, effectDescriptor, effectDefaultOptions } from '.
 import { PhaseVocoderOptions, phaseVocoderDefaultOptions, phaseVocoderDescriptor } from '../dsp/phaseVocoder';
 import Vibrato, { VibratoOptions, vibrartoDefaultOptions, vibratoDescriptor } from '../composite/vibrato';
 import PhaseVocoderNode from '../phaseVocoderNode';
+import { EffectType } from '../effectType';
 
 export interface OldFemaleOptions extends PhaseVocoderOptions, VibratoOptions, EffectOptions{
     highpassFreq: number;
@@ -13,6 +14,8 @@ export default class OldFemale extends Effect {
     static HIGHPASS_FREQ_DEFAULT = 120.0;
     static HIGHPASS_FREQ_MIN = 100;
     static HIGHPASS_FREQ_MAX = 4000;
+
+    readonly type: EffectType = EffectType.OLD_FEMALE;
 
     private _highpass: BiquadFilterNode;
     private _vocoder: PhaseVocoderNode;

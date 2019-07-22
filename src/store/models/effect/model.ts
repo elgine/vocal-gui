@@ -8,6 +8,7 @@ import {
 } from './type';
 import { EffectType } from '../../../processor/effectType';
 import { getEffectOptions } from '../../../processor/effects/factory';
+import { getPlayer } from '../../../processor';
 
 const initialState: EffectState = {
     effect: EffectType.NONE,
@@ -28,10 +29,14 @@ export default {
     },
     effects: (dispatch: RematchDispatch) => ({
         [ACTION_SWITCH_EFFECT](payload: EffectType) {
+            const player = getPlayer();
+            player.setEffect(payload);
             dispatch.effect[REDUCER_SET_EFFECT](payload);
             dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](getEffectOptions(payload));
         },
         [ACTION_CHANGE_EFFECT_OPTIONS](payload: any) {
+            const player = getPlayer();
+            player.setEffectState(payload);
             dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](payload);
         }
     })

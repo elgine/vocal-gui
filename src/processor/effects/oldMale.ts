@@ -3,6 +3,7 @@ import Effect, { EffectOptions } from './effect';
 import { PhaseVocoderOptions, phaseVocoderDefaultOptions, phaseVocoderDescriptor } from '../dsp/phaseVocoder';
 import Vibrato, { VibratoOptions, vibrartoDefaultOptions, vibratoDescriptor } from '../composite/vibrato';
 import PhaseVocoderNode from '../phaseVocoderNode';
+import { EffectType } from '../effectType';
 
 export interface OldMaleOptions extends PhaseVocoderOptions, VibratoOptions, EffectOptions{
     lowpassFreq: number;
@@ -13,6 +14,8 @@ export default class OldMale extends Effect {
     static LOWPASS_FREQ_DEFAULT = 8000.0;
     static LOWPASS_FREQ_MIN = 500;
     static LOWPASS_FREQ_MAX = 20000;
+
+    readonly type: EffectType = EffectType.OLD_MALE;
 
     private _lowpass: BiquadFilterNode;
     private _vocoder: PhaseVocoderNode;
