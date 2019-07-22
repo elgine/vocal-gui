@@ -73,7 +73,9 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
                     </IconButton>
                 </Tooltip>
                 <RepeatButton value={repeat} onChange={onRepeatChange} />
-                <TimeInput label={`${getLang('CURRENT_TIME', lang)}: `} value={currentTime} onChange={onSeek} />
+                <TimeInput label={`${getLang('CURRENT_TIME', lang)}: `} placeholder={getLang('CURRENT_TIME', lang)}
+                    value={currentTime} onChange={onSeek}
+                />
             </Grow>
             <ToggleButton value={showEffectPanel} onChange={onToggleEffectPanel}>
                 <Tune />

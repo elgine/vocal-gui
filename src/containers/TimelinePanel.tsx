@@ -77,7 +77,7 @@ export interface TimelinePanelProps extends React.HTMLAttributes<{}>, TimelineSt
     timeScaleHeight?: number;
     waveHeight?: number;
     onSeek: (v: number) => void;
-    onClipRegionChange: (v: {start: number; end: number}) => void;
+    onClipRegionChange: (v: number[]) => void;
     onLoadSource: (v: {type: SourceType; value?: string | File | AudioBuffer}) => void;
 }
 
@@ -91,7 +91,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
     const lang = useContext(LangContext);
     const tsh = timeScaleHeight || 40;
     const wh = waveHeight || 128;
-    const showRegion = clipRegion.start !== clipRegion.end;
+    const showRegion = clipRegion[0] !== clipRegion[1];
     const classes = useStyles();
     const sourceBuffers: Float32Array[] = [];
     const sourceDuration = audioBuffer ? audioBuffer.duration * 1000 : 0;
@@ -145,17 +145,17 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
     };
     useEffect(() => {
         if (regionStartHasDown && !regionStartIsDragging) {
-            setLastClipStart(clipRegion.start);
+            setLastClipStart(clipRegion[0]);
         }
-    }, [regionStartHasDown, regionStartIsDragging, clipRegion.start]);
+    }, [regionStartHasDown, regionStartIsDragging, clipRegion[0]]);
 
     useEffect(() => {
         if (regionStartHasDown && regionStartIsDragging) {
             let newStart = lastClipStart + (regionStartCurPos.x - regionStartDownPos.x) / pixelsPerMSec;
-            newStart = clamp(newStart, 0, clipRegion.end);
-            onClipRegionChange({ start: newStart, end: clipRegion.end });
+            newStart = clamp(newStart, 0, clipRegion[1]);
+            onClipRegionChange([newStart, clipRegion[1]]);
         }
-    }, [regionStartHasDown, regionStartIsDragging, regionStartDownPos.x, regionStartCurPos.x, lastClipStart, clipRegion.end, pixelsPerMSec, onClipRegionChange]);
+    }, [regionStartHasDown, regionStartIsDragging, regionStartDownPos.x, regionStartCurPos.x, lastClipStart, clipRegion[1], pixelsPerMSec, onClipRegionChange]);
 
     const regionEndMoveHook = useMovement();
     const regionEndHasDown = regionEndMoveHook.hasDown;
@@ -168,16 +168,16 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
     };
     useEffect(() => {
         if (regionEndHasDown && !regionEndIsDragging) {
-            setLastClipEnd(clipRegion.end);
+            setLastClipEnd(clipRegion[1]);
         }
-    }, [regionEndHasDown, regionEndIsDragging, clipRegion.end]);
+    }, [regionEndHasDown, regionEndIsDragging, clipRegion[1]]);
     useEffect(() => {
         if (regionEndHasDown && regionEndIsDragging) {
             let newEnd = lastClipEnd + (regionEndCurPos.x - regionEndDownPos.x) / pixelsPerMSec;
-            newEnd = clamp(newEnd, clipRegion.start, duration);
-            onClipRegionChange({ end: newEnd, start: clipRegion.start });
+            newEnd = clamp(newEnd, clipRegion[0], duration);
+            onClipRegionChange([clipRegion[0], newEnd]);
         }
-    }, [regionEndHasDown, regionEndIsDragging, regionEndDownPos.x, regionEndCurPos.x, lastClipEnd, clipRegion.start, pixelsPerMSec, onClipRegionChange]);
+    }, [regionEndHasDown, regionEndIsDragging, regionEndDownPos.x, regionEndCurPos.x, lastClipEnd, clipRegion[0], pixelsPerMSec, onClipRegionChange]);
 
     const mainStyle: React.CSSProperties = {
         paddingTop: `${tsh}px`
@@ -237,10 +237,10 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                 {
                     showRegion ? (
                         <React.Fragment>
-                            <Pointer headShape="circular" color={primary} left={clipRegion.start * pixelsPerMSec} style={pointerStyle}
+                            <Pointer headShape="circular" color={primary} left={clipRegion[0] * pixelsPerMSec} style={pointerStyle}
                                 onMouseDown={onRegionStartMouseDown}
                             />
-                            <Pointer headShape="circular" color={primary} left={clipRegion.end * pixelsPerMSec} style={pointerStyle}
+                            <Pointer headShape="circular" color={primary} left={clipRegion[1] * pixelsPerMSec} style={pointerStyle}
                                 onMouseDown={onRegionEndMouseDown}
                             />
                         </React.Fragment>

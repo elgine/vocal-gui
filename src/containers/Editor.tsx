@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Slide, useMediaQuery } from '@material-ui/core';
+import { Slide, useMediaQuery, Paper } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import combineClassNames from '../utils/combineClassNames';
 import PlayerControls from './PlayerControls';
@@ -86,9 +86,9 @@ export default ({ className, ...others }: EditorProps) => {
             <ControlBar className={classes.controlBar} />
             <div className={combineClassNames(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
                 <Slide direction="left" in={openEffectPanel}>
-                    <div className={classes.effectPanel}>
+                    <Paper className={classes.effectPanel}>
                         <EffectPanel />
-                    </div>
+                    </Paper>
                 </Slide>
                 <TimelinePanel />
             </div>

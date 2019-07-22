@@ -14,5 +14,5 @@ export interface TimelineState{
     timeUnits: number[];
     duration: number;
     zoom: number;
-    clipRegion: {start: number; end: number};
+    clipRegion: number[];
 }

@@ -19,10 +19,7 @@ const initialState: TimelineState = {
     duration: 0,
     zoom: 1,
     timeUnits: TIME_UNITS,
-    clipRegion: {
-        start: 0,
-        end: 0
-    }
+    clipRegion: [0, 0]
 };
 
 const timelineModel: ModelConfig<TimelineState> = {
@@ -36,11 +33,11 @@ const timelineModel: ModelConfig<TimelineState> = {
         },
         [REDUCER_SET_DURATION](state: TimelineState, payload: number) {
             state.duration = payload;
-            state.clipRegion.start = 0;
-            state.clipRegion.end = payload;
+            state.clipRegion[0] = 0;
+            state.clipRegion[1] = payload;
             return state;
         },
-        [REDUCER_SET_CLIP_REGION](state: TimelineState, payload: {start: number; end: number}) {
+        [REDUCER_SET_CLIP_REGION](state: TimelineState, payload: number[]) {
             state.clipRegion = payload;
             return state;
         }
@@ -58,15 +55,15 @@ const timelineModel: ModelConfig<TimelineState> = {
         [ACTION_SOURCE_CHANGE](payload: AudioBuffer) {
             dispatch.timeline[REDUCER_SET_DURATION](payload.duration * 1000);
         },
-        [ACTION_CLIP_REGION_CHANGE](payload: {start: number; end: number}, rootState: any) {
+        [ACTION_CLIP_REGION_CHANGE](payload: number[], rootState: any) {
             const timeline = rootState.timeline;
-            if (payload.end < payload.start) {
-                let temp = payload.start;
-                payload.start = payload.end;
-                payload.end = temp;
+            if (payload[1] < payload[0]) {
+                let temp = payload[0];
+                payload[0] = payload[1];
+                payload[1] = temp;
             }
-            payload.start = clamp(payload.start, 0, timeline.duration);
-            payload.end = clamp(payload.end, 0, timeline.duration);
+            payload[0] = clamp(payload[0], 0, timeline.duration);
+            payload[1] = clamp(payload[1], 0, timeline.duration);
             dispatch.timeline[REDUCER_SET_CLIP_REGION](payload);
         }
     })
