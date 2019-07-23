@@ -51,7 +51,7 @@ export interface PlayerControlsProps extends Omit<ToolbarProps, 'onVolumeChange'
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
-    repeat, playing, volume, playbackSpeed, currentTime, showEffectPanel,
+    repeat, playing, volume, currentTime, showEffectPanel,
     onRepeatChange, onPlayingChange, onVolumeChange, onSkipPrevious,
     onSkipNext, onToggleEffectPanel, onSeek,
     ...others

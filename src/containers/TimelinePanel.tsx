@@ -16,12 +16,13 @@ import { LangContext, getLang } from '../lang';
 import { fade, contrast } from '../utils/color';
 import { PlayerState, ACTION_SEEK } from '../store/models/player/types';
 import ClipRegion from '../components/ClipRegion';
+import SourceInfo from './SourceInfo';
+import { UNDEFINED_STRING } from '../constant';
 
 const mapStateToProps = ({ timeline, player, source }: {timeline: TimelineState; player: PlayerState; source: SourceState}) => {
     return {
         currentTime: player.currentTime,
-        audioBuffer: source.audioBuffer,
-        loading: source.loading,
+        ...source,
         ...timeline
     };
 };
@@ -66,6 +67,11 @@ const useStyles = makeStyles((theme: Theme) => {
         },
         waveform: {
             borderBottom: `1px solid ${fade(theme.palette.divider, 0.65)}`
+        },
+        sourceInfo: {
+            position: 'absolute',
+            left: `${theme.spacing(1)}px`,
+            top: `${theme.spacing(1) * 0.5}px`
         }
     };
 });
@@ -215,6 +221,10 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                             {
                                 showRegion ? <ClipRegion pixelsPerMSec={pixelsPerMSec} region={clipRegion} style={clipRegionStyle} /> : undefined
                             }
+                            <SourceInfo className={classes.sourceInfo}
+                                sampleRate={44100}
+                                channels={2}
+                            />
                         </div>
                     ) : (
                         <Box position="absolute" bottom="50%" width="100%" textAlign="center">

@@ -2,7 +2,7 @@ import { RematchDispatch } from '@rematch/core';
 import { batch } from 'react-redux';
 import {
     SourceState,
-    REDUCER_SET_INFO,
+    REDUCER_SET_TITLE,
     REDUCER_SET_LOADING,
     REDUCER_SET_BUFFER,
     ACTION_LOAD_SOURCE,
@@ -17,16 +17,14 @@ import { ACTION_SHOW_MESSAGE } from '../message/type';
 
 const initialState: SourceState = {
     loading: false,
-    info: {
-        title: UNDEFINED_STRING
-    }
+    title: UNDEFINED_STRING
 };
 
 export default {
     state: initialState,
     reducers: {
-        [REDUCER_SET_INFO](state: SourceState, payload: any) {
-            state.info = payload;
+        [REDUCER_SET_TITLE](state: SourceState, payload: string) {
+            state.title = payload;
             return state;
         },
         [REDUCER_SET_LOADING](state: SourceState, payload: boolean) {
@@ -59,17 +57,13 @@ export default {
         },
         [ACTION_LOAD_FROM_URL](payload: string, rootState: any) {
             batch(() => {
-                dispatch.source[REDUCER_SET_INFO]({
-                    title: payload.substring(payload.lastIndexOf('/'))
-                });
+                dispatch.source[REDUCER_SET_TITLE](payload.substring(payload.lastIndexOf('/')));
                 dispatch.source[REDUCER_SET_LOADING](true);
             });
         },
         [ACTION_LOAD_FROM_LOCAL](payload: File, rootState: any) {
             batch(() => {
-                dispatch.source[REDUCER_SET_INFO]({
-                    title: payload.name.substring(payload.name.lastIndexOf('/'))
-                });
+                dispatch.source[REDUCER_SET_TITLE](payload.name.substring(payload.name.lastIndexOf('/')));
                 dispatch.source[REDUCER_SET_LOADING](true);
             });
         },
