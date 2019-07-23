@@ -9,7 +9,8 @@ import {
     ACTION_LOAD_FAILED,
     ACTION_LOAD_FROM_LOCAL,
     ACTION_LOAD_FROM_URL,
-    ACTION_LOAD_SOURCE_SUCCESS
+    ACTION_LOAD_SOURCE_SUCCESS,
+    ACTION_LOAD_FROM_MIC
 } from './types';
 import { UNDEFINED_STRING } from '../../../constant';
 import { ACTION_SOURCE_CHANGE } from '../timeline/types';
@@ -39,13 +40,7 @@ export default {
     effects: (dispatch: RematchDispatch) => ({
         [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}, rootState: any) {
             if (!payload.value) return;
-            if (payload.type === 'LOCAL') {
-                dispatch.source[ACTION_LOAD_FROM_LOCAL](payload.value);
-            } else if (payload.type === 'URL') {
-                dispatch.source[ACTION_LOAD_FROM_URL](payload.value);
-            } else {
-                dispatch.source[ACTION_LOAD_SOURCE_SUCCESS](payload.value);
-            }
+            dispatch.source[`ACTION_LOAD_FROM_${payload.type}`](payload.value);
         },
         [ACTION_LOAD_SOURCE_SUCCESS](payload: AudioBuffer) {
             batch(() => {
@@ -53,6 +48,12 @@ export default {
                 dispatch.source[REDUCER_SET_LOADING](false);
                 dispatch.player[ACTION_SOURCE_CHANGE](payload);
                 dispatch.timeline[ACTION_SOURCE_CHANGE](payload);
+            });
+        },
+        [ACTION_LOAD_FROM_MIC](payload: AudioBuffer, rootState: any) {
+            batch(() => {
+                dispatch.source[ACTION_LOAD_SOURCE_SUCCESS](payload);
+                dispatch.source[REDUCER_SET_TITLE](`Record${Date.now()}`);
             });
         },
         [ACTION_LOAD_FROM_URL](payload: string, rootState: any) {

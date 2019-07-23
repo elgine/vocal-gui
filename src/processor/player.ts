@@ -26,7 +26,9 @@ export default class Player extends Emitter {
     constructor() {
         super();
         this._onEnded = this._onEnded.bind(this);
-        this._ticker.timeGetter = () => this._audioCtx.currentTime * 1000;
+        this._ticker.timeGetter = () => {
+            return Math.max(0, (this._audioCtx.currentTime - this._audioCtx.baseLatency)) * 1000;
+        };
         this._ticker.cb = this._onTick.bind(this);
     }
 
@@ -34,8 +36,9 @@ export default class Player extends Emitter {
         if (this._effectType === effectType) return;
         this._effectType = effectType;
         if (this._playing && this._audioCtx) {
+            this.stop();
             await this._updateEffect();
-            this._updateGraph();
+            this.play();
         }
         initialState && this.setEffectState(initialState);
     }
@@ -139,7 +142,7 @@ export default class Player extends Emitter {
         this._disposeInput();
         this._input = this._audioCtx.createBufferSource();
         this._input.buffer = this._inputBuffer;
-        this._input.onended = this._onEnded;
+        // this._input.onended = this._onEnded;
     }
 
     private async _updateEffect() {

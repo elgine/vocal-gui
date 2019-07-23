@@ -1,5 +1,7 @@
 import { EffectType } from './effectType';
 import { createEffect } from './effects/factory';
+import { eq } from 'lodash';
+import Effect from './effects/effect';
 
 export enum RenderTaskLevel{
     NORMAL,
@@ -14,34 +16,73 @@ export enum RenderTaskState{
 }
 
 export interface RenderTask{
-    source: string;
-    dest: string;
+    source: AudioBuffer;
     level: RenderTaskLevel;
     state: RenderTaskState;
     taskCreatedTime: number;
     effectType: EffectType;
     effectOptions: any;
     segements: Segment[];
+    options: OfflineAudioContextOptions;
 }
 
-export default class Renderer {
+class Renderer {
 
-    public readonly offlineAudioCtx: OfflineAudioContext;
-    public readonly options: OfflineAudioContextOptions;
+    private _offlineAudioCtx!: OfflineAudioContext;
+    private _lastOptions!: OfflineAudioContextOptions;
+    private _effect!: Effect;
     private _rendering: boolean = false;
-    private _tasks: Dictionary<RenderTask> = {};
 
-    constructor(options: OfflineAudioContextOptions) {
-        this.options = options;
-        this.offlineAudioCtx = new OfflineAudioContext(options);
-        if (!this.offlineAudioCtx) {
-            throw new Error('Can not initialize OfflineAudioContext, please upgrade your browser to support');
+    * render(task: RenderTask) {
+        this._rendering = true;
+        if (!this._offlineAudioCtx || !eq(this._lastOptions, task.options)) {
+            this._offlineAudioCtx = new OfflineAudioContext(task.options);
+            this._lastOptions = task.options;
         }
+        yield this._buildGraph(task);
+        let buffer = yield this._offlineAudioCtx.startRendering();
+        this._rendering = false;
+        return buffer;
     }
 
+    * stop() {
+        yield this._offlineAudioCtx.suspend(this._offlineAudioCtx.currentTime);
+        this._rendering = false;
+    }
+
+    * resume() {
+        yield this._offlineAudioCtx.resume();
+        this._rendering = true;
+    }
+
+    private* _buildGraph(task: RenderTask) {
+        if (!this._effect || this._effect.type !== task.effectType) {
+            let e = yield createEffect(task.effectType, this._offlineAudioCtx);
+            if (!e) {
+                throw new Error(`No specific effect, ${task.effectType}`);
+            }
+            this._effect = e;
+        }
+        this._effect.set(task.effectOptions);
+        let input = this._offlineAudioCtx.createBufferSource();
+        input.buffer = task.source;
+        input.connect(this._effect.input);
+        this._effect.output.connect(this._offlineAudioCtx.destination);
+    }
+
+    get rendering() {
+        return this._rendering;
+    }
+}
+
+export default class RendererList {
+
+    private _rendering: boolean = false;
+    private _tasks: RenderTask[] = [];
+    private _renderers: Renderer[] = [];
+
     addTask(task: RenderTask) {
-        if (this._tasks[task.source] !== undefined) return;
-        this._tasks[task.source] = task;
+        this._tasks.push(task);
     }
 
     start(id?: string) {
@@ -77,8 +118,15 @@ export default class Renderer {
         this._render(tasks[0]);
     }
 
-    private _render(task: RenderTask) {
-        createEffect(task.effectType, this.offlineAudioCtx);
+    private* _render(task: RenderTask) {
+        while (true) {
+            const freeRenderers = this._renderers.filter((renderer) => !renderer.rendering);
+            const freeTasks = this._tasks.filter((task) => task.state === RenderTaskState.FREE);
+            if (freeTasks.length <= 0) {
+
+            }
+            yield;
+        }
     }
 
     get rendering() {

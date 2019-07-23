@@ -221,10 +221,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                             {
                                 showRegion ? <ClipRegion pixelsPerMSec={pixelsPerMSec} region={clipRegion} style={clipRegionStyle} /> : undefined
                             }
-                            <SourceInfo className={classes.sourceInfo}
-                                sampleRate={44100}
-                                channels={2}
-                            />
+                            {
+                                audioBuffer ? <SourceInfo className={classes.sourceInfo}
+                                    sampleRate={audioBuffer.sampleRate}
+                                    channels={audioBuffer.numberOfChannels}
+                                /> : undefined
+                            }
                         </div>
                     ) : (
                         <Box position="absolute" bottom="50%" width="100%" textAlign="center">

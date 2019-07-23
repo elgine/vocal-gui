@@ -4,6 +4,7 @@ import effect from './effect/model';
 import timeline from './timeline/model';
 import message from './message/model';
 import history from './history/model';
+import render from './render/model';
 
 export default {
     effect,
@@ -11,5 +12,6 @@ export default {
     player,
     source,
     timeline,
-    history
+    history,
+    render
 };

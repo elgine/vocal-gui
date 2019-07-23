@@ -20,7 +20,10 @@ const useStyles = makeStyles((theme: Theme) => {
         root: {
             position: 'absolute',
             width: '1px',
-            cursor: 'ew-resize'
+            cursor: 'ew-resize',
+            '&:active, &:hover': {
+                cursor: 'ew-resize'
+            }
         },
         triangle: {
             position: 'absolute',
