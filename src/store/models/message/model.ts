@@ -1,3 +1,4 @@
+import { batch } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import { MessageState, REDUCER_SET_MESSAGE, ACTION_SHOW_MESSAGE, ACTION_HIDE_MESSAGE, REDUCER_SET_SHOW } from './type';
 import { EMPTY_STRING } from '../../../constant';
@@ -23,8 +24,10 @@ export default {
     },
     effects: (dispatch: RematchDispatch) => ({
         [ACTION_SHOW_MESSAGE](payload: Message) {
-            dispatch.message[REDUCER_SET_MESSAGE](payload);
-            dispatch.message[REDUCER_SET_SHOW](true);
+            batch(() => {
+                dispatch.message[REDUCER_SET_MESSAGE](payload);
+                dispatch.message[REDUCER_SET_SHOW](true);
+            });
         },
         [ACTION_HIDE_MESSAGE](payload: any, rootState: any) {
             dispatch.message[REDUCER_SET_SHOW](false);

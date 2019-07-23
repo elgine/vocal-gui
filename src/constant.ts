@@ -11,6 +11,7 @@ export const EMPTY_DICT = {};
 export const EMPTY_ARRAY = [];
 export const EMPTY_STRING = '';
 export const EMPTY_FN = () => {};
+export const SLIDER_STEP_COUNT = 20;
 export const CANVAS_MAX_WIDTH = 8192;
 export const SUPPORT_AUDIO_EXTS = ['ogg', 'mp3', 'wav', 'webm'];
 export const SUPPORT_MIME = SUPPORT_AUDIO_EXTS.map((ext) => `audio/${ext}`).join(', ');

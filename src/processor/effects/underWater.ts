@@ -48,7 +48,7 @@ export default class UnderWater extends Effect {
         this._compressor.connect(this._gain);
         this._underWater.connect(this._underWaterGain);
         this._underWater.connect(this._compressor);
-
+        this._underWater.start();
         this.set({
             lowpassFreq: UnderWater.LOWPASS_FREQ_DEFAULT,
             inputGain: UnderWater.INPUT_GAIN_DEFAULT,
@@ -70,18 +70,12 @@ export default class UnderWater extends Effect {
         }
     }
 
-    start() {
-        this._wahwah.start();
-        this._underWater.start();
-    }
-
-    stop() {
-        this._wahwah.stop();
-        this._underWater.stop();
-    }
-
     dispose() {
         super.dispose();
+        this._lowpass.disconnect();
+        this._inputGain.disconnect();
+        this._underWaterGain.disconnect();
+        this._wahwah.dispose();
     }
 }
 

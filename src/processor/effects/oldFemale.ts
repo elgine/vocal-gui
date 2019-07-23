@@ -45,14 +45,6 @@ export default class OldFemale extends Effect {
         this._vibrato.set(options);
     }
 
-    start() {
-        this._vibrato.start();
-    }
-
-    stop() {
-        this._vibrato.stop();
-    }
-
     dispose() {
         super.dispose();
         this._highpass.disconnect();

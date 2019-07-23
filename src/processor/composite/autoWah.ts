@@ -91,7 +91,7 @@ export const autoWahDescriptor = {
 };
 
 export const autoWahDefaultOptions = {
-    envelopeFollowerFilterFrequency: AutoWah.ENVELOPE_FOLLOWER_FILTER_FREQ_DEFAULT,
+    envelopeFollowerFilterFreq: AutoWah.ENVELOPE_FOLLOWER_FILTER_FREQ_DEFAULT,
     filterDepth: AutoWah.FILTER_DEPTH_DEFAULT,
     filterQ: AutoWah.FILTER_Q_DEFAULT
 };

@@ -35,14 +35,6 @@ export default class Male extends Effect {
         this._jungle.set(options);
     }
 
-    start() {
-        this._jungle.start();
-    }
-
-    stop() {
-        this._jungle.stop();
-    }
-
     dispose() {
         super.dispose();
         this._lowpass.disconnect();

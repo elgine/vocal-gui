@@ -3,7 +3,7 @@ import { IconButton, Box, Slider, Tooltip } from '@material-ui/core';
 import { BoxProps } from '@material-ui/core/Box';
 import { VolumeDown, VolumeMute, VolumeOff, VolumeUp } from '@material-ui/icons';
 import { LangContext, getLang } from '../lang';
-import { VOLUME_MINIMUM, VOLUME_MAXIMUM } from '../constant';
+import { VOLUME_MINIMUM, VOLUME_MAXIMUM, SLIDER_STEP_COUNT } from '../constant';
 
 export interface VolumeProps extends Omit<BoxProps, 'onChange'>{
     value?: number;
@@ -37,7 +37,7 @@ export default ({ value, onChange }: VolumeProps) => {
                 </IconButton>
             </Tooltip>
             <Box ml={1}>
-                <Slider step={(VOLUME_MAXIMUM - VOLUME_MINIMUM) * 0.1}
+                <Slider step={(VOLUME_MAXIMUM - VOLUME_MINIMUM) / SLIDER_STEP_COUNT}
                     min={VOLUME_MINIMUM} max={VOLUME_MAXIMUM} value={v}
                     valueLabelDisplay="auto"
                     onChange={onValChange} style={{ minWidth: '120px' }}

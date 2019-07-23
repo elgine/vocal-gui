@@ -45,14 +45,6 @@ export default class OldMale extends Effect {
         this._vibrato.set(options);
     }
 
-    start() {
-        this._vibrato.start();
-    }
-
-    stop() {
-        this._vibrato.stop();
-    }
-
     dispose() {
         super.dispose();
         this._lowpass.disconnect();

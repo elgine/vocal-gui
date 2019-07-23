@@ -42,21 +42,13 @@ export default class Flanger extends Composite {
         this._delay.connect(this._wet);
         this._delay.connect(this._feedback);
         this._feedback.connect(this._input);
-
+        this._osc.start();
         this.set({
             flangerSpeed: Flanger.FLANGER_SPEED_DEFAULT,
             flangerDelay: Flanger.FLANGER_DELAY_DEFAULT,
             flangerDepth: Flanger.FLANGER_DEPTH_DEFAULT,
             flangerFeedback: Flanger.FLANGER_FEEDBACK_DEFAULT
         });
-    }
-
-    start() {
-        this._osc.start();
-    }
-
-    stop() {
-        this._osc.stop();
     }
 
     set(options: AnyOf<FlangerOptions>) {

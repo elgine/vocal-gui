@@ -74,7 +74,7 @@ export interface EditorProps extends React.HTMLAttributes<{}>{
 export default ({ className, ...others }: EditorProps) => {
     const classes = useStyles();
     const matches = useMediaQuery('(min-width: 600px)');
-    const [openEffectPanel, setOpenEffectPanel] = useState(false);
+    const [openEffectPanel, setOpenEffectPanel] = useState(true);
     const onToggleEffectPanel = (v: boolean) => {
         setOpenEffectPanel(v);
     };

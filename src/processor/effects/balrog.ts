@@ -120,6 +120,8 @@ export default class Balrog extends Effect {
         this._fire.connect(this._fireGain);
         this._fireGain.connect(this._gain);
 
+        this._fire.start();
+        this._osc.start();
         this.set(balrogDefaultOptions);
     }
 
@@ -173,16 +175,6 @@ export default class Balrog extends Effect {
         this._fireGain.disconnect();
         this._filter2.disconnect();
         this._noConvGain.disconnect();
-    }
-
-    start() {
-        this._fire.start();
-        this._osc.start();
-    }
-
-    stop() {
-        this._fire.stop();
-        this._osc.stop();
     }
 
     get input() {

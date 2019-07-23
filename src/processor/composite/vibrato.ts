@@ -33,20 +33,12 @@ export default class Vibrato extends Composite {
         this._oscGain.connect(this._delay.delayTime);
         this._input.connect(this._delay);
         this._delay.connect(this._wet);
-
+        this._osc.start();
         this.set({
             vibratoDelay: Vibrato.VIBRATO_DELAY_DEFAULT,
             vibratoDepth: Vibrato.VIBRATO_DEPTH_DEFAULT,
             vibratoSpeed: Vibrato.VIBRATO_SPEED_DEFAULT
         });
-    }
-
-    start() {
-        this._osc.start();
-    }
-
-    stop() {
-        this._osc.stop();
     }
 
     set(options: AnyOf<VibratoOptions>) {

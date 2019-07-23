@@ -18,21 +18,12 @@ export default class Female extends Effect {
         this._compressor = this._audioContext.createDynamicsCompressor();
         this._jungle.output.connect(this._compressor);
         this._compressor.connect(this._gain);
-
         this.set(femaleDefaultOptions);
     }
 
     set(options: AnyOf<FemaleOptions>) {
         super.set(options);
         this._jungle.set(options);
-    }
-
-    start() {
-        this._jungle.start();
-    }
-
-    stop() {
-        this._jungle.stop();
     }
 
     dispose() {

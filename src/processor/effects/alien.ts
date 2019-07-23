@@ -19,7 +19,7 @@ export default class Alien extends Effect {
     readonly type: EffectType = EffectType.ALIEN;
 
     private _delay: DelayNode;
-    private _osc: OscillatorNode;
+    private _osc!: OscillatorNode;
     private _oscGain: GainNode;
 
     constructor(audioContext: BaseAudioContext) {
@@ -27,10 +27,11 @@ export default class Alien extends Effect {
         this._delay = this._audioContext.createDelay();
         this._osc = this._audioContext.createOscillator();
         this._oscGain = this._audioContext.createGain();
-        this._osc.connect(this._oscGain);
         this._oscGain.connect(this._delay.delayTime);
         this._delay.connect(this._gain);
         this._delay.delayTime.value = 0.05;
+        this._osc.connect(this._oscGain);
+        this._osc.start();
         this.set(alienDefaultOptions);
     }
 
@@ -44,16 +45,11 @@ export default class Alien extends Effect {
         }
     }
 
-    start() {
-        this._osc.start();
-    }
-
-    stop() {
-        this._osc.stop();
-    }
-
     dispose() {
         super.dispose();
+        this._osc.disconnect();
+        this._oscGain.disconnect();
+        this._delay.disconnect();
     }
 
     get input() {

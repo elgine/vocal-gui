@@ -8,7 +8,7 @@ import Uncle, { uncleDefaultOptions, uncleDescriptor } from './uncle';
 import Female, { femaleDefaultOptions, femaleDescriptor } from './female';
 import Child, { childDefaultOptions, childDescriptor } from './child';
 import Male, { maleDefaultOptions, maleDescriptor } from './male';
-import OldMale, { oldMaleDescriptor } from './oldMale';
+import OldMale, { oldMaleDescriptor, oldMaleDefaultOptions } from './oldMale';
 import OldFemale, { oldFemaleDefaultOptions, oldFemaleDescriptor } from './oldFemale';
 import Transformer from './transformer';
 import Balrog, { balrogDefaultOptions, balrogDescriptor } from './balrog';
@@ -89,7 +89,7 @@ export const getEffectOptions = (type: EffectType) => {
         case EffectType.FEMALE: options = femaleDefaultOptions; break;
         case EffectType.MALE: options = maleDefaultOptions; break;
         case EffectType.OLD_FEMALE: options = oldFemaleDefaultOptions; break;
-        case EffectType.OLD_MALE: options = maleDefaultOptions; break;
+        case EffectType.OLD_MALE: options = oldMaleDefaultOptions; break;
         case EffectType.UNCLE: options = uncleDefaultOptions; break;
         case EffectType.UNDER_WATER: options = underWaterDefaultOptions; break;
         default: options = effectDefaultOptions; break;

@@ -33,20 +33,12 @@ export default class Chorus extends Composite {
         this._input.connect(this._wet);
         this._input.connect(this._delay);
         this._delay.connect(this._wet);
-
+        this._osc.start();
         this.set({
             chorusDelay: Chorus.CHORUS_DELAY_DEFAULT,
             chorusDepth: Chorus.CHORUS_DEPTH_DEFAULT,
             chorusSpeed: Chorus.CHORUS_SPEED_DEFAULT
         });
-    }
-
-    start() {
-        this._osc.start();
-    }
-
-    stop() {
-        this._osc.stop();
     }
 
     set(options: AnyOf<ChorusOptions>) {

@@ -6,15 +6,15 @@ export interface JungleOptions{
     pitchOffset: number;
 }
 
+const delayTime = 0.100;
+const fadeTime = 0.050;
+const bufferTime = 0.100;
+
 export default class Jungle extends Composite {
 
     static PITCH_OFFSET_DEFAULT: number = 0;
-    static PITCH_OFFSET_MIN: number = -0.1;
+    static PITCH_OFFSET_MIN: number = -1;
     static PITCH_OFFSET_MAX: number = 1;
-
-    private _previousPitch: number = 1;
-    private _bufferTime: number;
-    private _fadeTime: number;
 
     private _mod1: AudioBufferSourceNode;
     private _mod2: AudioBufferSourceNode;
@@ -35,11 +35,8 @@ export default class Jungle extends Composite {
     private _mix1: GainNode;
     private _mix2: GainNode;
 
-    constructor(audioContext: BaseAudioContext, delayTime: number = 0.1, fadeTime: number = 0.05, bufferTime: number = 0.1) {
+    constructor(audioContext: BaseAudioContext) {
         super(audioContext);
-        this._previousPitch = -1;
-        this._bufferTime = bufferTime;
-        this._fadeTime = fadeTime;
 
         this._mod1 = this._audioContext.createBufferSource();
         this._mod2 = this._audioContext.createBufferSource();
@@ -69,23 +66,21 @@ export default class Jungle extends Composite {
         this._mod3.connect(this._mod3Gain);
         this._mod4.connect(this._mod4Gain);
 
+
         this._modGain1 = this._audioContext.createGain();
         this._modGain2 = this._audioContext.createGain();
 
         this._delay1 = this._audioContext.createDelay();
         this._delay2 = this._audioContext.createDelay();
-
         this._mod1Gain.connect(this._modGain1);
         this._mod2Gain.connect(this._modGain2);
         this._mod3Gain.connect(this._modGain1);
         this._mod4Gain.connect(this._modGain2);
-
         this._modGain1.connect(this._delay1.delayTime);
         this._modGain2.connect(this._delay2.delayTime);
 
         this._fade1 = this._audioContext.createBufferSource();
         this._fade2 = this._audioContext.createBufferSource();
-
         let fadeBuffer = createFadeBuffer(this._audioContext, bufferTime, fadeTime);
         this._fade1.buffer = fadeBuffer;
         this._fade2.buffer = fadeBuffer;
@@ -94,7 +89,8 @@ export default class Jungle extends Composite {
 
         this._mix1 = this._audioContext.createGain();
         this._mix2 = this._audioContext.createGain();
-
+        this._mix1.gain.value = 0;
+        this._mix2.gain.value = 0;
         this._fade1.connect(this._mix1.gain);
         this._fade2.connect(this._mix2.gain);
 
@@ -105,27 +101,16 @@ export default class Jungle extends Composite {
         this._mix1.connect(this._wet);
         this._mix2.connect(this._wet);
 
-        this.set(jungleDefaultOptions);
-    }
-
-    start() {
         let t = 0.05;
-        let t2 = t + this._bufferTime - this._fadeTime;
-        this._mod1.start(0, 0, t * 1000);
-        this._mod2.start(0, 0, t2 * 1000);
-        this._mod3.start(0, 0, t * 1000);
-        this._mod4.start(0, 0, t2 * 1000);
-        this._fade1.start(0, 0, t * 1000);
-        this._fade2.start(0, 0, t2 * 1000);
-    }
+        let t2 = t + bufferTime - fadeTime;
+        this._mod1.start(t);
+        this._mod2.start(t2);
+        this._mod3.start(t);
+        this._mod4.start(t2);
+        this._fade1.start(t);
+        this._fade2.start(t2);
 
-    stop() {
-        this._mod1.stop();
-        this._mod2.stop();
-        this._mod3.stop();
-        this._mod4.stop();
-        this._fade1.stop();
-        this._fade2.stop();
+        this.set({ pitchOffset: 0 });
     }
 
     set(options: AnyOf<JungleOptions>) {
@@ -144,7 +129,6 @@ export default class Jungle extends Composite {
                 this._mod4Gain.gain.value = 0;
             }
             this._setDelay(0.1 * Math.abs(mul));
-            this._previousPitch = mul;
         }
     }
 
@@ -169,8 +153,8 @@ export default class Jungle extends Composite {
     }
 
     private _setDelay(delayTime: number) {
-        this._modGain1.gain.setTargetAtTime(0.5 * delayTime, 0, 0.01 * 1000);
-        this._modGain2.gain.setTargetAtTime(0.5 * delayTime, 0, 0.01 * 1000);
+        this._modGain1.gain.setTargetAtTime(0.5 * delayTime, 0, 0.01);
+        this._modGain2.gain.setTargetAtTime(0.5 * delayTime, 0, 0.01);
     }
 }
 
@@ -184,5 +168,5 @@ export const jungleDescriptor = {
 };
 
 export const jungleDefaultOptions = {
-    pitchOffset: 1
+    pitchOffset: 0
 };

@@ -22,19 +22,11 @@ export default class Robot1 extends Effect {
         this._oscGain.gain.value = 0.004;
         this._biquad.type = 'highpass';
         this._biquad.frequency.value = 695;
-
         this._osc.connect(this._oscGain);
         this._oscGain.connect(this._delay.delayTime);
         this._delay.connect(this._biquad);
         this._biquad.connect(this._gain);
-    }
-
-    start() {
         this._osc.start();
-    }
-
-    stop() {
-        this._osc.stop();
     }
 
     dispose() {

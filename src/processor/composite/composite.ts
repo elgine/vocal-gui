@@ -17,10 +17,6 @@ export default class Composite {
         this._wet.connect(this._output);
     }
 
-    start() {}
-
-    stop() {}
-
     set(options: any) {}
 
     crossFade(v: number) {

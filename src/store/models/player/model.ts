@@ -1,5 +1,6 @@
 import { RematchDispatch } from '@rematch/core';
 import { clamp } from 'lodash';
+import { batch } from 'react-redux';
 import {
     ACTION_SEEK, PlayerState, ACTION_SET_VOLUME,
     ACTION_PLAY, ACTION_STOP, ACTION_SWITCH_REPEAT, ACTION_SWITCH_PLAYING,
@@ -52,7 +53,10 @@ export default {
         });
         return {
             [ACTION_SOURCE_CHANGE](payload: AudioBuffer) {
-                dispatch.player[REDUCER_SET_DURATION](payload.duration * 1000);
+                batch(() => {
+                    dispatch.player[ACTION_STOP]();
+                    dispatch.player[REDUCER_SET_DURATION](payload.duration * 1000);
+                });
                 player.setSource(payload);
             },
             [ACTION_SKIP_PREVIOUS](payload: any, rootState: any) {

@@ -91,6 +91,9 @@ export default class Player extends Emitter {
 
     stop() {
         this._playing = false;
+        if (this._effect) {
+            this._effect.output.disconnect();
+        }
         this._disposeInput();
         this._ticker.stop();
     }
@@ -143,6 +146,10 @@ export default class Player extends Emitter {
         if (this._effect && this._effect.type !== this._effectType || (
             !this._effect && this._effectType !== EffectType.NONE
         )) {
+            if (this._effect) {
+                this._effect.dispose();
+                this._effect.output.disconnect();
+            }
             this._effect = await createEffect(this._effectType, this._audioCtx);
         }
         if (this._effect) {

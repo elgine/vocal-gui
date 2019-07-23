@@ -1,3 +1,4 @@
+import { batch } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import {
     EffectState,
@@ -23,18 +24,23 @@ export default {
             return state;
         },
         [REDUCER_SET_EFFECT_OPTIONS](state: EffectState, payload: any) {
-            state.effectOptions = payload;
+            /* eslint-disable */
+            for (let k in payload) {
+                state.effectOptions[k] = payload[k];
+            }
             return state;
         }
     },
     effects: (dispatch: RematchDispatch) => ({
-        [ACTION_SWITCH_EFFECT](payload: EffectType) {
+        async [ACTION_SWITCH_EFFECT](payload: EffectType) {
             const player = getPlayer();
-            player.setEffect(payload);
-            dispatch.effect[REDUCER_SET_EFFECT](payload);
-            dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](getEffectOptions(payload));
+            await player.setEffect(payload);
+            batch(() => {
+                dispatch.effect[REDUCER_SET_EFFECT](payload);
+                dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](getEffectOptions(payload));
+            });
         },
-        [ACTION_CHANGE_EFFECT_OPTIONS](payload: any) {
+        [ACTION_CHANGE_EFFECT_OPTIONS](payload: any, rootState: any) {
             const player = getPlayer();
             player.setEffectState(payload);
             dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](payload);

@@ -114,6 +114,7 @@ function TimeInput<T = number | number[], V = string | string[]>({ value, placeh
                             <Box display="flex" alignItems="center" py={1} px={2}>
                                 <TextField variant="outlined" label={placeholderList[0]}
                                     margin="dense" style={textFieldStyle} InputProps={{
+                                        type: 'number',
                                         endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
                                     }}
                                     value={startVal} onChange={onRegionStartChange} onKeyDown={onRegionStartKeyDown} onBlur={onRegionStartSubmit}
@@ -124,6 +125,7 @@ function TimeInput<T = number | number[], V = string | string[]>({ value, placeh
                                             <Box px={1}><ArrowRightAlt /></Box>
                                             <TextField variant="outlined" label={placeholderList[1]}
                                                 margin="dense" style={textFieldStyle} InputProps={{
+                                                    type: 'number',
                                                     endAdornment: <InputAdornment position="end">{getLang('SECOND', lang)}</InputAdornment>
                                                 }}
                                                 value={endVal} onChange={onRegionEndChange} onKeyDown={onRegionEndKeyDown} onBlur={onRegionEndSubmit}

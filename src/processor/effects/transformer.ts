@@ -33,20 +33,11 @@ export default class Transformer extends Effect {
         this._jungle4.output.connect(this._compressor);
 
         this._compressor.connect(this._gain);
-    }
 
-    start() {
-        this._jungle1.start();
-        this._jungle2.start();
-        this._jungle3.start();
-        this._jungle4.start();
-    }
-
-    stop() {
-        this._jungle1.stop();
-        this._jungle2.stop();
-        this._jungle3.stop();
-        this._jungle4.stop();
+        this._jungle1.set({ pitchOffset: -0.1 });
+        this._jungle2.set({ pitchOffset: -0.2 });
+        this._jungle3.set({ pitchOffset: -0.4 });
+        this._jungle4.set({ pitchOffset: -0.8 });
     }
 
     dispose() {

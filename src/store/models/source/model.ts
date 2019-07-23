@@ -1,4 +1,5 @@
 import { RematchDispatch } from '@rematch/core';
+import { batch } from 'react-redux';
 import {
     SourceState,
     REDUCER_SET_INFO,
@@ -49,28 +50,36 @@ export default {
             }
         },
         [ACTION_LOAD_SOURCE_SUCCESS](payload: AudioBuffer) {
-            dispatch.source[REDUCER_SET_BUFFER](payload);
-            dispatch.source[REDUCER_SET_LOADING](false);
-            dispatch.player[ACTION_SOURCE_CHANGE](payload);
-            dispatch.timeline[ACTION_SOURCE_CHANGE](payload);
+            batch(() => {
+                dispatch.source[REDUCER_SET_BUFFER](payload);
+                dispatch.source[REDUCER_SET_LOADING](false);
+                dispatch.player[ACTION_SOURCE_CHANGE](payload);
+                dispatch.timeline[ACTION_SOURCE_CHANGE](payload);
+            });
         },
         [ACTION_LOAD_FROM_URL](payload: string, rootState: any) {
-            dispatch.source[REDUCER_SET_INFO]({
-                title: payload.substring(payload.lastIndexOf('/'))
+            batch(() => {
+                dispatch.source[REDUCER_SET_INFO]({
+                    title: payload.substring(payload.lastIndexOf('/'))
+                });
+                dispatch.source[REDUCER_SET_LOADING](true);
             });
-            dispatch.source[REDUCER_SET_LOADING](true);
         },
         [ACTION_LOAD_FROM_LOCAL](payload: File, rootState: any) {
-            dispatch.source[REDUCER_SET_INFO]({
-                title: payload.name.substring(payload.name.lastIndexOf('/'))
+            batch(() => {
+                dispatch.source[REDUCER_SET_INFO]({
+                    title: payload.name.substring(payload.name.lastIndexOf('/'))
+                });
+                dispatch.source[REDUCER_SET_LOADING](true);
             });
-            dispatch.source[REDUCER_SET_LOADING](true);
         },
         [ACTION_LOAD_FAILED](payload: Error, rootState: any) {
-            dispatch.source[REDUCER_SET_LOADING](false);
-            dispatch.message[ACTION_SHOW_MESSAGE]({
-                msg: payload.message,
-                msgType: 'ERROR'
+            batch(() => {
+                dispatch.source[REDUCER_SET_LOADING](false);
+                dispatch.message[ACTION_SHOW_MESSAGE]({
+                    msg: payload.message,
+                    msgType: 'ERROR'
+                });
             });
         }
     })

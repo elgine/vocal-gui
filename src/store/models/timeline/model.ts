@@ -1,5 +1,6 @@
 import { RematchDispatch, ModelConfig } from '@rematch/core';
 import { clamp } from 'lodash';
+import { batch } from 'react-redux';
 import {
     TimelineState,
     ACTION_ZOOM,
@@ -52,11 +53,13 @@ const timelineModel: ModelConfig<TimelineState> = {
             dispatch.timeline[REDUCER_SET_ZOOM](clamp(rootState.timeline.zoom - (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
         },
         [ACTION_SOURCE_CHANGE](payload: AudioBuffer) {
-            dispatch.timeline[REDUCER_SET_DURATION](payload.duration * 1000);
-            dispatch.timeline[ACTION_CLIP_REGION_CHANGE]([
-                0,
-                payload.duration * 1000
-            ]);
+            batch(() => {
+                dispatch.timeline[REDUCER_SET_DURATION](payload.duration * 1000);
+                dispatch.timeline[ACTION_CLIP_REGION_CHANGE]([
+                    0,
+                    payload.duration * 1000
+                ]);
+            });
         },
         [ACTION_CLIP_REGION_CHANGE](payload: number[], rootState: any) {
             const timeline = rootState.timeline;

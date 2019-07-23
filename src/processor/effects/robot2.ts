@@ -26,24 +26,14 @@ export default class Robot2 extends Effect {
         this._osc3.frequency.value = 50;
         this._delay.delayTime.value = 0.01;
         this._oscGain.gain.value = 0.004;
-
         this._osc1.connect(this._oscGain);
         this._osc2.connect(this._oscGain);
         this._osc3.connect(this._oscGain);
         this._oscGain.connect(this._delay.delayTime);
         this._delay.connect(this._gain);
-    }
-
-    start() {
         this._osc1.start();
         this._osc2.start();
         this._osc3.start();
-    }
-
-    stop() {
-        this._osc1.stop();
-        this._osc2.stop();
-        this._osc3.stop();
     }
 
     dispose() {

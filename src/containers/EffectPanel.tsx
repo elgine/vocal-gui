@@ -81,7 +81,7 @@ interface PaneProps extends React.HTMLAttributes<{}>{
     height?: string | number;
 }
 
-const TOOLBAR_HEIGHT = 64;
+const TOOLBAR_HEIGHT = 44;
 const usePaneStyles = makeStyles((theme: Theme) => ({
     root: {
         position: 'relative',
@@ -96,10 +96,12 @@ const usePaneStyles = makeStyles((theme: Theme) => ({
         height: `${TOOLBAR_HEIGHT}px`
     },
     content: {
+        position: 'relative',
+        zIndex: 1,
         height: '100%',
         overflow: 'hidden auto',
         boxSizing: 'border-box',
-        padding: `0 ${theme.spacing(2)}px`
+        padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`
     }
 }));
 
@@ -114,7 +116,7 @@ const Pane = ({ header, children, className, style, height, ...others }: PanePro
     }
     return (
         <div className={combinedClassName} style={combinedStyle} {...others}>
-            <Toolbar className={classes.toolbar}>
+            <Toolbar className={classes.toolbar} variant="dense">
                 {header}
             </Toolbar>
             <div className={classes.content}>
