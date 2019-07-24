@@ -5,7 +5,7 @@ import {
     REDUCER_SET_EFFECT,
     REDUCER_SET_EFFECT_OPTIONS,
     ACTION_SWITCH_EFFECT,
-    ACTION_CHANGE_EFFECT_OPTIONS
+    ACTION_EFFECT_OPTIONS_CHANGE
 } from './type';
 import { EffectType } from '../../../processor/effectType';
 import { getEffectOptions } from '../../../processor/effects/factory';
@@ -40,7 +40,7 @@ export default {
                 dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](getEffectOptions(payload));
             });
         },
-        [ACTION_CHANGE_EFFECT_OPTIONS](payload: any, rootState: any) {
+        [ACTION_EFFECT_OPTIONS_CHANGE](payload: any, rootState: any) {
             const player = getPlayer();
             player.setEffectState(payload);
             dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](payload);

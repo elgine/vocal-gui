@@ -11,9 +11,8 @@ import combineClassNames from '../utils/combineClassNames';
 import Placeholder from '../components/Placeholder';
 import { EMPTY_STRING } from '../constant';
 import EffectPropertyPane from './EffectPropertyPane';
-import { EffectState, ACTION_SWITCH_EFFECT, ACTION_CHANGE_EFFECT_OPTIONS } from '../store/models/effect/type';
+import { EffectState, ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from '../store/models/effect/type';
 import { getEffectDescriptor } from '../processor/effects/factory';
-import { BoxProps } from '@material-ui/core/Box';
 
 interface EffectItemProps extends GridProps{
     title?: string;
@@ -72,7 +71,7 @@ const mapStateToProps = (state: {effect: EffectState}) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onEffectChange: dispatch.effect[ACTION_SWITCH_EFFECT],
-        onEffectOptionsChange: dispatch.effect[ACTION_CHANGE_EFFECT_OPTIONS]
+        onEffectOptionsChange: dispatch.effect[ACTION_EFFECT_OPTIONS_CHANGE]
     };
 };
 
