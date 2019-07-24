@@ -51,7 +51,6 @@ export default {
                 dispatch.source[REDUCER_SET_TITLE](title);
                 dispatch.source[REDUCER_SET_BUFFER](buffer);
                 dispatch.source[REDUCER_SET_LOADING](false);
-                dispatch.player[ACTION_SOURCE_CHANGE](buffer);
                 dispatch.timeline[ACTION_SOURCE_CHANGE](buffer);
             });
         },

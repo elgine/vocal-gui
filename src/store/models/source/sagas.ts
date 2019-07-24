@@ -1,4 +1,5 @@
 import { fork, take, put, call, cancel, takeEvery } from 'redux-saga/effects';
+import { SagaMiddleware } from 'redux-saga';
 import {
     LoadFileFromURLAction,
     LoadFileFromLocalAction,
@@ -57,3 +58,8 @@ export function* importLocalSaga() {
 export function* importUrlSaga() {
     yield takeEvery(`source/${ACTION_LOAD_FROM_URL}`, importFromUrl);
 }
+
+export default (sagaMiddleware: SagaMiddleware<{}>) => {
+    sagaMiddleware.run(importLocalSaga);
+    sagaMiddleware.run(importUrlSaga);
+};

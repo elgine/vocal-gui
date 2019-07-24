@@ -1,12 +1,12 @@
 export const ACTION_UNDO = 'ACTION_UNDO';
 export const ACTION_REDO = 'ACTION_REDO';
-export const ACTION_PUSH_STATE = 'ACTION_PUSH_STATE';
+export const ACTION_SET_HISTORY = 'ACTION_SET_HISTORY';
 
 export const REDUCER_PUSH_STATE = 'REDUCER_PUSH_STATE';
 export const REDUCER_SET_STACK_INDEX = 'REDUCER_SET_STACK_INDEX';
 
-export interface HistoryState{
+export interface HistoryState<S>{
     currentIndex: number;
-    stateStack: any[];
-    currentState: any;
+    stateStack: S[];
+    currentState: S;
 }

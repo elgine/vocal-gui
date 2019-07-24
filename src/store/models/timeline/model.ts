@@ -10,17 +10,22 @@ import {
     REDUCER_SET_ZOOM,
     REDUCER_SET_CLIP_REGION,
     ACTION_ZOOM_IN,
-    ACTION_ZOOM_OUT
+    ACTION_ZOOM_OUT,
+    REDUCER_SET_CURRENT_TIME,
+    ACTION_SEEK,
+    ACTION_SKIP_NEXT
 } from './types';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT, ZOOM_MAXIMUM, ZOOM_MINIMUM } from '../../../constant';
 import calcProperTimeUnits from './calcProperTimeUnits';
 import { getPlayer } from '../../../processor';
+import { ACTION_SKIP_PREVIOUS } from '../player/types';
 
 const initialState: TimelineState = {
     pixelsPerMSec: 0.01,
     duration: 0,
     zoom: 1,
     timeUnits: TIME_UNITS,
+    currentTime: 0,
     clipRegion: [0, 0]
 };
 
@@ -31,6 +36,10 @@ const timelineModel: ModelConfig<TimelineState> = {
             state.zoom = payload;
             state.timeUnits = calcProperTimeUnits(~~(TIME_UNITS[0] / state.zoom));
             state.pixelsPerMSec = PIXELS_PER_TIME_UNIT / state.timeUnits[0];
+            return state;
+        },
+        [REDUCER_SET_CURRENT_TIME](state: TimelineState, payload: number) {
+            state.currentTime = clamp(payload, state.clipRegion[0], state.clipRegion[1]);
             return state;
         },
         [REDUCER_SET_DURATION](state: TimelineState, payload: number) {
@@ -60,6 +69,15 @@ const timelineModel: ModelConfig<TimelineState> = {
                     payload.duration * 1000
                 ]);
             });
+        },
+        [ACTION_SEEK](payload: number) {
+            dispatch.timeline[REDUCER_SET_CURRENT_TIME](payload);
+        },
+        [ACTION_SKIP_PREVIOUS](payload: any, rootState: any) {
+            dispatch.timeline[REDUCER_SET_CURRENT_TIME](rootState.timeline.clipRegion[0]);
+        },
+        [ACTION_SKIP_NEXT](payload: any, rootState: any) {
+            dispatch.timeline[REDUCER_SET_CURRENT_TIME](rootState.timeline.clipRegion[1]);
         },
         [ACTION_CLIP_REGION_CHANGE](payload: number[], rootState: any) {
             const timeline = rootState.timeline;

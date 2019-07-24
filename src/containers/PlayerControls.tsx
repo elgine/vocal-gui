@@ -14,32 +14,37 @@ import {
     PlayerState,
     ACTION_SWITCH_REPEAT,
     ACTION_SWITCH_PLAYING,
-    ACTION_SET_VOLUME,
+    ACTION_SET_VOLUME
+} from '../store/models/player/types';
+import {
     ACTION_SKIP_PREVIOUS,
     ACTION_SKIP_NEXT,
-    ACTION_SEEK
-} from '../store/models/player/types';
+    ACTION_SEEK,
+    TimelineState
+} from '../store/models/timeline/types';
 import ToggleButton from '../components/ToggleButton';
 import TimeInput from '../components/TimeInput';
 
-const mapStateToProps = ({ player }: {player: PlayerState}) => {
+const mapStateToProps = ({ player, timeline }: {player: PlayerState; timeline: TimelineState}) => {
     return {
-        ...player
+        ...player,
+        currentTime: timeline.currentTime
     };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onSkipPrevious: dispatch.player[ACTION_SKIP_PREVIOUS],
-        onSkipNext: dispatch.player[ACTION_SKIP_NEXT],
+        onSkipPrevious: dispatch.timeline[ACTION_SKIP_PREVIOUS],
+        onSkipNext: dispatch.timeline[ACTION_SKIP_NEXT],
+        onSeek: dispatch.timeline[ACTION_SEEK],
         onRepeatChange: dispatch.player[ACTION_SWITCH_REPEAT],
         onPlayingChange: dispatch.player[ACTION_SWITCH_PLAYING],
-        onVolumeChange: dispatch.player[ACTION_SET_VOLUME],
-        onSeek: dispatch.player[ACTION_SEEK]
+        onVolumeChange: dispatch.player[ACTION_SET_VOLUME]
     };
 };
 
 export interface PlayerControlsProps extends Omit<ToolbarProps, 'onVolumeChange'>, PlayerState{
+    currentTime: number;
     onRepeatChange: (v: boolean) => void;
     onPlayingChange: (v: boolean) => void;
     onVolumeChange: (v: number) => void;

@@ -3,7 +3,6 @@ import source from './source/model';
 import effect from './effect/model';
 import timeline from './timeline/model';
 import message from './message/model';
-import history from './history/model';
 import render from './render/model';
 
 export default {
@@ -12,6 +11,5 @@ export default {
     player,
     source,
     timeline,
-    history,
     render
 };

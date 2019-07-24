@@ -13,9 +13,7 @@ import LoadButton from './LoadButton';
 import ClipRegionInput from './ClipRegionControls';
 import ZoomControls from './ZoomControls';
 import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
-import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
 import ExportButton from './ExportButton';
-import TimeInput from '../components/TimeInput';
 
 export interface ControlBarProps extends ToolbarProps{
     onLoadSource: (v: {type: SourceType; value?: string| File | AudioBuffer}) => void;
@@ -30,8 +28,8 @@ const mapStateToProps = () => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onLoadSource: dispatch.source[ACTION_LOAD_SOURCE],
-        onUndo: dispatch.history[ACTION_UNDO],
-        onRedo: dispatch.history[ACTION_REDO]
+        onUndo: () => {},
+        onRedo: () => {}
     };
 };
 
