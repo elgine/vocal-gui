@@ -13,12 +13,12 @@ import {
     ACTION_ZOOM_OUT,
     REDUCER_SET_CURRENT_TIME,
     ACTION_SEEK,
+    ACTION_SKIP_PREVIOUS,
     ACTION_SKIP_NEXT
 } from './types';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT, ZOOM_MAXIMUM, ZOOM_MINIMUM } from '../../../constant';
 import calcProperTimeUnits from './calcProperTimeUnits';
 import { getPlayer } from '../../../processor';
-import { ACTION_SKIP_PREVIOUS } from '../player/types';
 
 const initialState: TimelineState = {
     pixelsPerMSec: 0.01,

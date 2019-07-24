@@ -64,6 +64,8 @@ export const combineHistoryReducers = (historyReducerOptions: Dictionary<History
         for (let name in reducerMap) {
             if (historyReducerOptions[name]) {
                 newReducerMap[name] = historyEnhancer(reducerMap[name], historyReducerOptions[name]);
+            } else {
+                newReducerMap[name] = reducerMap[name];
             }
         }
         return combineReducers(newReducerMap);
