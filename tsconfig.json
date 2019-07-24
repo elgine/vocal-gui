@@ -20,6 +20,7 @@
         "allowJs": true,
         "strict": true,
         "jsx": "react",
+        "downlevelIteration": true,
         "lib": [
             "es2015",
             "es2017",

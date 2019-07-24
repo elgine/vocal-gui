@@ -12,7 +12,7 @@ export default (workers: Dictionary<Worker>) => {
                 workers[k].addEventListener('message', (e: MessageEvent) => next(e.data));
             }
             return (action: AnyAction) => {
-                let { type, ...data } = action;
+                let { type, payload } = action;
                 let actionType = String(type);
                 let paths = actionType.split('/');
                 if (actionType.toLowerCase().startsWith('worker')) {
@@ -20,7 +20,7 @@ export default (workers: Dictionary<Worker>) => {
                     if (workers[workerName]) {
                         workers[workerName].postMessage({
                             type: `${workerName}/${paths[2] || ''}`,
-                            payload: data
+                            payload
                         });
                     }
                 }

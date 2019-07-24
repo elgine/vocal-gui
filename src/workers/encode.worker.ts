@@ -1,5 +1,5 @@
 import lamejs from 'lamejs';
-import  { merge } from 'lodash';
+import  { merge, eq } from 'lodash';
 
 interface EncodeConfig{
     channels?: number;
@@ -17,20 +17,18 @@ let rightChunk = new Float32Array(CHUNK_SIZE);
 let encoder: lamejs.Mp3Encoder;
 let lastConfig: {channels: number; sampleRate};
 
-const clearBuffer = ()=>{
-    chunks.length = 0;
+const clearBuffer = () => {
+    chunks = [];
 };
 
-const isConfigEquals = (c1: EncodeConfig, c2: EncodeConfig) => {
-    return c1.channels === c2.channels && c1.bitRate === c2.bitRate && c1.sampleRate === c2.sampleRate;
-};
+const isConfigEquals = (c1: EncodeConfig, c2: EncodeConfig) => eq(c1, c2);
 
 const init = (config?: EncodeConfig) => {
     const c = merge({ channels: 1, sampleRate: 44100, bitRate: 128 }, config);
     if (!encoder || (lastConfig && (!isConfigEquals(c, lastConfig)))) {
         encoder = new lamejs.Mp3Encoder(c.channels, c.sampleRate, c.bitRate);
-        clearBuffer();
     }
+    clearBuffer();
 };
 
 const encode = (channelData: Float32Array[]) => {
@@ -49,8 +47,8 @@ const encode = (channelData: Float32Array[]) => {
                 chunks.push(chunk);
             } else {
                 ctx.postMessage({
-                    type: 'encode/ACTION_ENCODE_ERROR',
-                    payload: 'Can not encode buffer to mp3 frame'     
+                    type: 'render/ACTION_ENCODE_ERROR',
+                    payload: 'Can not encode buffer to mp3 frame'
                 });
             }
         }
@@ -61,25 +59,32 @@ const close = () => {
     if (encoder) {
         const chunk = encoder.flush();
         if (chunk.length > 0) { chunks.push(chunk) }
-        ctx.postMessage({ type: 'encode/ACTION_ENCODE_SUCCESS', payload: chunks });
+        ctx.postMessage({ type: 'render/ACTION_ENCODE_SUCCESS', payload: chunks });
         clearBuffer();
     }
 };
 
 ctx.addEventListener('message', (e) => {
     const action = e.data;
-    if(!action.type)return;
-    switch (action.type.toLowerCase()) {
-        case 'encode/ACTION_INIT': {
-            init(action.payload);
-            break;
-        }
-        case 'encode/ACTION_ENCODE': {
-            encode(action.buffer);
-            break;
-        }
-        case 'encode/ACTION_CLOSE': {
-            close();
-        }
+    if (!action.type) return;
+    const { type, payload } = action;
+    if (type.toLowerCase() === 'encode/ACTION_ENCODE') {
+        const { options, buffer } = payload;
+        init(options);
+        encode(buffer);
+        close();
     }
+    // switch (type.toLowerCase()) {
+    //     case 'encode/ACTION_ENCODE_INIT': {
+    //         init(payload);
+    //         break;
+    //     }
+    //     case 'encode/ACTION_ENCODE': {
+    //         encode(payload);
+    //         break;
+    //     }
+    //     case 'encode/ACTION_ENCODE_CLOSE': {
+    //         close();
+    //     }
+    // }
 });

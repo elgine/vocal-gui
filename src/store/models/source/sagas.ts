@@ -2,7 +2,7 @@ import { fork, take, put, call, cancel, takeEvery } from 'redux-saga/effects';
 import {
     LoadFileFromURLAction,
     LoadFileFromLocalAction,
-    ACTION_CANCEL_LOAD_FILE,
+    ACTION_CANCEL_LOAD_SORUCE,
     ACTION_LOAD_SOURCE_SUCCESS,
     ACTION_LOAD_FROM_LOCAL,
     ACTION_LOAD_FROM_URL,
@@ -10,19 +10,29 @@ import {
 } from './types';
 import { loadFromLocal, loadFromUrl } from '../../../utils/loader';
 
-function* doImportFromLocal(action: LoadFileFromLocalAction) {
+function* doImportFromLocal({ payload }: LoadFileFromLocalAction) {
     try {
-        const buf = yield call(loadFromLocal, action.payload);
-        yield put({ type: `source/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: buf });
+        const buf = yield call(loadFromLocal, payload);
+        yield put({
+            type: `source/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: {
+                buffer: buf,
+                title: payload.name.substring(payload.name.lastIndexOf('/'))
+            }
+        });
     } catch (e) {
         yield put({ type: `source/${ACTION_LOAD_FAILED}`, payload: e });
     }
 }
 
-function* doImportFromURL(action: LoadFileFromURLAction) {
+function* doImportFromURL({ payload }: LoadFileFromURLAction) {
     try {
-        const buf = yield call(loadFromUrl, action.payload);
-        yield put({ type: `source/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: buf });
+        const buf = yield call(loadFromUrl, payload);
+        yield put({
+            type: `source/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: {
+                buffer: buf,
+                title: payload.substring(payload.lastIndexOf('/'))
+            }
+        });
     } catch (e) {
         yield put({ type: `source/${ACTION_LOAD_FAILED}`, payload: e });
     }
@@ -30,13 +40,13 @@ function* doImportFromURL(action: LoadFileFromURLAction) {
 
 function* importFromLocal(action: LoadFileFromLocalAction) {
     const task = yield fork(doImportFromLocal, action);
-    yield take(`source/${ACTION_CANCEL_LOAD_FILE}`);
+    yield take(`source/${ACTION_CANCEL_LOAD_SORUCE}`);
     yield cancel(task);
 }
 
 function* importFromUrl(action: LoadFileFromURLAction) {
     const task = yield fork(doImportFromURL, action);
-    yield take(`source/${ACTION_CANCEL_LOAD_FILE}`);
+    yield take(`source/${ACTION_CANCEL_LOAD_SORUCE}`);
     yield cancel(task);
 }
 

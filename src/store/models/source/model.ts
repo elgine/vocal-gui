@@ -10,7 +10,8 @@ import {
     ACTION_LOAD_FROM_LOCAL,
     ACTION_LOAD_FROM_URL,
     ACTION_LOAD_SOURCE_SUCCESS,
-    ACTION_LOAD_FROM_MIC
+    ACTION_LOAD_FROM_MIC,
+    ACTION_CANCEL_LOAD_SORUCE
 } from './types';
 import { UNDEFINED_STRING } from '../../../constant';
 import { ACTION_SOURCE_CHANGE } from '../timeline/types';
@@ -38,16 +39,20 @@ export default {
         }
     },
     effects: (dispatch: RematchDispatch) => ({
+        [ACTION_CANCEL_LOAD_SORUCE]() {
+            dispatch.source[REDUCER_SET_LOADING](false);
+        },
         [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}, rootState: any) {
             if (!payload.value) return;
             dispatch.source[`ACTION_LOAD_FROM_${payload.type}`](payload.value);
         },
-        [ACTION_LOAD_SOURCE_SUCCESS](payload: AudioBuffer) {
+        [ACTION_LOAD_SOURCE_SUCCESS]({ buffer, title }: {buffer: AudioBuffer; title: string}) {
             batch(() => {
-                dispatch.source[REDUCER_SET_BUFFER](payload);
+                dispatch.source[REDUCER_SET_TITLE](title);
+                dispatch.source[REDUCER_SET_BUFFER](buffer);
                 dispatch.source[REDUCER_SET_LOADING](false);
-                dispatch.player[ACTION_SOURCE_CHANGE](payload);
-                dispatch.timeline[ACTION_SOURCE_CHANGE](payload);
+                dispatch.player[ACTION_SOURCE_CHANGE](buffer);
+                dispatch.timeline[ACTION_SOURCE_CHANGE](buffer);
             });
         },
         [ACTION_LOAD_FROM_MIC](payload: AudioBuffer, rootState: any) {
@@ -57,16 +62,10 @@ export default {
             });
         },
         [ACTION_LOAD_FROM_URL](payload: string, rootState: any) {
-            batch(() => {
-                dispatch.source[REDUCER_SET_TITLE](payload.substring(payload.lastIndexOf('/')));
-                dispatch.source[REDUCER_SET_LOADING](true);
-            });
+            dispatch.source[REDUCER_SET_LOADING](true);
         },
         [ACTION_LOAD_FROM_LOCAL](payload: File, rootState: any) {
-            batch(() => {
-                dispatch.source[REDUCER_SET_TITLE](payload.name.substring(payload.name.lastIndexOf('/')));
-                dispatch.source[REDUCER_SET_LOADING](true);
-            });
+            dispatch.source[REDUCER_SET_LOADING](true);
         },
         [ACTION_LOAD_FAILED](payload: Error, rootState: any) {
             batch(() => {

@@ -2,13 +2,13 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { clamp } from 'lodash';
 import TimeScale from '../components/TimeScale';
-import { Box, CircularProgress } from '@material-ui/core';
+import { Box, CircularProgress, Button } from '@material-ui/core';
 import { makeStyles, Theme, withTheme } from '@material-ui/core/styles';
 import { OpenInNew, ArrowDropDown } from '@material-ui/icons';
 import Waveform from '../components/Waveform';
 import { TimelineState, ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
 import combineClassNames from '../utils/combineClassNames';
-import { SourceState, ACTION_LOAD_SOURCE } from '../store/models/source/types';
+import { SourceState, ACTION_LOAD_SOURCE, ACTION_CANCEL_LOAD_SORUCE } from '../store/models/source/types';
 import LoadButton from './LoadButton';
 import useMovement from '../hooks/useMovement';
 import Pointer from '../components/Pointer';
@@ -17,7 +17,6 @@ import { fade, contrast } from '../utils/color';
 import { PlayerState, ACTION_SEEK } from '../store/models/player/types';
 import ClipRegion from '../components/ClipRegion';
 import SourceInfo from './SourceInfo';
-import { UNDEFINED_STRING } from '../constant';
 
 const mapStateToProps = ({ timeline, player, source }: {timeline: TimelineState; player: PlayerState; source: SourceState}) => {
     return {
@@ -31,7 +30,8 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onSeek: dispatch.player[ACTION_SEEK],
         onClipRegionChange: dispatch.timeline[ACTION_CLIP_REGION_CHANGE],
-        onLoadSource: dispatch.source[ACTION_LOAD_SOURCE]
+        onLoadSource: dispatch.source[ACTION_LOAD_SOURCE],
+        onCancelLoadSource: dispatch.source[ACTION_CANCEL_LOAD_SORUCE]
     };
 };
 
@@ -82,6 +82,7 @@ export interface TimelinePanelProps extends React.HTMLAttributes<{}>, TimelineSt
     audioBuffer?: AudioBuffer;
     timeScaleHeight?: number;
     waveHeight?: number;
+    onCancelLoadSource: () => void;
     onSeek: (v: number) => void;
     onClipRegionChange: (v: number[]) => void;
     onLoadSource: (v: {type: SourceType; value?: string | File | AudioBuffer}) => void;
@@ -90,7 +91,7 @@ export interface TimelinePanelProps extends React.HTMLAttributes<{}>, TimelineSt
 export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
     theme, className, timeScaleHeight, waveHeight, pixelsPerMSec,
     currentTime, timeUnits, duration, zoom, audioBuffer, loading, clipRegion,
-    onClipRegionChange, onLoadSource, onSeek,
+    onClipRegionChange, onLoadSource, onSeek, onCancelLoadSource,
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
     const primary = theme.palette.primary[theme.palette.type];
@@ -231,7 +232,13 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
                     ) : (
                         <Box position="absolute" bottom="50%" width="100%" textAlign="center">
                             {
-                                loading ? <CircularProgress /> : (
+                                loading ? <React.Fragment>
+                                    <CircularProgress />
+                                    <br /><br />
+                                    <Button variant="outlined" onClick={onCancelLoadSource}>
+                                        {getLang('CANCEL', lang)}
+                                    </Button>
+                                </React.Fragment> : (
                                     <LoadButton color="primary" variant="contained" onLoadSource={onLoadSource}>
                                         <OpenInNew />
                                     &nbsp;
