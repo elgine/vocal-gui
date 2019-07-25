@@ -22,8 +22,8 @@ export default React.memo((props: ToolbarProps) => {
     const lang = useContext(LangContext);
     const dispatch = useDispatch<RematchDispatch>();
     const onLoadSource = dispatch.source[ACTION_LOAD_SOURCE];
-    const onUndo = dispatch.history[ACTION_UNDO];
-    const onRedo = dispatch.history[ACTION_REDO];
+    const onUndo = () => dispatch({ type: ACTION_UNDO });
+    const onRedo = () => dispatch({ type: ACTION_REDO });
     return (
         <Toolbar {...props}>
             <Tooltip title={getLang('LOAD_SOURCE_FROM', lang)}>
