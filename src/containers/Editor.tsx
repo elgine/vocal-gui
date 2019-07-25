@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { RematchDispatch } from '@rematch/core';
+import { useDispatch } from 'react-redux';
 import { Slide, useMediaQuery, Paper } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import combineClassNames from '../utils/combineClassNames';
@@ -8,6 +10,7 @@ import scrollBar from '../components/mixins/scrollBar';
 import { fade } from '../utils/color';
 import ControlBar from './ControlBar';
 import EffectPanel from './EffectPanel';
+import { ACTION_CALL_HOTKEY } from '../store/models/hotkeys/types';
 
 const PLAYER_CONTROLS_HEIGHT = 64;
 const CONTROL_BAR_HEIGHT = 64;
@@ -67,17 +70,31 @@ const useStyles = makeStyles((theme: Theme) => {
     };
 });
 
-export interface EditorProps extends React.HTMLAttributes<{}>{
-
-}
-
-export default ({ className, ...others }: EditorProps) => {
+export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
+    const dispatch = useDispatch<RematchDispatch>();
     const classes = useStyles();
     const matches = useMediaQuery('(min-width: 600px)');
     const [openEffectPanel, setOpenEffectPanel] = useState(true);
     const onToggleEffectPanel = (v: boolean) => {
         setOpenEffectPanel(v);
     };
+
+    useEffect(() => {
+        const onKeyDown = (e: KeyboardEvent) => {
+            dispatch.hotkeys[ACTION_CALL_HOTKEY]({
+                hotkey: {
+                    ctrl: e.ctrlKey,
+                    shift: e.shiftKey,
+                    alt: e.altKey,
+                    keyCode: e.keyCode
+                }
+            });
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return () => {
+            window.removeEventListener('keydown', onKeyDown);
+        };
+    }, []);
     return (
         <div className={combineClassNames(
             classes.root,

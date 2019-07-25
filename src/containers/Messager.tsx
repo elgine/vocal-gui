@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Snackbar, SnackbarContent, IconButton } from '@material-ui/core';
 import { SnackbarContentProps } from '@material-ui/core/SnackbarContent';
 import { MessageState, ACTION_HIDE_MESSAGE } from '../store/models/message/type';
@@ -11,6 +10,8 @@ import { amber, green } from '@material-ui/core/colors';
 import WarningIcon from '@material-ui/icons/Warning';
 import { makeStyles } from '@material-ui/core/styles';
 import combineClassNames from '../utils/combineClassNames';
+import { useSelector, useDispatch } from 'react-redux';
+import { RematchDispatch } from '@rematch/core';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
     SUCCESS: {
@@ -74,9 +75,8 @@ const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
     );
 };
 
-export interface MessagerProps extends MessageState{
+export interface MessagerProps{
     messageAutoHideDuraiton?: number;
-    onMessageClose: () => void;
 }
 
 const mapStateToProps = ({ message }: {message: MessageState}) => {
@@ -85,13 +85,10 @@ const mapStateToProps = ({ message }: {message: MessageState}) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onMessageClose: dispatch.message[ACTION_HIDE_MESSAGE]
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({ messageAutoHideDuraiton, showMsg, msg, msgType, onMessageClose }: MessagerProps) => {
+export default React.memo(({ messageAutoHideDuraiton }: MessagerProps) => {
+    const { showMsg, msgType, msg } = useSelector(mapStateToProps);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onMessageClose = dispatch.message[ACTION_HIDE_MESSAGE];
     return (
         <Snackbar autoHideDuration={messageAutoHideDuraiton || 6000}
             open={showMsg} anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
@@ -104,8 +101,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({ messag
         </Snackbar>
     );
 }, (prevProps: MessagerProps, nextProps: MessagerProps) => {
-    return prevProps.msg === nextProps.msg &&
-        prevProps.msgType === nextProps.msgType &&
-        prevProps.showMsg === nextProps.showMsg &&
-        prevProps.messageAutoHideDuraiton === nextProps.messageAutoHideDuraiton;
-}));
+    return prevProps.messageAutoHideDuraiton === nextProps.messageAutoHideDuraiton;
+});

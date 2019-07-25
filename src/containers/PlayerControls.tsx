@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import {
     Toolbar, IconButton, Tooltip
 } from '@material-ui/core';
@@ -24,6 +24,7 @@ import {
 } from '../store/models/timeline/types';
 import ToggleButton from '../components/ToggleButton';
 import TimeInput from '../components/TimeInput';
+import { RematchDispatch } from '@rematch/core';
 
 const mapStateToProps = ({ player, timeline }: {player: PlayerState; timeline: TimelineState}) => {
     return {
@@ -32,35 +33,24 @@ const mapStateToProps = ({ player, timeline }: {player: PlayerState; timeline: T
     };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onSkipPrevious: dispatch.timeline[ACTION_SKIP_PREVIOUS],
-        onSkipNext: dispatch.timeline[ACTION_SKIP_NEXT],
-        onSeek: dispatch.timeline[ACTION_SEEK],
-        onRepeatChange: dispatch.player[ACTION_SWITCH_REPEAT],
-        onPlayingChange: dispatch.player[ACTION_SWITCH_PLAYING],
-        onVolumeChange: dispatch.player[ACTION_SET_VOLUME]
-    };
-};
-
-export interface PlayerControlsProps extends Omit<ToolbarProps, 'onVolumeChange'>, PlayerState{
-    currentTime: number;
-    onRepeatChange: (v: boolean) => void;
-    onPlayingChange: (v: boolean) => void;
-    onVolumeChange: (v: number) => void;
-    onSkipPrevious: () => void;
-    onSkipNext: () => void;
+export interface PlayerControlsProps extends ToolbarProps{
     showEffectPanel?: boolean;
     onToggleEffectPanel: (v: boolean) => void;
-    onSeek: (v: number) => void;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
-    repeat, playing, volume, currentTime, showEffectPanel,
-    onRepeatChange, onPlayingChange, onVolumeChange, onSkipPrevious,
-    onSkipNext, onToggleEffectPanel, onSeek,
+export default React.memo(({
+    showEffectPanel,
+    onToggleEffectPanel,
     ...others
 }: PlayerControlsProps) => {
+    const { volume, playing, repeat, currentTime } = useSelector(mapStateToProps);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onSkipPrevious = dispatch.timeline[ACTION_SKIP_PREVIOUS];
+    const onSkipNext = dispatch.timeline[ACTION_SKIP_NEXT];
+    const onSeek = dispatch.timeline[ACTION_SEEK];
+    const onRepeatChange = dispatch.player[ACTION_SWITCH_REPEAT];
+    const onPlayingChange = dispatch.player[ACTION_SWITCH_PLAYING];
+    const onVolumeChange = dispatch.player[ACTION_SET_VOLUME];
     const lang = useContext(LangContext);
     return (
         <Toolbar {...others}>
@@ -92,10 +82,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
         </Toolbar>
     );
 }, (prevProps: PlayerControlsProps, nextProps: PlayerControlsProps) => {
-    return prevProps.volume === nextProps.volume &&
-        prevProps.repeat === nextProps.repeat &&
-        prevProps.playing === nextProps.playing &&
-        prevProps.currentTime === nextProps.currentTime &&
-        prevProps.showEffectPanel === nextProps.showEffectPanel &&
+    return prevProps.showEffectPanel === nextProps.showEffectPanel &&
         prevProps.onToggleEffectPanel === nextProps.onToggleEffectPanel;
-}));
+});

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import { clamp } from 'lodash';
 import TimeScale from '../components/TimeScale';
 import { Box, CircularProgress, Button } from '@material-ui/core';
@@ -16,6 +16,7 @@ import { LangContext, getLang } from '../lang';
 import { fade, contrast } from '../utils/color';
 import ClipRegion from '../components/ClipRegion';
 import SourceInfo from './SourceInfo';
+import { RematchDispatch } from '@rematch/core';
 
 const mapStateToProps = ({ timeline, source }: {timeline: TimelineState; source: SourceState}) => {
     return {
@@ -74,24 +75,22 @@ const useStyles = makeStyles((theme: Theme) => {
     };
 });
 
-export interface TimelinePanelProps extends React.HTMLAttributes<{}>, TimelineState{
-    currentTime: number;
-    loading: boolean;
-    audioBuffer?: AudioBuffer;
+export interface TimelinePanelProps extends React.HTMLAttributes<{}>{
     timeScaleHeight?: number;
     waveHeight?: number;
-    onCancelLoadSource: () => void;
-    onSeek: (v: number) => void;
-    onClipRegionChange: (v: number[]) => void;
-    onLoadSource: (v: {type: SourceType; value?: string | File | AudioBuffer}) => void;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
-    theme, className, timeScaleHeight, waveHeight, pixelsPerMSec,
-    currentTime, timeUnits, duration, zoom, audioBuffer, loading, clipRegion,
-    onClipRegionChange, onLoadSource, onSeek, onCancelLoadSource,
+export default withTheme(({
+    theme, className, timeScaleHeight, waveHeight,
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
+    const { loading, clipRegion, currentTime, audioBuffer, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onSeek = dispatch.timeline[ACTION_SEEK];
+    const onClipRegionChange = dispatch.timeline[ACTION_CLIP_REGION_CHANGE];
+    const onLoadSource = dispatch.source[ACTION_LOAD_SOURCE];
+    const onCancelLoadSource = dispatch.source[ACTION_CANCEL_LOAD_SORUCE];
+
     const primary = theme.palette.primary[theme.palette.type];
     const lang = useContext(LangContext);
     const tsh = timeScaleHeight || 40;
@@ -271,4 +270,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(withTheme(({
             </div>
         </div>
     );
-}));
+});

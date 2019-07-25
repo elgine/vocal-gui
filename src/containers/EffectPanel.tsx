@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext, useRef, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import { Tooltip, Toolbar, Grid, Box, Button, Menu, MenuItem, Typography } from '@material-ui/core';
 import { GridProps } from '@material-ui/core/Grid';
 import { AudiotrackTwoTone, FilterList }  from '@material-ui/icons';
@@ -13,6 +13,7 @@ import { EMPTY_STRING } from '../constant';
 import EffectPropertyPane from './EffectPropertyPane';
 import { EffectState, ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from '../store/models/effect/type';
 import { getEffectDescriptor } from '../processor/effects/factory';
+import { RematchDispatch } from '@rematch/core';
 
 interface EffectItemProps extends GridProps{
     title?: string;
@@ -54,13 +55,6 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
         </Grid>
     );
 };
-
-export interface EffectPanelProps{
-    effect: EffectType;
-    onEffectChange: (v: EffectType) => void;
-    effectOptions: any;
-    onEffectOptionsChange: (v: any) => void;
-}
 
 const mapStateToProps = (state: {effect: EffectState}) => {
     return {
@@ -125,10 +119,11 @@ const Pane = ({ header, children, className, style, height, ...others }: PanePro
     );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(({
-    effect, effectOptions,
-    onEffectChange, onEffectOptionsChange
-}: EffectPanelProps) => {
+export default () => {
+    const { effect, effectOptions } = useSelector(mapStateToProps);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onEffectChange = dispatch.effect[ACTION_SWITCH_EFFECT];
+    const onEffectOptionsChange = dispatch.effect[ACTION_EFFECT_OPTIONS_CHANGE];
     const lang = useContext(LangContext);
     const filterBtnRef = useRef<HTMLButtonElement>(null);
     const [showFilterList, setShowFilterList] = useState(false);
@@ -216,4 +211,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(({
             </Pane>
         </React.Fragment>
     );
-});
+};

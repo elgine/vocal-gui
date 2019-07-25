@@ -7,7 +7,7 @@ import sourceSagas from './models/source/sagas';
 import renderSagas from './models/render/sagas';
 import workers from '../workers';
 import models from './models';
-import { combineHistoryReducers } from './models/history/enhancer';
+import historyPlugin from './models/history/enhancer';
 import { ACTION_LOAD_SOURCE_SUCCESS } from './models/source/types';
 import { ACTION_SEEK, ACTION_SOURCE_CHANGE, ACTION_ZOOM, ACTION_CLIP_REGION_CHANGE } from './models/timeline/types';
 import { ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from './models/effect/type';
@@ -18,8 +18,11 @@ const worker = createWorkerMiddleware(workers);
 const store = init({
     models,
     redux: {
-        middlewares: [worker, saga, thunk],
-        combineReducers: combineHistoryReducers({
+        middlewares: [worker, saga, thunk]
+    },
+    plugins: [
+        immerPlugin(),
+        historyPlugin({
             source: {
                 whiteList: [
                     `source/${ACTION_LOAD_SOURCE_SUCCESS}`
@@ -40,8 +43,7 @@ const store = init({
                 ]
             }
         })
-    },
-    plugins: [immerPlugin()]
+    ]
 });
 
 // Run sagas

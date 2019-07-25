@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
-    Toolbar, IconButton, Tooltip, Button, Chip
+    Toolbar, IconButton, Tooltip
 } from '@material-ui/core';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import {
-    Undo, Redo, OpenInNew, ArrowDropDown, List
+    Undo, Redo, OpenInNew, ArrowDropDown, Settings, HelpOutline
 } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
 import { getLang, LangContext } from '../lang';
@@ -14,32 +14,18 @@ import ClipRegionInput from './ClipRegionControls';
 import ZoomControls from './ZoomControls';
 import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import ExportButton from './ExportButton';
+import { RematchDispatch } from '@rematch/core';
+import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
 
-export interface ControlBarProps extends ToolbarProps{
-    onLoadSource: (v: {type: SourceType; value?: string| File | AudioBuffer}) => void;
-    onUndo: () => void;
-    onRedo: () => void;
-}
 
-const mapStateToProps = () => {
-    return {};
-};
-
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onLoadSource: dispatch.source[ACTION_LOAD_SOURCE],
-        onUndo: () => {},
-        onRedo: () => {}
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
-    onRedo, onUndo, onLoadSource,
-    ...others
-}: ControlBarProps) => {
+export default React.memo((props: ToolbarProps) => {
     const lang = useContext(LangContext);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onLoadSource = dispatch.source[ACTION_LOAD_SOURCE];
+    const onUndo = dispatch.history[ACTION_UNDO];
+    const onRedo = dispatch.history[ACTION_REDO];
     return (
-        <Toolbar {...others}>
+        <Toolbar {...props}>
             <Tooltip title={getLang('LOAD_SOURCE_FROM', lang)}>
                 <div>
                     <LoadButton onLoadSource={onLoadSource}>
@@ -59,10 +45,20 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
                     <Redo />
                 </IconButton>
             </Tooltip>
+            <ZoomControls />
             <Placeholder textAlign="center">
                 <ClipRegionInput />
             </Placeholder>
-            <ZoomControls />
+            <Tooltip title={getLang('SETTINGS', lang)}>
+                <IconButton>
+                    <Settings />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title={getLang('HELP', lang)}>
+                <IconButton>
+                    <HelpOutline />
+                </IconButton>
+            </Tooltip>
         </Toolbar>
     );
-}, () => true));
+}, () => true);

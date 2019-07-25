@@ -1,4 +1,5 @@
 import { Reducer, Action, combineReducers } from 'redux';
+import { } from '@rematch/immer';
 import { HistoryState, ACTION_UNDO, ACTION_REDO } from './types';
 
 export interface HistoryEnhancerOptions{
@@ -71,3 +72,11 @@ export const combineHistoryReducers = (historyReducerOptions: Dictionary<History
         return combineReducers(newReducerMap);
     };
 };
+
+export default (options: Dictionary<HistoryEnhancerOptions>) => ({
+    config: {
+        redux: {
+            combineReducers: combineHistoryReducers(options)
+        }
+    }
+});
