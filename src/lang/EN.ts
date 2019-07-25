@@ -83,6 +83,7 @@ export default {
     BIT_RATE: 'Bit rate',
     UNDO: 'Undo',
     REDO: 'Redo',
+    HOTKEY: 'Hotkey',
     LOAD_FROM_LOCAL: 'Load from local file',
     LOAD_FROM_URL: 'Load from url',
     LOAD_FROM_MIC: 'Load from mic stream',
