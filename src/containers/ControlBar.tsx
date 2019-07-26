@@ -1,32 +1,39 @@
 import React, { useContext } from 'react';
-import { useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import {
     Toolbar, IconButton, Tooltip
 } from '@material-ui/core';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import {
-    Undo, Redo, OpenInNew, ArrowDropDown, Settings, HelpOutline
+    Undo, Redo, OpenInNew, ArrowDropDown
 } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
 import { getLang, LangContext } from '../lang';
 import LoadButton from './LoadButton';
-import ClipRegionInput from './ClipRegionControls';
+import ClipRegionControls from './ClipRegionControls';
 import ZoomControls from './ZoomControls';
 import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import ExportButton from './ExportButton';
-import { RematchDispatch } from '@rematch/core';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
-import SettingsButton from './SettingsButton';
 
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        onLoadSource: dispatch.source[ACTION_LOAD_SOURCE],
+        onUndo: () => dispatch({ type: ACTION_UNDO }),
+        onRedo: () => dispatch({ type: ACTION_REDO })
+    };
+};
 
-export default React.memo((props: ToolbarProps) => {
+export interface ControlBarProps extends ToolbarProps{
+    onLoadSource: () => void;
+    onUndo: () => void;
+    onRedo: () => void;
+}
+
+export default connect(undefined, mapDispatchToProps)(React.memo(({ onUndo, onRedo, onLoadSource, ...others }: ControlBarProps) => {
     const lang = useContext(LangContext);
-    const dispatch = useDispatch<RematchDispatch>();
-    const onLoadSource = dispatch.source[ACTION_LOAD_SOURCE];
-    const onUndo = () => dispatch({ type: ACTION_UNDO });
-    const onRedo = () => dispatch({ type: ACTION_REDO });
     return (
-        <Toolbar {...props}>
+        <Toolbar {...others}>
             <Tooltip title={getLang('LOAD_SOURCE_FROM', lang)}>
                 <div>
                     <LoadButton onLoadSource={onLoadSource}>
@@ -46,16 +53,10 @@ export default React.memo((props: ToolbarProps) => {
                     <Redo />
                 </IconButton>
             </Tooltip>
-            <ZoomControls />
             <Placeholder textAlign="center">
-                <ClipRegionInput />
+                <ClipRegionControls />
             </Placeholder>
-            <SettingsButton />
-            <Tooltip title={getLang('HELP', lang)}>
-                <IconButton>
-                    <HelpOutline />
-                </IconButton>
-            </Tooltip>
+            <ZoomControls />
         </Toolbar>
     );
-}, () => true);
+}, () => true));

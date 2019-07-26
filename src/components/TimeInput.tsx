@@ -4,7 +4,7 @@ import { ChipProps } from '@material-ui/core/Chip';
 import { ArrowRightAlt } from '@material-ui/icons';
 import { toTimeString } from '../utils/time';
 import { getLang, LangContext } from '../lang';
-import { ENTER_KEY_CODE } from '../constant';
+import keycode from 'keycode';
 
 export interface TimeInputProps<T = number|number[], V = string | string[]> extends Omit<ChipProps, 'onChange' | 'placeholder'>{
     value?: T;
@@ -64,12 +64,12 @@ function TimeInput<T = number | number[], V = string | string[]>({ value, placeh
         }
     };
     const onRegionStartKeyDown = (e: React.KeyboardEvent) => {
-        if (e.keyCode === ENTER_KEY_CODE) {
+        if (e.keyCode === keycode('enter')) {
             onRegionStartSubmit();
         }
     };
     const onRegionEndKeyDown = (e: React.KeyboardEvent) => {
-        if (e.keyCode === ENTER_KEY_CODE) {
+        if (e.keyCode === keycode('enter')) {
             onRegionEndSubmit();
         }
     };

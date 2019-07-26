@@ -14,9 +14,14 @@ export const ACTION_SKIP_NEXT = 'ACTION_SKIP_NEXT';
 
 export interface TimelineState{
     pixelsPerMSec: number;
+    baseTimeUnit: number;
     timeUnits: number[];
     duration: number;
     currentTime: number;
     clipRegion: number[];
     zoom: number;
+    zoomUnit: {
+        in: number;
+        out: number;
+    };
 }

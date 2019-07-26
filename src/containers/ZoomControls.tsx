@@ -1,15 +1,16 @@
 import React, { useContext } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { Box, Slider, IconButton, Tooltip } from '@material-ui/core';
 import { ZoomIn, ZoomOut } from '@material-ui/icons';
 import { LangContext, getLang } from '../lang';
 import { ZOOM_MINIMUM, ZOOM_MAXIMUM, SLIDER_STEP_COUNT } from '../constant';
 import { ACTION_ZOOM_IN, ACTION_ZOOM_OUT, ACTION_ZOOM } from '../store/models/timeline/types';
-import { RematchDispatch } from '@rematch/core';
 
 export interface ZoomControlsProps{
-    zoomMin?: number;
-    zoomMax?: number;
+    zoom: number;
+    onZoom: (v: number) => void;
+    onZoomIn: () => void;
+    onZoomOut: () => void;
 }
 
 const mapStateToProps = (state: any) => {
@@ -18,22 +19,22 @@ const mapStateToProps = (state: any) => {
     };
 };
 
-export default React.memo(({ zoomMin, zoomMax }: ZoomControlsProps) => {
-    const { zoom } = useSelector(mapStateToProps);
-    const dispatch = useDispatch<RematchDispatch>();
-    const onZoomIn = dispatch.timeline[ACTION_ZOOM_IN];
-    const onZoomOut = dispatch.timeline[ACTION_ZOOM_OUT];
-    const onZoom = dispatch.timeline[ACTION_ZOOM];
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        onZoomIn: dispatch.timeline[ACTION_ZOOM_IN],
+        onZoomOut: dispatch.timeline[ACTION_ZOOM_OUT],
+        onZoom: dispatch.timeline[ACTION_ZOOM]
+    };
+};
 
+export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({ zoom, onZoom, onZoomIn, onZoomOut }: ZoomControlsProps) => {
     const lang = useContext(LangContext);
     const onZoomSliderChange = (e: React.ChangeEvent<{}>, v: number | number[]) => {
         onZoom(typeof v === 'number' ? v : v[0]);
     };
-    const max = zoomMax || ZOOM_MAXIMUM;
-    const min = zoomMin || ZOOM_MINIMUM;
-    const step = (max - min) / SLIDER_STEP_COUNT;
+    const step = (ZOOM_MAXIMUM - ZOOM_MINIMUM) / SLIDER_STEP_COUNT;
     return (
-        <React.Fragment>
+        <Box id="zoom-controls" display="flex" alignItems="center" overflow="hidden visible">
             <Tooltip title={getLang('ZOOM_IN_TIMELINE', lang)}>
                 <IconButton onClick={onZoomIn}>
                     <ZoomIn />
@@ -44,14 +45,16 @@ export default React.memo(({ zoomMin, zoomMax }: ZoomControlsProps) => {
                     <ZoomOut />
                 </IconButton>
             </Tooltip>
-            <Box ml={2} maxWidth="120px" width="100%">
+            <Box m={3} width="128px">
                 <Slider value={zoom}
                     step={step}
-                    min={min}
-                    max={max}
+                    min={ZOOM_MINIMUM}
+                    max={ZOOM_MAXIMUM}
                     onChange={onZoomSliderChange}
                 />
             </Box>
-        </React.Fragment>
+        </Box>
     );
-}, () => true);
+}, (prevProps: ZoomControlsProps, nextProps: ZoomControlsProps) => {
+    return prevProps.zoom === nextProps.zoom;
+}));

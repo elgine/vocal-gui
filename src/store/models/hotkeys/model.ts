@@ -74,6 +74,7 @@ const defaultSkipNextHotkeyId = getHotkeyId(defaultSkipNext);
 const initialState: HotkeysState = {
     hotkeyActionMap: {
         [defaultSkipPreviousHotkeyId]: {
+            id: defaultSkipPreviousHotkeyId,
             hotkey: defaultSkipPrevious,
             action: {
                 title: 'SKIP_PREVIOUS',
@@ -81,6 +82,7 @@ const initialState: HotkeysState = {
             }
         },
         [defaultSkipNextHotkeyId]: {
+            id: defaultSkipNextHotkeyId,
             hotkey: defaultSkipNext,
             action: {
                 title: 'SKIP_NEXT',
@@ -88,20 +90,23 @@ const initialState: HotkeysState = {
             }
         },
         [defaultZoomOutHotkeyId]: {
+            id: defaultZoomOutHotkeyId,
             hotkey: defaultZoomOut,
             action: {
-                title: 'ZOOM_OUT',
+                title: 'ZOOM_OUT_TIMELINE',
                 value: `timeline/${ACTION_ZOOM_OUT}`
             }
         },
         [defaultZoomInHotkeyId]: {
+            id: defaultZoomInHotkeyId,
             hotkey: defaultZoomIn,
             action: {
-                title: 'ZOOM_IN',
+                title: 'ZOOM_IN_TIMELINE',
                 value: `timeline/${ACTION_ZOOM_IN}`
             }
         },
         [defaultPlayHotkeyId]: {
+            id: defaultPlayHotkeyId,
             hotkey: defaultPlayHotkey,
             action: {
                 title: 'TOGGLE',
@@ -109,6 +114,7 @@ const initialState: HotkeysState = {
             }
         },
         [defaultUndoHotkeyId]: {
+            id: defaultUndoHotkeyId,
             hotkey: defaultUndoHotkey,
             action: {
                 title: 'UNDO',
@@ -116,6 +122,7 @@ const initialState: HotkeysState = {
             }
         },
         [defaultRedoHotkeyId]: {
+            id: defaultRedoHotkeyId,
             hotkey: defaultRedoHotkey,
             action: {
                 title: 'REDO',
@@ -149,7 +156,10 @@ export default {
                 }
                 // Add new hotkey record
                 let id = getHotkeyId(hotkey); 
-                state.hotkeyActionMap[id] = payload[k];
+                state.hotkeyActionMap[id] = {
+                    id,
+                    ...payload[k]
+                };
                 state.actionHotkeyMap[action.value] = id;
             }
             return state;

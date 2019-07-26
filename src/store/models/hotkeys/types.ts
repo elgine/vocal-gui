@@ -10,6 +10,7 @@ export interface Hotkey{
 }
 
 export interface HotkeyAction{
+    id: string;
     hotkey: Hotkey;
     action: {
         title: string;

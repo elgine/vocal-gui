@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT } from '../constant';
-import { toTimeString } from '../utils/time';
 
 const MAX_CANVAS_WIDTH = 8192;
 const FONT_SIZE = 12;

@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Grid, Slider, Input } from '@material-ui/core';
 import { LangContext, getLang } from '../lang';
-import { ENTER_KEY_CODE, SLIDER_STEP_COUNT } from '../constant';
+import { SLIDER_STEP_COUNT } from '../constant';
+import keycode from 'keycode';
 
 export interface EffectPropertyDescriptor{
     min: number;
@@ -45,7 +46,7 @@ const PropertyField = ({ label, min, max, value, onChange }: PropertyFieldProps)
         }
     };
     const onInputKeyDown = (e: React.KeyboardEvent) => {
-        if (e.keyCode === ENTER_KEY_CODE) {
+        if (e.keyCode === keycode('enter')) {
             onSubmit();
         }
     };

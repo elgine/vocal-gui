@@ -9,7 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { amber, green } from '@material-ui/core/colors';
 import WarningIcon from '@material-ui/icons/Warning';
 import { makeStyles } from '@material-ui/core/styles';
-import combineClassNames from '../utils/combineClassNames';
+import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 
@@ -57,11 +57,11 @@ const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
     const Icon = variantIcon[variant || 'INFO'];
     return (
         <SnackbarContent
-            className={combineClassNames(classes[variant || 'INFO'], className)}
+            className={clsx(classes[variant || 'INFO'], className)}
             aria-describedby="client-snackbar"
             message={
                 <span id="client-snackbar" className={classes.message}>
-                    <Icon className={combineClassNames(classes.icon, classes.iconVariant)} />
+                    <Icon className={clsx(classes.icon, classes.iconVariant)} />
                     {message}
                 </span>
             }

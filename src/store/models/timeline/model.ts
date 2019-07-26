@@ -16,17 +16,53 @@ import {
     ACTION_SKIP_PREVIOUS,
     ACTION_SKIP_NEXT
 } from './types';
+import calcMaxFactor from '../../../utils/calcMaxFactor';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT, ZOOM_MAXIMUM, ZOOM_MINIMUM } from '../../../constant';
-import calcProperTimeUnits from './calcProperTimeUnits';
 import { getPlayer } from '../../../processor';
 
 const initialState: TimelineState = {
     pixelsPerMSec: 0.01,
     duration: 0,
     zoom: 1,
+    zoomUnit: {
+        in: 2,
+        out: 0.5
+    },
+    baseTimeUnit: TIME_UNITS[0],
     timeUnits: TIME_UNITS,
     currentTime: 0,
     clipRegion: [0, 0]
+};
+
+const roundTimeUnit = (timeUnit: number) => {
+    const unitStr = String(timeUnit);
+    const len = unitStr.length;
+    const den = Math.pow(10, len - 1);
+    return Math.ceil(timeUnit / den) * den;
+};
+
+const calcProperTimeUnit = (duration: number) => {
+    return roundTimeUnit(~~(duration * 0.05));
+};
+
+const calcProperTimeUnits = (timeUnit: number) => {
+    return [
+        timeUnit,
+        timeUnit * 0.5,
+        timeUnit * 0.25
+    ];
+};
+
+const updateTimeUnits = (state: TimelineState) => {
+    let zoom = 1;
+    if (state.zoom > 1) {
+        zoom = (state.zoom - 1) * state.zoomUnit.in + 1;
+    } else if (state.zoom < 1) {
+        zoom = 1 / (((1 - state.zoom) * state.zoomUnit.out) + 1);
+    }
+    let ideaTimeUnit = Math.ceil(state.baseTimeUnit * (zoom || 1));
+    state.timeUnits = calcProperTimeUnits(ideaTimeUnit);
+    state.pixelsPerMSec = PIXELS_PER_TIME_UNIT / state.timeUnits[0];
 };
 
 const timelineModel: ModelConfig<TimelineState> = {
@@ -34,8 +70,7 @@ const timelineModel: ModelConfig<TimelineState> = {
     reducers: {
         [REDUCER_SET_ZOOM](state: TimelineState, payload: number) {
             state.zoom = payload;
-            state.timeUnits = calcProperTimeUnits(~~(TIME_UNITS[0] / state.zoom));
-            state.pixelsPerMSec = PIXELS_PER_TIME_UNIT / state.timeUnits[0];
+            updateTimeUnits(state);
             return state;
         },
         [REDUCER_SET_CURRENT_TIME](state: TimelineState, payload: number) {
@@ -44,6 +79,11 @@ const timelineModel: ModelConfig<TimelineState> = {
         },
         [REDUCER_SET_DURATION](state: TimelineState, payload: number) {
             state.duration = payload;
+            state.baseTimeUnit = calcProperTimeUnit(state.duration);
+            state.zoomUnit.out = Math.max(2, Math.ceil(1000 / state.baseTimeUnit));
+            state.zoomUnit.in = Math.max(2, Math.ceil((state.duration * 0.01) / state.baseTimeUnit));
+            console.log(state.zoomUnit.out, state.zoomUnit.in);
+            updateTimeUnits(state);
             return state;
         },
         [REDUCER_SET_CLIP_REGION](state: TimelineState, payload: number[]) {
@@ -56,10 +96,10 @@ const timelineModel: ModelConfig<TimelineState> = {
             dispatch.timeline[REDUCER_SET_ZOOM](payload);
         },
         [ACTION_ZOOM_IN](payload: any, rootState: any) {
-            dispatch.timeline[REDUCER_SET_ZOOM](clamp(rootState.timeline.zoom + (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
+            dispatch.timeline[REDUCER_SET_ZOOM](clamp(rootState.timeline.zoom - (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
         },
         [ACTION_ZOOM_OUT](payload: any, rootState: any) {
-            dispatch.timeline[REDUCER_SET_ZOOM](clamp(rootState.timeline.zoom - (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
+            dispatch.timeline[REDUCER_SET_ZOOM](clamp(rootState.timeline.zoom + (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
         },
         [ACTION_SOURCE_CHANGE](payload: AudioBuffer) {
             batch(() => {

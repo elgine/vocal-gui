@@ -3,14 +3,15 @@ import { RematchDispatch } from '@rematch/core';
 import { useDispatch } from 'react-redux';
 import { Slide, useMediaQuery, Paper } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import combineClassNames from '../utils/combineClassNames';
-import PlayerControls from './PlayerControls';
+import clsx from 'clsx';
+import PlayerControlBar from './PlayerControlBar';
 import TimelinePanel from './TimelinePanel';
 import scrollBar from '../components/mixins/scrollBar';
 import { fade } from '../utils/color';
 import ControlBar from './ControlBar';
 import EffectPanel from './EffectPanel';
 import { ACTION_CALL_HOTKEY } from '../store/models/hotkeys/types';
+import HelpButton from './HelpButton';
 
 const PLAYER_CONTROLS_HEIGHT = 64;
 const CONTROL_BAR_HEIGHT = 64;
@@ -66,6 +67,11 @@ const useStyles = makeStyles((theme: Theme) => {
         },
         playerControls: {
             height: `${PLAYER_CONTROLS_HEIGHT}px`
+        },
+        helpButton: {
+            position: 'absolute',
+            bottom: theme.spacing(2),
+            right: theme.spacing(2)
         }
     };
 });
@@ -96,20 +102,25 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
         };
     }, []);
     return (
-        <div className={combineClassNames(
+        <div className={clsx(
             classes.root,
             className
         )} {...others}>
+            {/* <Guide /> */}
             <ControlBar className={classes.controlBar} />
-            <div className={combineClassNames(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
+            <div className={clsx(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
                 <Slide direction="left" in={openEffectPanel}>
-                    <Paper className={classes.effectPanel}>
+                    <Paper id="effect-panel" className={classes.effectPanel}>
                         <EffectPanel />
                     </Paper>
                 </Slide>
                 <TimelinePanel />
+                <HelpButton open={!openEffectPanel}
+                    color="secondary"
+                    className={classes.helpButton}
+                />
             </div>
-            <PlayerControls className={classes.playerControls}
+            <PlayerControlBar className={classes.playerControls}
                 showEffectPanel={openEffectPanel}
                 onToggleEffectPanel={onToggleEffectPanel}
             />

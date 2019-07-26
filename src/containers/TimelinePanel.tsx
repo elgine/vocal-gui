@@ -7,7 +7,7 @@ import { makeStyles, Theme, withTheme } from '@material-ui/core/styles';
 import { OpenInNew, ArrowDropDown } from '@material-ui/icons';
 import Waveform from '../components/Waveform';
 import { TimelineState, ACTION_SEEK, ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
-import combineClassNames from '../utils/combineClassNames';
+import clsx from 'clsx';
 import { SourceState, ACTION_LOAD_SOURCE, ACTION_CANCEL_LOAD_SORUCE } from '../store/models/source/types';
 import LoadButton from './LoadButton';
 import useMovement from '../hooks/useMovement';
@@ -22,15 +22,6 @@ const mapStateToProps = ({ timeline, source }: {timeline: TimelineState; source:
     return {
         ...source,
         ...timeline
-    };
-};
-
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onSeek: dispatch.timeline[ACTION_SEEK],
-        onClipRegionChange: dispatch.timeline[ACTION_CLIP_REGION_CHANGE],
-        onLoadSource: dispatch.source[ACTION_LOAD_SOURCE],
-        onCancelLoadSource: dispatch.source[ACTION_CANCEL_LOAD_SORUCE]
     };
 };
 
@@ -193,12 +184,13 @@ export default withTheme(({
         height: `${wh * channels + tsh}px`
     };
     return (
-        <div className={combineClassNames(
+        <div className={clsx(
             classes.root,
             className
         )} {...others}>
             <div ref={mainRef} className={classes.main} style={mainStyle}>
                 <TimeScale
+                    id="time-scale"
                     className={classes.timeScale}
                     timeUnits={timeUnits}
                     pixelsPerMSec={pixelsPerMSec}
@@ -211,7 +203,7 @@ export default withTheme(({
                         <div className={classes.content}>
                             {
                                 sourceBuffers.map((b, i) => (
-                                    <Waveform key={i} color="#fff" className={classes.waveform} height={wh}
+                                    <Waveform id={`waveform-${i}`} key={i} color="#fff" className={classes.waveform} height={wh}
                                         pixelsPerMSec={pixelsPerMSec} duration={sourceDuration} buffer={b}
                                     />
                                 ))
@@ -238,11 +230,11 @@ export default withTheme(({
                                 </React.Fragment> : (
                                     <LoadButton color="primary" variant="contained" onLoadSource={onLoadSource}>
                                         <OpenInNew />
-                                    &nbsp;
+                                        &nbsp;
                                         {
                                             getLang('LOAD_SOURCE_FROM', lang)
                                         }
-                                    ...
+                                        ...
                                         <ArrowDropDown />
                                     </LoadButton>
                                 )

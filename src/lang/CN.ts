@@ -1,4 +1,12 @@
 export default {
+    ZOOM_CONTROLS_TIPS: '时间轴缩放组件拥有"放大"以及“缩小”时间轴的时间比例，允许以不同的时间粒度去浏览音频波形',
+    TIME_SCALE_TIPS: '时间轴刻度会很方便的告知你所处时间频段',
+    WAVEFORM_TIPS: '音频波形图让你更直观的浏览音频响度与时间的关系',
+    PLAYER_VOLUME_TIPS: '通过音量组件，你可以实时更改播放器的音量，然而此组件不会影响导出音频文件的音量',
+    PLAYER_CONTROL_LIST_TIPS: '这是一组播放器组件，通过它们，你可以控制播放器的播放状态，比如：跳转到选择区域的开始结束位置；精确跳转到区域位置里某时间刻',
+    EFFECT_PANEL_COLLAPSE_BUTTON_TIPS: '你可以通过该按钮展开或收起效果面板',
+    EFFECT_PANEL_TIPS: '效果面板里的上下两个区域分别表示“效果列表”以及“对应效果选项”，你可以很方便的浏览效果，切换效果，并在下方更改选项',
+
     GAIN: '增益',
     LFO_FREQ: '低频振荡器频率',
     LFO_GAIN: '低频振荡器增益',
@@ -25,7 +33,6 @@ export default {
     ENVELOPE_FOLLOWER_FILTER_FREQ: '效果器过滤频率',
     FILTER_DEPTH: '过滤深度',
     FILTER_Q: '过滤Q值',
-
 
     ALIEN: '外星人',
     ASTRONAUT: '宇航员',
@@ -74,7 +81,7 @@ export default {
     NO_EFFECT_SELECTED: '没选中效果',
     EFFECT_PROPERTIES: '效果属性',
     EFFECT_LIST: '效果列表',
-    APPLY_EFFECT: '应用效果',
+    EFFECT: '效果',
     EXPORT_LIST: '导出列表',
     EXPORT: '导出',
     EXPORT_FORMAT: '导出格式',
@@ -89,14 +96,22 @@ export default {
     LOAD_FROM_MIC: '捕获自麦克风流',
     ZOOM_IN_TIMELINE: '放大时间轴',
     ZOOM_OUT_TIMELINE: '缩小时间轴',
+    GUIDE: '引导',
     REPEAT: '循环播放',
     NO_REPEAT: '不循环播放',
     MUTED: '静音',
     UNMUTED: '有声',
     SETTINGS: '设置',
+    TOGGLE: '开始/暂停',
     HELP: '帮助',
     START: '开始',
     STOP: '暂停',
     CANCEL: '取消',
-    CONFIRM: '确定'
+    CONFIRM: '确定',
+
+    BACK: '后退',
+    CLOSE: '关闭',
+    LAST: '上一个',
+    NEXT: '下一个',
+    SKIP: '跳转'
 } as Dictionary<string>;

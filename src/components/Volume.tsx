@@ -10,7 +10,7 @@ export interface VolumeProps extends Omit<BoxProps, 'onChange'>{
     onChange?: (v: number) => void;
 }
 
-export default ({ value, onChange }: VolumeProps) => {
+export default React.memo(({ value, onChange }: VolumeProps) => {
     const lang = useContext(LangContext);
     const v = value || 0;
     const [lastValue, setLastValue] = useState(0);
@@ -45,4 +45,7 @@ export default ({ value, onChange }: VolumeProps) => {
             </Box>
         </Box>
     );
-};
+}, (prevProps: VolumeProps, nextProps: VolumeProps) => {
+    return prevProps.value === nextProps.value &&
+        prevProps.onChange === nextProps.onChange;
+});
