@@ -16,6 +16,7 @@ import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import ExportButton from './ExportButton';
 import { RematchDispatch } from '@rematch/core';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
+import SettingsButton from './SettingsButton';
 
 
 export default React.memo((props: ToolbarProps) => {
@@ -49,11 +50,7 @@ export default React.memo((props: ToolbarProps) => {
             <Placeholder textAlign="center">
                 <ClipRegionInput />
             </Placeholder>
-            <Tooltip title={getLang('SETTINGS', lang)}>
-                <IconButton>
-                    <Settings />
-                </IconButton>
-            </Tooltip>
+            <SettingsButton />
             <Tooltip title={getLang('HELP', lang)}>
                 <IconButton>
                     <HelpOutline />

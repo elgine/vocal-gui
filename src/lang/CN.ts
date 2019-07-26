@@ -83,6 +83,7 @@ export default {
     BIT_RATE: '比特率',
     UNDO: '撤回',
     REDO: '重做',
+    HOTKEY: '热键',
     LOAD_FROM_LOCAL: '加载本地文件',
     LOAD_FROM_URL: '加载网络文件',
     LOAD_FROM_MIC: '捕获自麦克风流',
