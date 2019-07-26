@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import React, { useContext, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import {
     Toolbar, IconButton, Tooltip
 } from '@material-ui/core';
@@ -15,23 +15,14 @@ import ZoomControls from './ZoomControls';
 import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
 import ExportButton from './ExportButton';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
+import { RematchDispatch } from '@rematch/core';
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onLoadSource: dispatch.source[ACTION_LOAD_SOURCE],
-        onUndo: () => dispatch({ type: ACTION_UNDO }),
-        onRedo: () => dispatch({ type: ACTION_REDO })
-    };
-};
-
-export interface ControlBarProps extends ToolbarProps{
-    onLoadSource: () => void;
-    onUndo: () => void;
-    onRedo: () => void;
-}
-
-export default connect(undefined, mapDispatchToProps)(React.memo(({ onUndo, onRedo, onLoadSource, ...others }: ControlBarProps) => {
+export default React.memo(({ ...others }: ToolbarProps) => {
     const lang = useContext(LangContext);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onLoadSource = dispatch.source[ACTION_LOAD_SOURCE];
+    const onUndo = useCallback(() => dispatch({ type: ACTION_UNDO }), []);
+    const onRedo = useCallback(() => dispatch({ type: ACTION_REDO }), []);
     return (
         <Toolbar {...others}>
             <Tooltip title={getLang('LOAD_SOURCE_FROM', lang)}>
@@ -59,4 +50,4 @@ export default connect(undefined, mapDispatchToProps)(React.memo(({ onUndo, onRe
             <ZoomControls />
         </Toolbar>
     );
-}, () => true));
+}, () => true);

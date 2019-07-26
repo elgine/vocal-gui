@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext, useRef, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Tooltip, Toolbar, Grid, Box, Button, Menu, MenuItem, Typography } from '@material-ui/core';
 import { GridProps } from '@material-ui/core/Grid';
 import { AudiotrackTwoTone, FilterList }  from '@material-ui/icons';
@@ -13,6 +13,7 @@ import { EMPTY_STRING } from '../constant';
 import EffectPropertyPane from './EffectPropertyPane';
 import { EffectState, ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from '../store/models/effect/type';
 import { getEffectDescriptor } from '../processor/effects/factory';
+import { RematchDispatch } from '@rematch/core';
 
 interface EffectItemProps extends GridProps{
     title?: string;
@@ -58,13 +59,6 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
 const mapStateToProps = (state: {effect: EffectState}) => {
     return {
         ...state.effect
-    };
-};
-
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onEffectChange: dispatch.effect[ACTION_SWITCH_EFFECT],
-        onEffectOptionsChange: dispatch.effect[ACTION_EFFECT_OPTIONS_CHANGE]
     };
 };
 
@@ -118,13 +112,12 @@ const Pane = ({ header, children, className, style, height, ...others }: PanePro
     );
 };
 
-export interface EffectPanelProps extends EffectState{
-    onEffectChange: (v: EffectType) => void;
-    onEffectOptionsChange: (v: any) => void;
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({ effect, effectOptions, onEffectChange, onEffectOptionsChange }: EffectPanelProps) => {
+export default React.memo(() => {
     const filterBtnRef = useRef<HTMLButtonElement>(null);
+    const {effect, effectOptions} = useSelector(mapStateToProps, shallowEqual);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onEffectChange = dispatch.effect[ACTION_SWITCH_EFFECT];
+    const onEffectOptionsChange = dispatch.effect[ACTION_EFFECT_OPTIONS_CHANGE];
     const [showFilterList, setShowFilterList] = useState(false);
     const [effectCategory, setEffectCategory] = useState(EMPTY_STRING);
     const [currentEffectsVM, setCurrentEffectsVM] = useState<EffectType[]>([]);
@@ -211,7 +204,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({ effect
             </Pane>
         </React.Fragment>
     );
-}, (prevProps: EffectPanelProps, nextProps: EffectPanelProps) => {
-    return prevProps.effect === nextProps.effect &&
-        prevProps.effectOptions === nextProps.effectOptions;
-}));
+}, () => true);

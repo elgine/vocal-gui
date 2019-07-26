@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, shallowEqual, useDispatch } from 'react-redux';
 import TimeInput from '../components/TimeInput';
 import { getLang, LangContext } from '../lang';
 import { TimelineState, ACTION_SEEK } from '../store/models/timeline/types';
+import { RematchDispatch } from '@rematch/core';
 
 export interface PlayerCurrentTimeInputProps{
     currentTime: number;
@@ -15,23 +16,15 @@ const mapStateToProps = (state: {timeline: TimelineState}) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onSeek: dispatch.timeline[ACTION_SEEK]
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
-    currentTime,
-    onSeek
-}: PlayerCurrentTimeInputProps) => {
+export default React.memo(() => {
     const lang = useContext(LangContext);
+    const { currentTime } = useSelector(mapStateToProps, shallowEqual);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onSeek = dispatch.timeline[ACTION_SEEK];
     return (
         <TimeInput label={`${getLang('CURRENT_TIME', lang)}: `}
             placeholder={getLang('CURRENT_TIME', lang)}
             value={currentTime} onChange={onSeek}
         />
     );
-}, (prevProps: PlayerCurrentTimeInputProps, nextProps: PlayerCurrentTimeInputProps) => {
-    return prevProps.currentTime === nextProps.currentTime;
-}));
+}, () => true);

@@ -10,7 +10,7 @@ import { amber, green } from '@material-ui/core/colors';
 import WarningIcon from '@material-ui/icons/Warning';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
@@ -86,7 +86,7 @@ const mapStateToProps = ({ message }: {message: MessageState}) => {
 };
 
 export default React.memo(({ messageAutoHideDuraiton }: MessagerProps) => {
-    const { showMsg, msgType, msg } = useSelector(mapStateToProps);
+    const { showMsg, msgType, msg } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
     const onMessageClose = dispatch.message[ACTION_HIDE_MESSAGE];
     return (

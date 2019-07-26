@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import {
     PlayerState,
     ACTION_SWITCH_REPEAT,
@@ -7,15 +7,14 @@ import {
 } from '../store/models/player/types';
 import {
     ACTION_SKIP_PREVIOUS,
-    ACTION_SKIP_NEXT,
-    ACTION_SEEK,
-    TimelineState
+    ACTION_SKIP_NEXT
 } from '../store/models/timeline/types';
 import { Tooltip, IconButton } from '@material-ui/core';
 import { SkipPrevious, SkipNext } from '@material-ui/icons';
 import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
 import { LangContext, getLang } from '../lang';
+import { RematchDispatch } from '@rematch/core';
 
 const mapStateToProps = (state: {player: PlayerState}) => {
     return {
@@ -24,31 +23,15 @@ const mapStateToProps = (state: {player: PlayerState}) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onSkipPrevious: dispatch.timeline[ACTION_SKIP_PREVIOUS],
-        onSkipNext: dispatch.timeline[ACTION_SKIP_NEXT],
-        onRepeatChange: dispatch.player[ACTION_SWITCH_REPEAT],
-        onPlayingChange: dispatch.player[ACTION_SWITCH_PLAYING],
-    };
-};
 
-export interface PlayerControlsProps{
-    playing: boolean;
-    repeat: boolean;
-    onSkipPrevious: () => void;
-    onSkipNext: () => void;
-    onRepeatChange: (v: boolean) => void;
-    onPlayingChange: (v: boolean) => void;
-}
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
-    playing, repeat,
-    onSkipPrevious, onSkipNext,
-    onRepeatChange, onPlayingChange
-}: PlayerControlsProps) => {
+export default React.memo(() => {
     const lang = useContext(LangContext);
+    const { playing, repeat } = useSelector(mapStateToProps, shallowEqual);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onSkipPrevious = dispatch.timeline[ACTION_SKIP_PREVIOUS];
+    const onSkipNext = dispatch.timeline[ACTION_SKIP_NEXT];
+    const onRepeatChange = dispatch.player[ACTION_SWITCH_REPEAT];
+    const onPlayingChange = dispatch.player[ACTION_SWITCH_PLAYING];
     return (
         <React.Fragment>
             <Tooltip title={getLang('SKIP_PREVIOUS', lang)}>
@@ -65,7 +48,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
             <RepeatButton value={repeat} onChange={onRepeatChange} />
         </React.Fragment>
     );
-}, (prevProps: PlayerControlsProps, nextProps: PlayerControlsProps) => {
-    return prevProps.playing === nextProps.playing &&
-        prevProps.repeat === nextProps.repeat;
-}));
+}, () => true);

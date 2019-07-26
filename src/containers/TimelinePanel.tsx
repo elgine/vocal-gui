@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { connect, useSelector, useDispatch } from 'react-redux';
+import { connect, useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { clamp } from 'lodash';
 import TimeScale from '../components/TimeScale';
 import { Box, CircularProgress, Button } from '@material-ui/core';
@@ -75,7 +75,7 @@ export default withTheme(({
     theme, className, timeScaleHeight, waveHeight,
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
-    const { loading, clipRegion, currentTime, audioBuffer, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps);
+    const { loading, clipRegion, currentTime, audioBuffer, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
     const onSeek = dispatch.timeline[ACTION_SEEK];
     const onClipRegionChange = dispatch.timeline[ACTION_CLIP_REGION_CHANGE];

@@ -7,13 +7,6 @@ import { ZOOM_MINIMUM, ZOOM_MAXIMUM, SLIDER_STEP_COUNT } from '../constant';
 import { ACTION_ZOOM_IN, ACTION_ZOOM_OUT, ACTION_ZOOM } from '../store/models/timeline/types';
 import { RematchDispatch } from '@rematch/core';
 
-export interface ZoomControlsProps{
-    // zoom: number;
-    onZoom: (v: number) => void;
-    onZoomIn: () => void;
-    onZoomOut: () => void;
-}
-
 const mapStateToProps = (state: any) => {
     return {
         zoom: state.timeline.zoom
