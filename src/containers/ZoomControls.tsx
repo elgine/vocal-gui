@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Box, Slider, IconButton, Tooltip } from '@material-ui/core';
 import { ZoomIn, ZoomOut } from '@material-ui/icons';
 import { LangContext, getLang } from '../lang';
 import { ZOOM_MINIMUM, ZOOM_MAXIMUM, SLIDER_STEP_COUNT } from '../constant';
 import { ACTION_ZOOM_IN, ACTION_ZOOM_OUT, ACTION_ZOOM } from '../store/models/timeline/types';
+import { RematchDispatch } from '@rematch/core';
 
 export interface ZoomControlsProps{
-    zoom: number;
+    // zoom: number;
     onZoom: (v: number) => void;
     onZoomIn: () => void;
     onZoomOut: () => void;
@@ -19,16 +20,13 @@ const mapStateToProps = (state: any) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onZoomIn: dispatch.timeline[ACTION_ZOOM_IN],
-        onZoomOut: dispatch.timeline[ACTION_ZOOM_OUT],
-        onZoom: dispatch.timeline[ACTION_ZOOM]
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({ zoom, onZoom, onZoomIn, onZoomOut }: ZoomControlsProps) => {
+export default React.memo(() => {
     const lang = useContext(LangContext);
+    const dispatch = useDispatch<RematchDispatch>();
+    const { zoom } = useSelector(mapStateToProps, shallowEqual);
+    const onZoomIn = dispatch.timeline[ACTION_ZOOM_IN];
+    const onZoomOut = dispatch.timeline[ACTION_ZOOM_OUT];
+    const onZoom = dispatch.timeline[ACTION_ZOOM];
     const onZoomSliderChange = (e: React.ChangeEvent<{}>, v: number | number[]) => {
         onZoom(typeof v === 'number' ? v : v[0]);
     };
@@ -55,6 +53,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({ zoom, 
             </Box>
         </Box>
     );
-}, (prevProps: ZoomControlsProps, nextProps: ZoomControlsProps) => {
-    return prevProps.zoom === nextProps.zoom;
-}));
+}, () => true);

@@ -1,7 +1,8 @@
 import React from 'react';
 import Volume from '../components/Volume';
-import { connect } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { ACTION_SET_VOLUME, PlayerState } from '../store/models/player/types';
+import { RematchDispatch } from '@rematch/core';
 
 export interface PlayerVolumeProps{
     volume: number;
@@ -14,19 +15,11 @@ const mapStateToProps = (state: {player: PlayerState}) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onVolumeChange: dispatch.player[ACTION_SET_VOLUME]
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(({
-    volume,
-    onVolumeChange
-}: PlayerVolumeProps) => {
+export default React.memo(() => {
+    const { volume } = useSelector(mapStateToProps, shallowEqual);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onVolumeChange = dispatch.player[ACTION_SET_VOLUME];
     return (
         <Volume id="player-volume" value={volume} onChange={onVolumeChange} />
     );
-}, (prevProps: PlayerVolumeProps, nextProps: PlayerVolumeProps) => {
-    return prevProps.volume === nextProps.volume;
-}));
+}, () => true);
