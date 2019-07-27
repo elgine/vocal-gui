@@ -42,6 +42,7 @@ import { RootState } from '../../index';
 import { EffectType } from '../../../processor/effectType';
 import { getEffectOptions } from '../../../processor/effects/factory';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
+import Player from '../../../processor/player';
 
 const initialState: EditorState = {
     title: UNDEFINED_STRING,
@@ -158,6 +159,8 @@ const timelineModel: ModelConfig<EditorState> = {
     },
     effects: (dispatch: RematchDispatch<any>) => {
         const player = getPlayer();
+        player.on(Player.ON_TICK, dispatch.editor[REDUCER_SET_CURRENT_TIME]);
+        player.on(Player.ON_ENDED, () => dispatch.editor[REDUCER_SET_PLAYING](false));
         return {
             async [ACTION_SWITCH_EFFECT](payload: EffectType) {
                 await player.setEffect(payload);
@@ -215,11 +218,12 @@ const timelineModel: ModelConfig<EditorState> = {
             },
             [ACTION_LOAD_SOURCE_SUCCESS]({ buffer, title }: {buffer: AudioBuffer; title: string}) {
                 batch(() => {
+                    player.setSource(buffer);
                     dispatch.editor[REDUCER_SET_TITLE](title);
                     dispatch.editor[REDUCER_SET_BUFFER](buffer);
                     dispatch.editor[REDUCER_SET_LOADING](false);
                     dispatch.editor[REDUCER_SET_DURATION](buffer.duration * 1000);
-                    dispatch.editor[REDUCER_SET_CLIP_REGION]([
+                    dispatch.editor[ACTION_CLIP_REGION_CHANGE]([
                         0,
                         buffer.duration * 1000
                     ]);
@@ -241,19 +245,20 @@ const timelineModel: ModelConfig<EditorState> = {
                 dispatch.editor[REDUCER_SET_ZOOM](payload);
             },
             [ACTION_ZOOM_IN](payload: any, { present }: RootState) {
-                dispatch.editor[REDUCER_SET_ZOOM](clamp(present.editor.zoom - (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
+                dispatch.editor[ACTION_ZOOM](clamp(present.editor.zoom - (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
             },
             [ACTION_ZOOM_OUT](payload: any, { present }: RootState) {
-                dispatch.editor[REDUCER_SET_ZOOM](clamp(present.editor.zoom + (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
+                dispatch.editor[ACTION_ZOOM](clamp(present.editor.zoom + (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
             },
             [ACTION_SEEK](payload: number) {
+                player.seek(payload);
                 dispatch.editor[REDUCER_SET_CURRENT_TIME](payload);
             },
             [ACTION_SKIP_PREVIOUS](payload: any, { present }: RootState) {
-                dispatch.editor[REDUCER_SET_CURRENT_TIME](present.editor.clipRegion[0]);
+                dispatch.editor[ACTION_SEEK](present.editor.clipRegion[0]);
             },
             [ACTION_SKIP_NEXT](payload: any, { present }: RootState) {
-                dispatch.editor[REDUCER_SET_CURRENT_TIME](present.editor.clipRegion[1]);
+                dispatch.editor[ACTION_SEEK](present.editor.clipRegion[1]);
             },
             [ACTION_CLIP_REGION_CHANGE](payload: number[], { present }: RootState) {
                 const timeline = present.editor;
