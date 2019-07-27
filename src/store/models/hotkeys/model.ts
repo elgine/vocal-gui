@@ -8,9 +8,14 @@ import {
     ACTION_UPDATE_HOTKEYS
 } from './types';
 import { ACTION_UNDO, ACTION_REDO } from '../history/types';
-import { ACTION_SWITCH_PLAYING } from '../player/types';
-import { ACTION_ZOOM_OUT, ACTION_ZOOM_IN, ACTION_SKIP_PREVIOUS, ACTION_SKIP_NEXT } from '../timeline/types';
-import { RootState } from '../..';
+import {
+    ACTION_ZOOM_OUT,
+    ACTION_ZOOM_IN,
+    ACTION_SWITCH_PLAYING,
+    ACTION_SKIP_PREVIOUS,
+    ACTION_SKIP_NEXT
+} from '../editor/types';
+import { RootState } from '../../index';
 
 const getHotkeyId = (hotkey: Hotkey) => {
     return `${Number(hotkey.ctrl)}${Number(hotkey.shift)}${Number(hotkey.alt)}${hotkey.keyCode}`;
@@ -79,7 +84,7 @@ const initialState: HotkeysState = {
             hotkey: defaultSkipPrevious,
             action: {
                 title: 'SKIP_PREVIOUS',
-                value: `player/${ACTION_SKIP_PREVIOUS}`
+                value: `editor/${ACTION_SKIP_PREVIOUS}`
             }
         },
         [defaultSkipNextHotkeyId]: {
@@ -87,7 +92,7 @@ const initialState: HotkeysState = {
             hotkey: defaultSkipNext,
             action: {
                 title: 'SKIP_NEXT',
-                value: `player/${ACTION_SKIP_NEXT}`
+                value: `editor/${ACTION_SKIP_NEXT}`
             }
         },
         [defaultZoomOutHotkeyId]: {
@@ -95,7 +100,7 @@ const initialState: HotkeysState = {
             hotkey: defaultZoomOut,
             action: {
                 title: 'ZOOM_OUT_TIMELINE',
-                value: `timeline/${ACTION_ZOOM_OUT}`
+                value: `editor/${ACTION_ZOOM_OUT}`
             }
         },
         [defaultZoomInHotkeyId]: {
@@ -103,7 +108,7 @@ const initialState: HotkeysState = {
             hotkey: defaultZoomIn,
             action: {
                 title: 'ZOOM_IN_TIMELINE',
-                value: `timeline/${ACTION_ZOOM_IN}`
+                value: `editor/${ACTION_ZOOM_IN}`
             }
         },
         [defaultPlayHotkeyId]: {
@@ -111,7 +116,7 @@ const initialState: HotkeysState = {
             hotkey: defaultPlayHotkey,
             action: {
                 title: 'TOGGLE',
-                value: `player/${ACTION_SWITCH_PLAYING}`
+                value: `editor/${ACTION_SWITCH_PLAYING}`
             }
         },
         [defaultUndoHotkeyId]: {
@@ -134,11 +139,11 @@ const initialState: HotkeysState = {
     actionHotkeyMap: {
         [ACTION_UNDO]: defaultUndoHotkeyId,
         [ACTION_REDO]: defaultRedoHotkeyId,
-        [`player/${ACTION_SWITCH_PLAYING}`]: defaultPlayHotkeyId,
-        [`timeline/${ACTION_ZOOM_IN}`]: defaultZoomInHotkeyId,
-        [`timeline/${ACTION_ZOOM_OUT}`]: defaultZoomOutHotkeyId,
-        [`player/${ACTION_SKIP_PREVIOUS}`]: defaultSkipPreviousHotkeyId,
-        [`player/${ACTION_SKIP_NEXT}`]: defaultSkipNextHotkeyId
+        [`editor/${ACTION_SWITCH_PLAYING}`]: defaultPlayHotkeyId,
+        [`editor/${ACTION_ZOOM_IN}`]: defaultZoomInHotkeyId,
+        [`editor/${ACTION_ZOOM_OUT}`]: defaultZoomOutHotkeyId,
+        [`editor/${ACTION_SKIP_PREVIOUS}`]: defaultSkipPreviousHotkeyId,
+        [`editor/${ACTION_SKIP_NEXT}`]: defaultSkipNextHotkeyId
     }
 };
 
@@ -168,9 +173,10 @@ export default {
     },
     effects: (dispatch: RematchDispatch) => ({
         [ACTION_CALL_HOTKEY]({hotkey, payload}: {hotkey: Hotkey, payload: any}, {present}: RootState) {
-            let id = getHotkeyId(hotkey); 
-            const action = present.hotkeys.hotkeyActionMap[id].action.value;
-            dispatch({type: action, payload});
+            const id = getHotkeyId(hotkey); 
+            const hotkeyAction = present.hotkeys.hotkeyActionMap[id];
+            if(!hotkeyAction)return;
+            dispatch({type: hotkeyAction.action.value, payload});
         },
         [ACTION_UPDATE_HOTKEYS](payload: Dictionary<HotkeyAction>) {
             dispatch.hotkeys[REDUCER_SET_HOTKEYS](payload);

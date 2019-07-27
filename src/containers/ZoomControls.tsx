@@ -4,23 +4,23 @@ import { Box, Slider, IconButton, Tooltip } from '@material-ui/core';
 import { ZoomIn, ZoomOut } from '@material-ui/icons';
 import { LangContext, getLang } from '../lang';
 import { ZOOM_MINIMUM, ZOOM_MAXIMUM, SLIDER_STEP_COUNT } from '../constant';
-import { ACTION_ZOOM_IN, ACTION_ZOOM_OUT, ACTION_ZOOM } from '../store/models/timeline/types';
+import { ACTION_ZOOM_IN, ACTION_ZOOM_OUT, ACTION_ZOOM } from '../store/models/editor/types';
 import { RematchDispatch } from '@rematch/core';
-import { RootState } from '../store';
+import { RootState, Models } from '../store';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        zoom: present.timeline.zoom
+        zoom: present.editor.zoom
     };
 };
 
 export default React.memo(() => {
     const lang = useContext(LangContext);
-    const dispatch = useDispatch<RematchDispatch>();
+    const dispatch = useDispatch<RematchDispatch<Models>>();
     const { zoom } = useSelector(mapStateToProps, shallowEqual);
-    const onZoomIn = dispatch.timeline[ACTION_ZOOM_IN];
-    const onZoomOut = dispatch.timeline[ACTION_ZOOM_OUT];
-    const onZoom = dispatch.timeline[ACTION_ZOOM];
+    const onZoomIn = dispatch.editor[ACTION_ZOOM_IN];
+    const onZoomOut = dispatch.editor[ACTION_ZOOM_OUT];
+    const onZoom = dispatch.editor[ACTION_ZOOM];
     const onZoomSliderChange = (e: React.ChangeEvent<{}>, v: number | number[]) => {
         onZoom(typeof v === 'number' ? v : v[0]);
     };

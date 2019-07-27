@@ -12,6 +12,7 @@ import ControlBar from './ControlBar';
 import EffectPanel from './EffectPanel';
 import { ACTION_CALL_HOTKEY } from '../store/models/hotkeys/types';
 import HelpButton from './HelpButton';
+import { Models } from '../store';
 
 const PLAYER_CONTROLS_HEIGHT = 64;
 const CONTROL_BAR_HEIGHT = 64;
@@ -77,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
-    const dispatch = useDispatch<RematchDispatch>();
+    const dispatch = useDispatch<RematchDispatch<Models>>();
     const classes = useStyles();
     const matches = useMediaQuery('(min-width: 600px)');
     const [openEffectPanel, setOpenEffectPanel] = useState(true);

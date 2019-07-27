@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext, useMemo } from 'react';
 import { Chip, Box, Grow, TextField, Popper, Paper, InputAdornment } from '@material-ui/core';
 import { ChipProps } from '@material-ui/core/Chip';
 import { ArrowRightAlt } from '@material-ui/icons';
@@ -26,7 +26,7 @@ const toSec = (v?: number) => {
 };
 
 function TimeInput<T = number | number[], V = string | string[]>({ disabled, value, placeholder, label, onChange, onClick, ...others }: TimeInputProps<T, V>) {
-    const valList = Array.isArray(value) ? value : [value];
+    const valList = useMemo(() => (Array.isArray(value) ? value : [value]), [value]);
     const lang = useContext(LangContext);
     const placeholderList =  Array.isArray(placeholder) ? placeholder : [placeholder];
     const [showEditPane, setShowEditPane] = useState(false);

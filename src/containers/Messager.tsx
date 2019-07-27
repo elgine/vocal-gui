@@ -12,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
-import { RootState } from '../store';
+import { RootState, Models } from '../store';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
     SUCCESS: {
@@ -88,8 +88,8 @@ const mapStateToProps = ({ present }: RootState) => {
 
 export default React.memo(({ messageAutoHideDuraiton }: MessagerProps) => {
     const { showMsg, msgType, msg } = useSelector(mapStateToProps, shallowEqual);
-    const dispatch = useDispatch<RematchDispatch>();
-    const onMessageClose = dispatch.message[ACTION_HIDE_MESSAGE];
+    const dispatch = useDispatch<RematchDispatch<Models>>();
+    const onMessageClose = () => dispatch.message[ACTION_HIDE_MESSAGE];
     return (
         <Snackbar autoHideDuration={messageAutoHideDuraiton || 6000}
             open={showMsg} anchorOrigin={{ horizontal: 'center', vertical: 'top' }}

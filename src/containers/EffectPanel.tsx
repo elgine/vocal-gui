@@ -11,10 +11,10 @@ import clsx from 'clsx';
 import Placeholder from '../components/Placeholder';
 import { EMPTY_STRING } from '../constant';
 import EffectPropertyPane from './EffectPropertyPane';
-import { ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from '../store/models/effect/type';
+import { ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from '../store/models/editor/types';
 import { getEffectDescriptor } from '../processor/effects/factory';
 import { RematchDispatch } from '@rematch/core';
-import { RootState } from '../store';
+import { RootState, Models } from '../store';
 
 interface EffectItemProps extends GridProps{
     title?: string;
@@ -57,9 +57,10 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
     );
 };
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = ({ present }: RootState) => {
     return {
-        ...state.present.effect
+        effect: present.editor.effect,
+        effectOptions: present.editor.effectOptions
     };
 };
 
@@ -116,9 +117,9 @@ const Pane = ({ header, children, className, style, height, ...others }: PanePro
 export default React.memo(() => {
     const filterBtnRef = useRef<HTMLButtonElement>(null);
     const { effect, effectOptions } = useSelector(mapStateToProps, shallowEqual);
-    const dispatch = useDispatch<RematchDispatch>();
-    const onEffectChange = dispatch.effect[ACTION_SWITCH_EFFECT];
-    const onEffectOptionsChange = dispatch.effect[ACTION_EFFECT_OPTIONS_CHANGE];
+    const dispatch = useDispatch<RematchDispatch<Models>>();
+    const onEffectChange = dispatch.editor[ACTION_SWITCH_EFFECT];
+    const onEffectOptionsChange = dispatch.editor[ACTION_EFFECT_OPTIONS_CHANGE];
     const [showFilterList, setShowFilterList] = useState(false);
     const [effectCategory, setEffectCategory] = useState(EMPTY_STRING);
     const [currentEffectsVM, setCurrentEffectsVM] = useState<EffectType[]>([]);

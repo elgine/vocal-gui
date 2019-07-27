@@ -6,9 +6,8 @@ import { Box, CircularProgress, Button } from '@material-ui/core';
 import { makeStyles, Theme, withTheme } from '@material-ui/core/styles';
 import { OpenInNew, ArrowDropDown } from '@material-ui/icons';
 import Waveform from '../components/Waveform';
-import { ACTION_SEEK, ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
+import { ACTION_LOAD_SOURCE, ACTION_CANCEL_LOAD_SORUCE, ACTION_SEEK, ACTION_CLIP_REGION_CHANGE } from '../store/models/editor/types';
 import clsx from 'clsx';
-import { ACTION_LOAD_SOURCE, ACTION_CANCEL_LOAD_SORUCE } from '../store/models/source/types';
 import LoadButton from './LoadButton';
 import useMovement from '../hooks/useMovement';
 import Pointer from '../components/Pointer';
@@ -17,13 +16,12 @@ import { fade, contrast } from '../utils/color';
 import ClipRegion from '../components/ClipRegion';
 import SourceInfo from './SourceInfo';
 import { RematchDispatch } from '@rematch/core';
-import { RootState } from '../store';
+import { RootState, Models } from '../store';
 
 const mapStateToProps = ({ present }: RootState) => {
-    const { timeline, source } = present;
+    const { editor } = present;
     return {
-        ...source,
-        ...timeline
+        ...editor
     };
 };
 
@@ -78,12 +76,11 @@ export default withTheme(({
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
     const { loading, clipRegion, currentTime, audioBuffer, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps, shallowEqual);
-    const dispatch = useDispatch<RematchDispatch>();
-    const onSeek = dispatch.timeline[ACTION_SEEK];
-    const onClipRegionChange = dispatch.timeline[ACTION_CLIP_REGION_CHANGE];
-    const onLoadSource = dispatch.source[ACTION_LOAD_SOURCE];
-    const onCancelLoadSource = dispatch.source[ACTION_CANCEL_LOAD_SORUCE];
-
+    const dispatch = useDispatch<RematchDispatch<Models>>();
+    const onSeek = dispatch.editor[ACTION_SEEK];
+    const onClipRegionChange = dispatch.editor[ACTION_CLIP_REGION_CHANGE];
+    const onLoadSource = dispatch.editor[ACTION_LOAD_SOURCE];
+    const onCancelLoadSource = dispatch.editor[ACTION_CANCEL_LOAD_SORUCE];
     const primary = theme.palette.primary[theme.palette.type];
     const lang = useContext(LangContext);
     const tsh = timeScaleHeight || 40;

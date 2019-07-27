@@ -12,15 +12,16 @@ import { getLang, LangContext } from '../lang';
 import LoadButton from './LoadButton';
 import ClipRegionControls from './ClipRegionControls';
 import ZoomControls from './ZoomControls';
-import { ACTION_LOAD_SOURCE } from '../store/models/source/types';
+import { ACTION_LOAD_SOURCE } from '../store/models/editor/types';
 import ExportButton from './ExportButton';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
 import { RematchDispatch } from '@rematch/core';
+import { Models } from '../store';
 
 export default React.memo(({ ...others }: ToolbarProps) => {
     const lang = useContext(LangContext);
-    const dispatch = useDispatch<RematchDispatch>();
-    const onLoadSource = dispatch.source[ACTION_LOAD_SOURCE];
+    const dispatch = useDispatch<RematchDispatch<Models>>();
+    const onLoadSource = dispatch.editor[ACTION_LOAD_SOURCE];
     const onUndo = useCallback(() => dispatch({ type: ACTION_UNDO }), []);
     const onRedo = useCallback(() => dispatch({ type: ACTION_REDO }), []);
     return (

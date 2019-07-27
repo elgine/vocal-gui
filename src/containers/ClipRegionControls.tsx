@@ -3,13 +3,13 @@ import { RematchDispatch } from '@rematch/core';
 import { Collapse, Box } from '@material-ui/core';
 import { BoxProps } from '@material-ui/core/Box';
 import { LangContext, getLang } from '../lang';
-import { ACTION_CLIP_REGION_CHANGE, TimelineState } from '../store/models/timeline/types';
+import { ACTION_CLIP_REGION_CHANGE } from '../store/models/editor/types';
 import TimeInput from '../components/TimeInput';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { RootState } from '../store';
+import { RootState, Models } from '../store';
 
 const mapStateToProps = (state: RootState) => {
-    const clipRegion = state.present.timeline.clipRegion;
+    const clipRegion = state.present.editor.clipRegion;
     return {
         value: clipRegion
     };
@@ -19,8 +19,8 @@ export default React.memo((props: BoxProps) => {
     const lang = useContext(LangContext);
     const { value } = useSelector(mapStateToProps, shallowEqual);
     const disabled = value[0] === value[1];
-    const dispatch = useDispatch<RematchDispatch>();
-    const onChange = dispatch.timeline[ACTION_CLIP_REGION_CHANGE];
+    const dispatch = useDispatch<RematchDispatch<Models>>();
+    const onChange = dispatch.editor[ACTION_CLIP_REGION_CHANGE];
     return (
         <Collapse in={!disabled} timeout={500}>
             <Box display="inline-flex" alignItems="center" {...props}>
