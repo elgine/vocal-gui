@@ -19,6 +19,7 @@ import {
 import calcMaxFactor from '../../../utils/calcMaxFactor';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT, ZOOM_MAXIMUM, ZOOM_MINIMUM } from '../../../constant';
 import { getPlayer } from '../../../processor';
+import { StateWithHistory } from 'redux-undo';
 
 const initialState: TimelineState = {
     pixelsPerMSec: 0.01,
@@ -95,11 +96,11 @@ const timelineModel: ModelConfig<TimelineState> = {
         [ACTION_ZOOM](payload: number) {
             dispatch.timeline[REDUCER_SET_ZOOM](payload);
         },
-        [ACTION_ZOOM_IN](payload: any, rootState: any) {
-            dispatch.timeline[REDUCER_SET_ZOOM](clamp(rootState.timeline.zoom - (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
+        [ACTION_ZOOM_IN](payload: any, { present }: StateWithHistory<any>) {
+            dispatch.timeline[REDUCER_SET_ZOOM](clamp(present.timeline.zoom - (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
         },
-        [ACTION_ZOOM_OUT](payload: any, rootState: any) {
-            dispatch.timeline[REDUCER_SET_ZOOM](clamp(rootState.timeline.zoom + (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
+        [ACTION_ZOOM_OUT](payload: any, { present }: StateWithHistory<any>) {
+            dispatch.timeline[REDUCER_SET_ZOOM](clamp(present.timeline.zoom + (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
         },
         [ACTION_SOURCE_CHANGE](payload: AudioBuffer) {
             batch(() => {
@@ -113,14 +114,14 @@ const timelineModel: ModelConfig<TimelineState> = {
         [ACTION_SEEK](payload: number) {
             dispatch.timeline[REDUCER_SET_CURRENT_TIME](payload);
         },
-        [ACTION_SKIP_PREVIOUS](payload: any, rootState: any) {
-            dispatch.timeline[REDUCER_SET_CURRENT_TIME](rootState.timeline.clipRegion[0]);
+        [ACTION_SKIP_PREVIOUS](payload: any, { present }: StateWithHistory<any>) {
+            dispatch.timeline[REDUCER_SET_CURRENT_TIME](present.timeline.clipRegion[0]);
         },
-        [ACTION_SKIP_NEXT](payload: any, rootState: any) {
-            dispatch.timeline[REDUCER_SET_CURRENT_TIME](rootState.timeline.clipRegion[1]);
+        [ACTION_SKIP_NEXT](payload: any, { present }: StateWithHistory<any>) {
+            dispatch.timeline[REDUCER_SET_CURRENT_TIME](present.timeline.clipRegion[1]);
         },
-        [ACTION_CLIP_REGION_CHANGE](payload: number[], rootState: any) {
-            const timeline = rootState.timeline;
+        [ACTION_CLIP_REGION_CHANGE](payload: number[], { present }: StateWithHistory<any>) {
+            const timeline = present.timeline;
             if (payload[1] < payload[0]) {
                 let temp = payload[0];
                 payload[0] = payload[1];

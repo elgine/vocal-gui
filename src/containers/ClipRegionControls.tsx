@@ -3,12 +3,13 @@ import { RematchDispatch } from '@rematch/core';
 import { Collapse, Box } from '@material-ui/core';
 import { BoxProps } from '@material-ui/core/Box';
 import { LangContext, getLang } from '../lang';
-import { ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
+import { ACTION_CLIP_REGION_CHANGE, TimelineState } from '../store/models/timeline/types';
 import TimeInput from '../components/TimeInput';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { StateWithHistory } from 'redux-undo';
 
-const mapStateToProps = (state: any) => {
-    const clipRegion = state.timeline.clipRegion;
+const mapStateToProps = (state: StateWithHistory<{timeline: TimelineState}>) => {
+    const clipRegion = state.present.timeline.clipRegion;
     return {
         value: clipRegion
     };

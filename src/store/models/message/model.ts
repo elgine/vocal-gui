@@ -29,7 +29,7 @@ export default {
                 dispatch.message[REDUCER_SET_SHOW](true);
             });
         },
-        [ACTION_HIDE_MESSAGE](payload: any, rootState: any) {
+        [ACTION_HIDE_MESSAGE](payload: any) {
             dispatch.message[REDUCER_SET_SHOW](false);
         }
     })

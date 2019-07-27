@@ -42,7 +42,7 @@ export default {
         [ACTION_CANCEL_LOAD_SORUCE]() {
             dispatch.source[REDUCER_SET_LOADING](false);
         },
-        [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}, rootState: any) {
+        [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}) {
             if (!payload.value) return;
             dispatch.source[`ACTION_LOAD_FROM_${payload.type}`](payload.value);
         },
@@ -54,19 +54,19 @@ export default {
                 dispatch.timeline[ACTION_SOURCE_CHANGE](buffer);
             });
         },
-        [ACTION_LOAD_FROM_MIC](payload: AudioBuffer, rootState: any) {
+        [ACTION_LOAD_FROM_MIC](payload: AudioBuffer) {
             batch(() => {
                 dispatch.source[ACTION_LOAD_SOURCE_SUCCESS](payload);
                 dispatch.source[REDUCER_SET_TITLE](`Record${Date.now()}`);
             });
         },
-        [ACTION_LOAD_FROM_URL](payload: string, rootState: any) {
+        [ACTION_LOAD_FROM_URL](payload: string) {
             dispatch.source[REDUCER_SET_LOADING](true);
         },
-        [ACTION_LOAD_FROM_LOCAL](payload: File, rootState: any) {
+        [ACTION_LOAD_FROM_LOCAL](payload: File) {
             dispatch.source[REDUCER_SET_LOADING](true);
         },
-        [ACTION_LOAD_FAILED](payload: Error, rootState: any) {
+        [ACTION_LOAD_FAILED](payload: Error) {
             batch(() => {
                 dispatch.source[REDUCER_SET_LOADING](false);
                 dispatch.message[ACTION_SHOW_MESSAGE]({

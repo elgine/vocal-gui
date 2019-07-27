@@ -15,6 +15,7 @@ import {
     ACTION_STOP_RENDERING_ALL
 } from './types';
 import { RenderTask, RenderTaskState } from '../../../processor/renderer';
+import { StateWithHistory } from 'redux-undo';
 
 const initialState: RendererState = {
     rendering: false,
@@ -63,12 +64,12 @@ export default {
     },
     effects: (dispatch: any) => {
         return {
-            [ACTION_RENDER_SUCCESS]({ id }: {id: string; result: Uint8Array[]}, rootState: any) {
+            [ACTION_RENDER_SUCCESS]({ id }: {id: string; result: Uint8Array[]}, { pesent }: StateWithHistory<any>) {
                 batch(() => {
                     dispatch.renderer[REDUCER_SET_TASKS_STATE]({
                         [id]: { state: RenderTaskState.COMPLETE }
                     });
-                    if (existsFreeRenderTask(rootState.render.tasks)) {
+                    if (existsFreeRenderTask(pesent.render.tasks)) {
                         dispatch.renderer[REDUCER_SET_RENDERING](false);
                     }
                 });
@@ -79,13 +80,13 @@ export default {
                     dispatch.renderer[ACTION_START_RENDERING]();
                 });
             },
-            [ACTION_START_RENDERING](payload: string | undefined, rootState: any) {
+            [ACTION_START_RENDERING](payload: string | undefined) {
                 dispatch.renderer[REDUCER_SET_RENDERING](true);
             },
-            [ACTION_CANCEL_RENDERING](payload: string, rootState: any) {
+            [ACTION_CANCEL_RENDERING](payload: string, { present }: StateWithHistory<any>) {
                 batch(() => {
                     dispatch.renderer[REDUCER_REMOVE_RENDER_TASK](payload);
-                    if (existsFreeRenderTask(rootState.render.tasks)) {
+                    if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.renderer[REDUCER_SET_RENDERING](false);
                     }
                 });
@@ -96,19 +97,19 @@ export default {
                     dispatch.renderer[REDUCER_SET_RENDERING](false);
                 });
             },
-            [ACTION_STOP_RENDERING](payload: string, rootState: any) {
+            [ACTION_STOP_RENDERING](payload: string, { present }: StateWithHistory<any>) {
                 batch(() => {
                     dispatch.renderer[REDUCER_SET_TASKS_STATE]({
                         [payload]: { state: RenderTaskState.STOPPED }
                     });
-                    if (existsFreeRenderTask(rootState.render.tasks)) {
+                    if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.renderer[REDUCER_SET_RENDERING](false);
                     }
                 });
             },
-            [ACTION_STOP_RENDERING_ALL](payload: any, rootState: any) {
+            [ACTION_STOP_RENDERING_ALL](payload: any, { present }: StateWithHistory<any>) {
                 batch(() => {
-                    dispatch.renderer[REDUCER_SET_TASKS_STATE](Object.keys(rootState.render.tasks).reduce((map, id) => {
+                    dispatch.renderer[REDUCER_SET_TASKS_STATE](Object.keys(present.render.tasks).reduce((map, id) => {
                         map[id] = { state: RenderTaskState.STOPPED };
                         return map;
                     }, {}));

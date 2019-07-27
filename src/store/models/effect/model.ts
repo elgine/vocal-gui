@@ -40,7 +40,7 @@ export default {
                 dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](getEffectOptions(payload));
             });
         },
-        [ACTION_EFFECT_OPTIONS_CHANGE](payload: any, rootState: any) {
+        [ACTION_EFFECT_OPTIONS_CHANGE](payload: any) {
             const player = getPlayer();
             player.setEffectState(payload);
             dispatch.effect[REDUCER_SET_EFFECT_OPTIONS](payload);

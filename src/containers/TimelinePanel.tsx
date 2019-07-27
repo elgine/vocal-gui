@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { connect, useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { clamp } from 'lodash';
 import TimeScale from '../components/TimeScale';
 import { Box, CircularProgress, Button } from '@material-ui/core';
@@ -17,8 +17,10 @@ import { fade, contrast } from '../utils/color';
 import ClipRegion from '../components/ClipRegion';
 import SourceInfo from './SourceInfo';
 import { RematchDispatch } from '@rematch/core';
+import { StateWithHistory } from 'redux-undo';
 
-const mapStateToProps = ({ timeline, source }: {timeline: TimelineState; source: SourceState}) => {
+const mapStateToProps = ({ present }: StateWithHistory<{timeline: TimelineState; source: SourceState}>) => {
+    const { timeline, source } = present;
     return {
         ...source,
         ...timeline

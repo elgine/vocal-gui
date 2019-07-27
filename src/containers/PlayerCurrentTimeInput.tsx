@@ -1,28 +1,25 @@
 import React, { useContext } from 'react';
-import { connect, useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import TimeInput from '../components/TimeInput';
 import { getLang, LangContext } from '../lang';
 import { TimelineState, ACTION_SEEK } from '../store/models/timeline/types';
 import { RematchDispatch } from '@rematch/core';
+import { StateWithHistory } from 'redux-undo';
 
-export interface PlayerCurrentTimeInputProps{
-    currentTime: number;
-    onSeek: (v: number) => void;
-}
-
-const mapStateToProps = (state: {timeline: TimelineState}) => {
+const mapStateToProps = ({ present }: StateWithHistory<{timeline: TimelineState}>) => {
     return {
-        currentTime: state.timeline.currentTime
+        disabled: present.timeline.clipRegion[0] === present.timeline.clipRegion[1],
+        currentTime: present.timeline.currentTime
     };
 };
 
 export default React.memo(() => {
     const lang = useContext(LangContext);
-    const { currentTime } = useSelector(mapStateToProps, shallowEqual);
+    const { currentTime, disabled } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
     const onSeek = dispatch.timeline[ACTION_SEEK];
     return (
-        <TimeInput label={`${getLang('CURRENT_TIME', lang)}: `}
+        <TimeInput disabled={disabled} label={`${getLang('CURRENT_TIME', lang)}: `}
             placeholder={getLang('CURRENT_TIME', lang)}
             value={currentTime} onChange={onSeek}
         />

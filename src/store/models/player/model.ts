@@ -11,6 +11,7 @@ import {
     ACTION_SWITCH_REPEAT,
     ACTION_SWITCH_PLAYING
 } from './types';
+import { StateWithHistory } from 'redux-undo';
 
 const initialState: PlayerState = {
     repeat: false,
@@ -36,23 +37,23 @@ export default {
     },
     effects: (dispatch: RematchDispatch) => {
         return {
-            [ACTION_SWITCH_PLAYING](payload: any, rootState: any) {
-                if (!rootState.player.playing) {
+            [ACTION_SWITCH_PLAYING](payload: any, { present }: StateWithHistory<any>) {
+                if (!present.player.playing) {
                     dispatch.player[ACTION_PLAY]();
                 } else {
                     dispatch.player[ACTION_STOP]();
                 }
             },
-            [ACTION_SWITCH_REPEAT](payload: any, rootState: any) {
-                dispatch.player[REDUCER_SET_REPEAT](!rootState.player.repeat);
+            [ACTION_SWITCH_REPEAT](payload: any, { present }: StateWithHistory<any>) {
+                dispatch.player[REDUCER_SET_REPEAT](!present.player.repeat);
             },
-            async [ACTION_PLAY](payload: any, rootState: any) {
+            async [ACTION_PLAY](payload: any) {
                 dispatch.player[REDUCER_SET_PLAYING](true);
             },
-            [ACTION_STOP](payload: any, rootState: any) {
+            [ACTION_STOP](payload: any) {
                 dispatch.player[REDUCER_SET_PLAYING](false);
             },
-            [ACTION_SET_VOLUME](payload: number, rootState: any) {
+            [ACTION_SET_VOLUME](payload: number) {
                 dispatch.player[REDUCER_SET_VOLUME](clamp(payload, 0, 1));
             }
         };

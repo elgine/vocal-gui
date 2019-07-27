@@ -3,15 +3,16 @@ import Volume from '../components/Volume';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { ACTION_SET_VOLUME, PlayerState } from '../store/models/player/types';
 import { RematchDispatch } from '@rematch/core';
+import { StateWithHistory } from 'redux-undo';
 
 export interface PlayerVolumeProps{
     volume: number;
     onVolumeChange: (v: number) => void;
 }
 
-const mapStateToProps = (state: {player: PlayerState}) => {
+const mapStateToProps = ({ present }: StateWithHistory<{player: PlayerState}>) => {
     return {
-        volume: state.player.volume
+        volume: present.player.volume
     };
 };
 

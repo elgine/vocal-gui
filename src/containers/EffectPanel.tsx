@@ -14,6 +14,7 @@ import EffectPropertyPane from './EffectPropertyPane';
 import { EffectState, ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from '../store/models/effect/type';
 import { getEffectDescriptor } from '../processor/effects/factory';
 import { RematchDispatch } from '@rematch/core';
+import { StateWithHistory } from 'redux-undo';
 
 interface EffectItemProps extends GridProps{
     title?: string;
@@ -56,9 +57,9 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
     );
 };
 
-const mapStateToProps = (state: {effect: EffectState}) => {
+const mapStateToProps = (state: StateWithHistory<{effect: EffectState}>) => {
     return {
-        ...state.effect
+        ...state.present.effect
     };
 };
 
@@ -114,7 +115,7 @@ const Pane = ({ header, children, className, style, height, ...others }: PanePro
 
 export default React.memo(() => {
     const filterBtnRef = useRef<HTMLButtonElement>(null);
-    const {effect, effectOptions} = useSelector(mapStateToProps, shallowEqual);
+    const { effect, effectOptions } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
     const onEffectChange = dispatch.effect[ACTION_SWITCH_EFFECT];
     const onEffectOptionsChange = dispatch.effect[ACTION_EFFECT_OPTIONS_CHANGE];

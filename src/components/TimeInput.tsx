@@ -7,6 +7,7 @@ import { getLang, LangContext } from '../lang';
 import keycode from 'keycode';
 
 export interface TimeInputProps<T = number|number[], V = string | string[]> extends Omit<ChipProps, 'onChange' | 'placeholder'>{
+    disabled?: boolean;
     value?: T;
     placeholder?: V;
     onChange?: (v: T) => void;
@@ -24,12 +25,13 @@ const toSec = (v?: number) => {
     return (v || 0) * 0.001;
 };
 
-function TimeInput<T = number | number[], V = string | string[]>({ value, placeholder, label, onChange, onClick, ...others }: TimeInputProps<T, V>) {
+function TimeInput<T = number | number[], V = string | string[]>({ disabled, value, placeholder, label, onChange, onClick, ...others }: TimeInputProps<T, V>) {
     const valList = Array.isArray(value) ? value : [value];
     const lang = useContext(LangContext);
     const placeholderList =  Array.isArray(placeholder) ? placeholder : [placeholder];
     const [showEditPane, setShowEditPane] = useState(false);
-    const onChipClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const onChipClick = disabled ? undefined : (e: React.MouseEvent<HTMLDivElement>) => {
+        if (disabled) return;
         setShowEditPane(!showEditPane);
         onClick && onClick(e);
     };

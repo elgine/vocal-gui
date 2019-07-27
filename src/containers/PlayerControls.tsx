@@ -15,18 +15,21 @@ import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
 import { LangContext, getLang } from '../lang';
 import { RematchDispatch } from '@rematch/core';
+import { SourceState } from '../store/models/source/types';
+import { StateWithHistory } from 'redux-undo';
 
-const mapStateToProps = (state: {player: PlayerState}) => {
+const mapStateToProps = ({ present }: StateWithHistory<{source: SourceState; player: PlayerState}>) => {
     return {
-        playing: state.player.playing,
-        repeat: state.player.repeat
+        disabled: present.source.audioBuffer === undefined,
+        playing: present.player.playing,
+        repeat: present.player.repeat
     };
 };
 
 
 export default React.memo(() => {
     const lang = useContext(LangContext);
-    const { playing, repeat } = useSelector(mapStateToProps, shallowEqual);
+    const { playing, repeat, disabled } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
     const onSkipPrevious = dispatch.timeline[ACTION_SKIP_PREVIOUS];
     const onSkipNext = dispatch.timeline[ACTION_SKIP_NEXT];
@@ -35,15 +38,19 @@ export default React.memo(() => {
     return (
         <React.Fragment>
             <Tooltip title={getLang('SKIP_PREVIOUS', lang)}>
-                <IconButton onClick={onSkipPrevious}>
-                    <SkipPrevious />
-                </IconButton>
+                <div>
+                    <IconButton disabled={disabled} onClick={onSkipPrevious}>
+                        <SkipPrevious />
+                    </IconButton>
+                </div>
             </Tooltip>
-            <PlayButton value={playing} onChange={onPlayingChange} />
+            <PlayButton disabled={disabled} value={playing} onChange={onPlayingChange} />
             <Tooltip title={getLang('SKIP_NEXT', lang)}>
-                <IconButton onClick={onSkipNext}>
-                    <SkipNext />
-                </IconButton>
+                <div>
+                    <IconButton disabled={disabled} onClick={onSkipNext}>
+                        <SkipNext />
+                    </IconButton>
+                </div>
             </Tooltip>
             <RepeatButton value={repeat} onChange={onRepeatChange} />
         </React.Fragment>

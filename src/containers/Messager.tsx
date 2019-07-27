@@ -12,6 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
+import { StateWithHistory } from 'redux-undo';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
     SUCCESS: {
@@ -79,9 +80,9 @@ export interface MessagerProps{
     messageAutoHideDuraiton?: number;
 }
 
-const mapStateToProps = ({ message }: {message: MessageState}) => {
+const mapStateToProps = ({ present }: StateWithHistory<{message: MessageState}>) => {
     return {
-        ...message
+        ...present.message
     };
 };
 
