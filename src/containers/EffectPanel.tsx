@@ -11,10 +11,10 @@ import clsx from 'clsx';
 import Placeholder from '../components/Placeholder';
 import { EMPTY_STRING } from '../constant';
 import EffectPropertyPane from './EffectPropertyPane';
-import { EffectState, ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from '../store/models/effect/type';
+import { ACTION_SWITCH_EFFECT, ACTION_EFFECT_OPTIONS_CHANGE } from '../store/models/effect/type';
 import { getEffectDescriptor } from '../processor/effects/factory';
 import { RematchDispatch } from '@rematch/core';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../store';
 
 interface EffectItemProps extends GridProps{
     title?: string;
@@ -57,7 +57,7 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
     );
 };
 
-const mapStateToProps = (state: StateWithHistory<{effect: EffectState}>) => {
+const mapStateToProps = (state: RootState) => {
     return {
         ...state.present.effect
     };

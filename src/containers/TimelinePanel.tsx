@@ -6,9 +6,9 @@ import { Box, CircularProgress, Button } from '@material-ui/core';
 import { makeStyles, Theme, withTheme } from '@material-ui/core/styles';
 import { OpenInNew, ArrowDropDown } from '@material-ui/icons';
 import Waveform from '../components/Waveform';
-import { TimelineState, ACTION_SEEK, ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
+import { ACTION_SEEK, ACTION_CLIP_REGION_CHANGE } from '../store/models/timeline/types';
 import clsx from 'clsx';
-import { SourceState, ACTION_LOAD_SOURCE, ACTION_CANCEL_LOAD_SORUCE } from '../store/models/source/types';
+import { ACTION_LOAD_SOURCE, ACTION_CANCEL_LOAD_SORUCE } from '../store/models/source/types';
 import LoadButton from './LoadButton';
 import useMovement from '../hooks/useMovement';
 import Pointer from '../components/Pointer';
@@ -17,9 +17,9 @@ import { fade, contrast } from '../utils/color';
 import ClipRegion from '../components/ClipRegion';
 import SourceInfo from './SourceInfo';
 import { RematchDispatch } from '@rematch/core';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../store';
 
-const mapStateToProps = ({ present }: StateWithHistory<{timeline: TimelineState; source: SourceState}>) => {
+const mapStateToProps = ({ present }: RootState) => {
     const { timeline, source } = present;
     return {
         ...source,

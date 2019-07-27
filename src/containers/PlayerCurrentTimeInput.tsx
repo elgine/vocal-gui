@@ -2,11 +2,11 @@ import React, { useContext } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import TimeInput from '../components/TimeInput';
 import { getLang, LangContext } from '../lang';
-import { TimelineState, ACTION_SEEK } from '../store/models/timeline/types';
+import { ACTION_SEEK } from '../store/models/timeline/types';
 import { RematchDispatch } from '@rematch/core';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../store';
 
-const mapStateToProps = ({ present }: StateWithHistory<{timeline: TimelineState}>) => {
+const mapStateToProps = ({ present }: RootState) => {
     return {
         disabled: present.timeline.clipRegion[0] === present.timeline.clipRegion[1],
         currentTime: present.timeline.currentTime

@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
-import { connect, useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Box, Slider, IconButton, Tooltip } from '@material-ui/core';
 import { ZoomIn, ZoomOut } from '@material-ui/icons';
 import { LangContext, getLang } from '../lang';
 import { ZOOM_MINIMUM, ZOOM_MAXIMUM, SLIDER_STEP_COUNT } from '../constant';
-import { ACTION_ZOOM_IN, ACTION_ZOOM_OUT, ACTION_ZOOM, TimelineState } from '../store/models/timeline/types';
+import { ACTION_ZOOM_IN, ACTION_ZOOM_OUT, ACTION_ZOOM } from '../store/models/timeline/types';
 import { RematchDispatch } from '@rematch/core';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../store';
 
-const mapStateToProps = ({ present }: StateWithHistory<{timeline: TimelineState}>) => {
+const mapStateToProps = ({ present }: RootState) => {
     return {
         zoom: present.timeline.zoom
     };

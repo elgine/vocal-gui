@@ -6,9 +6,9 @@ import { LangContext, getLang } from '../lang';
 import { ACTION_CLIP_REGION_CHANGE, TimelineState } from '../store/models/timeline/types';
 import TimeInput from '../components/TimeInput';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../store';
 
-const mapStateToProps = (state: StateWithHistory<{timeline: TimelineState}>) => {
+const mapStateToProps = (state: RootState) => {
     const clipRegion = state.present.timeline.clipRegion;
     return {
         value: clipRegion

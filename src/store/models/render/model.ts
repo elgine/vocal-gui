@@ -15,7 +15,7 @@ import {
     ACTION_STOP_RENDERING_ALL
 } from './types';
 import { RenderTask, RenderTaskState } from '../../../processor/renderer';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../..';
 
 const initialState: RendererState = {
     rendering: false,
@@ -64,12 +64,12 @@ export default {
     },
     effects: (dispatch: any) => {
         return {
-            [ACTION_RENDER_SUCCESS]({ id }: {id: string; result: Uint8Array[]}, { pesent }: StateWithHistory<any>) {
+            [ACTION_RENDER_SUCCESS]({ id }: {id: string; result: Uint8Array[]}, { present }: RootState) {
                 batch(() => {
                     dispatch.renderer[REDUCER_SET_TASKS_STATE]({
                         [id]: { state: RenderTaskState.COMPLETE }
                     });
-                    if (existsFreeRenderTask(pesent.render.tasks)) {
+                    if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.renderer[REDUCER_SET_RENDERING](false);
                     }
                 });
@@ -83,7 +83,7 @@ export default {
             [ACTION_START_RENDERING](payload: string | undefined) {
                 dispatch.renderer[REDUCER_SET_RENDERING](true);
             },
-            [ACTION_CANCEL_RENDERING](payload: string, { present }: StateWithHistory<any>) {
+            [ACTION_CANCEL_RENDERING](payload: string, { present }: RootState) {
                 batch(() => {
                     dispatch.renderer[REDUCER_REMOVE_RENDER_TASK](payload);
                     if (existsFreeRenderTask(present.render.tasks)) {
@@ -97,7 +97,7 @@ export default {
                     dispatch.renderer[REDUCER_SET_RENDERING](false);
                 });
             },
-            [ACTION_STOP_RENDERING](payload: string, { present }: StateWithHistory<any>) {
+            [ACTION_STOP_RENDERING](payload: string, { present }: RootState) {
                 batch(() => {
                     dispatch.renderer[REDUCER_SET_TASKS_STATE]({
                         [payload]: { state: RenderTaskState.STOPPED }
@@ -107,7 +107,7 @@ export default {
                     }
                 });
             },
-            [ACTION_STOP_RENDERING_ALL](payload: any, { present }: StateWithHistory<any>) {
+            [ACTION_STOP_RENDERING_ALL](payload: any, { present }: RootState) {
                 batch(() => {
                     dispatch.renderer[REDUCER_SET_TASKS_STATE](Object.keys(present.render.tasks).reduce((map, id) => {
                         map[id] = { state: RenderTaskState.STOPPED };

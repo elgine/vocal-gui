@@ -11,7 +11,8 @@ import {
     ACTION_SWITCH_REPEAT,
     ACTION_SWITCH_PLAYING
 } from './types';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../../index';
+import { getPlayer } from '../../../processor';
 
 const initialState: PlayerState = {
     repeat: false,
@@ -36,24 +37,32 @@ export default {
         }
     },
     effects: (dispatch: RematchDispatch) => {
+        const player = getPlayer();
         return {
-            [ACTION_SWITCH_PLAYING](payload: any, { present }: StateWithHistory<any>) {
+            [ACTION_SWITCH_PLAYING](payload: any, { present }: RootState) {
                 if (!present.player.playing) {
                     dispatch.player[ACTION_PLAY]();
                 } else {
                     dispatch.player[ACTION_STOP]();
                 }
             },
-            [ACTION_SWITCH_REPEAT](payload: any, { present }: StateWithHistory<any>) {
-                dispatch.player[REDUCER_SET_REPEAT](!present.player.repeat);
+            [ACTION_SWITCH_REPEAT](payload: any, { present }: RootState) {
+                let r = !present.player.repeat;
+                player.setRepeat(r);
+                dispatch.player[REDUCER_SET_REPEAT](r);
             },
-            async [ACTION_PLAY](payload: any) {
+            async [ACTION_PLAY](payload: any, { present }: RootState) {
+                if (!present.source.audioBuffer) return;
+                await player.play();
                 dispatch.player[REDUCER_SET_PLAYING](true);
             },
-            [ACTION_STOP](payload: any) {
+            [ACTION_STOP](payload: any, { present }: RootState) {
+                if (!present.source.audioBuffer) return;
+                player.stop();
                 dispatch.player[REDUCER_SET_PLAYING](false);
             },
             [ACTION_SET_VOLUME](payload: number) {
+                player.setVolume(payload);
                 dispatch.player[REDUCER_SET_VOLUME](clamp(payload, 0, 1));
             }
         };

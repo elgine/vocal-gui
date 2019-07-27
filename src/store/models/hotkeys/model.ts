@@ -10,7 +10,7 @@ import {
 import { ACTION_UNDO, ACTION_REDO } from '../history/types';
 import { ACTION_SWITCH_PLAYING } from '../player/types';
 import { ACTION_ZOOM_OUT, ACTION_ZOOM_IN, ACTION_SKIP_PREVIOUS, ACTION_SKIP_NEXT } from '../timeline/types';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../..';
 
 const getHotkeyId = (hotkey: Hotkey) => {
     return `${Number(hotkey.ctrl)}${Number(hotkey.shift)}${Number(hotkey.alt)}${hotkey.keyCode}`;
@@ -167,7 +167,7 @@ export default {
         }
     },
     effects: (dispatch: RematchDispatch) => ({
-        [ACTION_CALL_HOTKEY]({hotkey, payload}: {hotkey: Hotkey, payload: any}, {present}: StateWithHistory<any>) {
+        [ACTION_CALL_HOTKEY]({hotkey, payload}: {hotkey: Hotkey, payload: any}, {present}: RootState) {
             let id = getHotkeyId(hotkey); 
             const action = present.hotkeys.hotkeyActionMap[id].action.value;
             dispatch({type: action, payload});

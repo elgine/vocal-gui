@@ -15,10 +15,9 @@ import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
 import { LangContext, getLang } from '../lang';
 import { RematchDispatch } from '@rematch/core';
-import { SourceState } from '../store/models/source/types';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../store';
 
-const mapStateToProps = ({ present }: StateWithHistory<{source: SourceState; player: PlayerState}>) => {
+const mapStateToProps = ({ present }: RootState) => {
     return {
         disabled: present.source.audioBuffer === undefined,
         playing: present.player.playing,

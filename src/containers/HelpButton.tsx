@@ -21,13 +21,12 @@ import { getLang, LangContext } from '../lang';
 import { Keyboard, Comment, Help } from '@material-ui/icons';
 import { MenuItemProps } from '@material-ui/core/MenuItem';
 import { useSelector } from 'react-redux';
-import { HotkeysState } from '../store/models/hotkeys/types';
 import { FabProps } from '@material-ui/core/Fab';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../store';
 
 const HotkeyMenuItem = ({ onClick, ...others }: Omit<MenuItemProps, 'button'>) => {
     const lang = useContext(LangContext);
-    const mapStateToProps = useCallback(({ present }: StateWithHistory<{hotkeys: HotkeysState}>) => {
+    const mapStateToProps = useCallback(({ present }: RootState) => {
         const { actionHotkeyMap, hotkeyActionMap } = present.hotkeys;
         return Object.values(actionHotkeyMap).map((hid) => hotkeyActionMap[hid]);
     }, []);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Snackbar, SnackbarContent, IconButton } from '@material-ui/core';
 import { SnackbarContentProps } from '@material-ui/core/SnackbarContent';
-import { MessageState, ACTION_HIDE_MESSAGE } from '../store/models/message/type';
+import { ACTION_HIDE_MESSAGE } from '../store/models/message/type';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
@@ -12,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
-import { StateWithHistory } from 'redux-undo';
+import { RootState } from '../store';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
     SUCCESS: {
@@ -80,7 +80,7 @@ export interface MessagerProps{
     messageAutoHideDuraiton?: number;
 }
 
-const mapStateToProps = ({ present }: StateWithHistory<{message: MessageState}>) => {
+const mapStateToProps = ({ present }: RootState) => {
     return {
         ...present.message
     };
