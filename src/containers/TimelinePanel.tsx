@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { clamp } from 'lodash';
 import TimeScale from '../components/TimeScale';
-import { Box, CircularProgress, Button } from '@material-ui/core';
+import { Box, CircularProgress, Button, Fade } from '@material-ui/core';
 import { makeStyles, Theme, withTheme } from '@material-ui/core/styles';
 import { OpenInNew, ArrowDropDown } from '@material-ui/icons';
 import Waveform from '../components/Waveform';
@@ -17,6 +17,56 @@ import ClipRegion from '../components/ClipRegion';
 import SourceInfo from './SourceInfo';
 import { RematchDispatch } from '@rematch/core';
 import { RootState, Models } from '../store';
+import { toTimeString } from '../utils/time';
+
+const PRESEEK_FADE = 0.4;
+
+const TIME_SCALE_OTHER_PROPS = {
+    spacing: 4,
+    dialLen: 10,
+    fontSize: 12
+};
+
+const preSeekPointerStyles = makeStyles((theme: Theme) => {
+    return {
+        root: {
+            position: 'absolute',
+            width: '1px',
+            backgroundColor: fade(theme.palette.text.primary, PRESEEK_FADE)
+        },
+        label: {
+            height: `${TIME_SCALE_OTHER_PROPS.fontSize}px`,
+            lineHeight: `${TIME_SCALE_OTHER_PROPS.fontSize}px`,
+            fontSize: '12px'
+        },
+        timeLabel: {
+            position: 'absolute',
+            height: `${TIME_SCALE_OTHER_PROPS.fontSize}px`,
+            left: 0,
+            transform: 'translateX(-50%)',
+            color: fade(theme.palette.text.primary, PRESEEK_FADE)
+        }
+    };
+});
+
+interface PreSeekPointerProps extends React.HTMLAttributes<{}>{
+    left: number;
+    timeScaleHeight?: number;
+    currentTime?: number;
+}
+
+const PreSeekPointer = ({ left, timeScaleHeight, currentTime, style, ...others }: PreSeekPointerProps) => {
+    const classes = preSeekPointerStyles();
+    const tsh = timeScaleHeight || 48;
+    const ct = currentTime || 0;
+    return (
+        <div className={classes.root} style={{ left: `${left}px`, top: `${tsh}px`, height: `calc(100% - ${tsh}px)`, ...style }} {...others}>
+            <span className={clsx(classes.label, classes.timeLabel)} style={{ top: `-${TIME_SCALE_OTHER_PROPS.dialLen + TIME_SCALE_OTHER_PROPS.fontSize + TIME_SCALE_OTHER_PROPS.spacing + 1}px` }}>
+                {toTimeString(ct)}
+            </span>
+        </div>
+    );
+};
 
 const mapStateToProps = ({ present }: RootState) => {
     const { editor } = present;
@@ -87,14 +137,31 @@ export default withTheme(({
     const wh = waveHeight || 128;
     const showRegion = clipRegion[0] !== clipRegion[1];
     const classes = useStyles();
-    const sourceBuffers: Float32Array[] = [];
+
     const sourceDuration = audioBuffer ? audioBuffer.duration * 1000 : 0;
     const channels = audioBuffer ? audioBuffer.numberOfChannels : 0;
-    if (audioBuffer) {
-        for (let i = 0; i < channels; i++) {
-            sourceBuffers.push(audioBuffer.getChannelData(i));
+    const sourceBuffers: Float32Array[] = useMemo(() => {
+        const arr: Float32Array[] = [];
+        if (audioBuffer) {
+            for (let i = 0; i < channels; i++) {
+                arr.push(audioBuffer.getChannelData(i));
+            }
         }
-    }
+        return arr;
+    }, [audioBuffer]);
+
+    const [openPreseek, setOpenPreseek] = useState(false);
+    const [preseek, setPreseek] = useState(0);
+    const preseekPointerLeft = preseek * pixelsPerMSec;
+    const onTimelineMove = (e: React.MouseEvent) => {
+        setPreseek(e.pageX / pixelsPerMSec);
+    };
+    const onTimelineOver = () => {
+        setOpenPreseek(true);
+    };
+    const onTimelineOut = () => {
+        setOpenPreseek(false);
+    };
 
     const pointerLeft = currentTime * pixelsPerMSec;
     const mainRef = useRef<HTMLDivElement>(null);
@@ -186,7 +253,7 @@ export default withTheme(({
         <div className={clsx(
             classes.root,
             className
-        )} {...others}>
+        )} onMouseMove={onTimelineMove} onMouseOver={onTimelineOver} onMouseLeave={onTimelineOut} {...others}>
             <div ref={mainRef} className={classes.main} style={mainStyle}>
                 <TimeScale
                     id="time-scale"
@@ -196,6 +263,7 @@ export default withTheme(({
                     duration={duration}
                     height={tsh}
                     onClick={onTimeScaleClick}
+                    {...TIME_SCALE_OTHER_PROPS}
                 />
                 {
                     !loading && channels > 0 ? (
@@ -254,9 +322,16 @@ export default withTheme(({
                     ) : undefined
                 }
                 {
-                    audioBuffer ? <Pointer left={pointerLeft} style={pointerStyle}
-                        onMouseDown={onPointerMouseDown}
-                    /> : undefined
+                    audioBuffer ? (
+                        <React.Fragment>
+                            <Fade in={openPreseek}>
+                                <PreSeekPointer timeScaleHeight={tsh} left={preseekPointerLeft} currentTime={preseek} />
+                            </Fade>
+                            <Pointer left={pointerLeft} style={pointerStyle}
+                                onMouseDown={onPointerMouseDown}
+                            />
+                        </React.Fragment>
+                    ) : undefined
                 }
             </div>
         </div>

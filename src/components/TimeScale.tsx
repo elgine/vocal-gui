@@ -21,6 +21,8 @@ const render = (
     height: number,
     duration: number,
     dialLen: number,
+    spacing: number,
+    fontSize: number,
     ppms: number,
     units: number[],
     colors: string[],
@@ -56,7 +58,7 @@ const render = (
         canvas.height = height;
         ctx.clearRect(x, 0, w, height);
         ctx.save();
-        ctx.font = `${FONT_SIZE}px Arial`;
+        ctx.font = `${fontSize}px Arial`;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
         for (;afrom < aTo; afrom += step) {
@@ -78,7 +80,7 @@ const render = (
             ctx.fillStyle = c;
             if (drawText) {
                 // toTimeString(afrom)
-                ctx.fillText((afrom * 0.001).toFixed(2) + 's', o, height - (SPACING + arh));
+                ctx.fillText((afrom * 0.001).toFixed(2) + 's', o, height - (spacing + arh));
             }
             ctx.fillRect(o - rw * 0.5, height - arh, rw, arh);
         }
@@ -97,9 +99,11 @@ export interface TimeScaleProps extends React.HTMLAttributes<{}>{
     height?: number;
     offset?: number;
     dialLen?: number;
+    spacing?: number;
+    fontSize?: number;
 }
 
-export default React.memo(({ pixelsPerMSec, offset, height, colors, timeUnits, duration, dialLen, style, children, ...others }: React.PropsWithChildren<TimeScaleProps>) => {
+export default React.memo(({ pixelsPerMSec, spacing, fontSize, offset, height, colors, timeUnits, duration, dialLen, style, children, ...others }: React.PropsWithChildren<TimeScaleProps>) => {
     const sl = offset || 0;
     const us = timeUnits || TIME_UNITS;
     const d = duration || 20000;
@@ -108,6 +112,8 @@ export default React.memo(({ pixelsPerMSec, offset, height, colors, timeUnits, d
     const w = d * ppms;
     const cs = colors || ['rgba(255, 255, 255, 0.45)', 'rgba(255, 255, 255, 0.35)', 'rgba(255, 255, 255, 0.12)'];
     const dl = dialLen || h * 0.25;
+    const s = spacing || SPACING;
+    const fs = fontSize || FONT_SIZE;
     const [lastDur, setLastDur] = useState(0);
     const [lastPPMS, setLastPPMS] = useState(1);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -130,7 +136,7 @@ export default React.memo(({ pixelsPerMSec, offset, height, colors, timeUnits, d
         }
         if (ppms !== lastPPMS || lastDur < d) {
             let res = render(
-                canvases, maxDurPerCanvas, h, md, dl, ppms, us,
+                canvases, maxDurPerCanvas, h, md, dl, s, fs, ppms, us,
                 cs,
                 lastDur,
                 ppms !== lastPPMS
