@@ -6,12 +6,15 @@ import {
 import { LangContext, getLang } from '../lang';
 
 export interface ExportPanelProps{
-    sampleRate?: number;
-    bitRate?: number;
-    format?: ExportFormat;
+    sampleRate: number;
+    bitRate: number;
+    format: ExportFormat;
+    onSampleRateChange: (v: number) => void;
+    onBitRateChange: (v: number) => void;
+    onFormatChange: (v: ExportFormat) => void;
 }
 
-export default ({ sampleRate, bitRate, format }: ExportPanelProps) => {
+export default ({ sampleRate, bitRate, format, onSampleRateChange, onBitRateChange, onFormatChange }: ExportPanelProps) => {
     const lang = useContext(LangContext);
     const sr = sampleRate || 44100;
     const br = bitRate || 128;
@@ -23,7 +26,7 @@ export default ({ sampleRate, bitRate, format }: ExportPanelProps) => {
                     {getLang('SAMPLE_RATE', lang)}
                 </FormLabel>
                 <FormGroup>
-                    <Select value={sr} required fullWidth>
+                    <Select value={sr} onChange={(e) => onSampleRateChange(e.target.value as number)} required fullWidth>
                         <MenuItem value={44100}>44100</MenuItem>
                         <MenuItem value={48000}>48000</MenuItem>
                         <MenuItem value={22050}>22050</MenuItem>
@@ -36,7 +39,7 @@ export default ({ sampleRate, bitRate, format }: ExportPanelProps) => {
                 <FormLabel component="legend">
                     {getLang('BIT_RATE', lang)}
                 </FormLabel>
-                <Select value={br} required fullWidth>
+                <Select value={br} onChange={(e) => onBitRateChange(e.target.value as number)} required fullWidth>
                     <MenuItem value={64}>64</MenuItem>
                     <MenuItem value={96}>96</MenuItem>
                     <MenuItem value={128}>128</MenuItem>
@@ -48,7 +51,7 @@ export default ({ sampleRate, bitRate, format }: ExportPanelProps) => {
                 <FormLabel component="legend">
                     {getLang('EXPORT_FORMAT', lang)}
                 </FormLabel>
-                <RadioGroup value={f} row>
+                <RadioGroup value={f} onChange={(e, v) => onFormatChange(v as ExportFormat)} row>
                     <FormControlLabel
                         control={<Radio color="primary" value="WAV" />}
                         label="WAV"

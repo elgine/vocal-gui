@@ -7,8 +7,8 @@ export default createMuiTheme({
         // primary: deepPurple,
         primary: {
             main: '#bb86fc',
-            dark: '#bb86fc',
-            light: '#6200ee',
+            // dark: '#bb86fc',
+            // light: '#6200ee',
             contrastText: '#000'
         },
         secondary: teal,

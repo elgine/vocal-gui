@@ -111,7 +111,7 @@ const timelineModel: ModelConfig<EditorState> = {
             state.volume = payload;
             return state;
         },
-        [REDUCER_SET_EFFECT_OPTIONS](state: EditorState, payload: EffectType) {
+        [REDUCER_SET_EFFECT](state: EditorState, payload: EffectType) {
             state.effect = payload;
             return state;
         },
