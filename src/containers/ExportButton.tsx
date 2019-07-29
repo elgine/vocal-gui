@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from 'react';
-import { IconButton, Menu, MenuItem, ListItemIcon, Typography, Tooltip } from '@material-ui/core';
+import { IconButton, Menu, MenuItem, ListItemIcon, Typography, Tooltip, Badge } from '@material-ui/core';
 import NewExportTaskButton from './NewExportTaskButton';
 import { useSelector, shallowEqual } from 'react-redux';
 import { RootState } from '../store';
@@ -17,21 +17,26 @@ const ExportIcon = () => {
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        disabledExport: present.editor.audioBuffer === undefined
+        disabledExport: present.editor.audioBuffer === undefined,
+        taskCount: Object.values(present.render.tasks).filter((t) => t.state >= 0 && t.state < 1).length
     };
 };
 
 export default () => {
     const lang = useContext(LangContext);
     const buttonRef = useRef<HTMLButtonElement>(null);
-    const { disabledExport } = useSelector(mapStateToProps, shallowEqual);
+    const { disabledExport, taskCount } = useSelector(mapStateToProps, shallowEqual);
     const [openMenu, setOpenMenu] = useState(false);
     const onMenuItemClose = () => setOpenMenu(false);
     return (
         <React.Fragment>
             <Tooltip title={getLang('EXPORT', lang)}>
                 <IconButton ref={buttonRef} onClick={() => setOpenMenu(true)}>
-                    <ExportIcon />
+                    {taskCount > 0 ? (
+                        <Badge badgeContent={taskCount} color="secondary">
+                            <ExportIcon />
+                        </Badge>
+                    ) : <ExportIcon />}
                 </IconButton>
             </Tooltip>
             <Menu open={openMenu} anchorEl={buttonRef.current} onClose={() => setOpenMenu(false)}>
