@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 import { LangContext, getLang } from '../lang';
 
-export interface ExportPanelProps{
+export interface ExportSettingsPanelProps{
     sampleRate: number;
     bitRate: number;
     format: ExportFormat;
@@ -14,7 +14,7 @@ export interface ExportPanelProps{
     onFormatChange: (v: ExportFormat) => void;
 }
 
-export default ({ sampleRate, bitRate, format, onSampleRateChange, onBitRateChange, onFormatChange }: ExportPanelProps) => {
+export default ({ sampleRate, bitRate, format, onSampleRateChange, onBitRateChange, onFormatChange }: ExportSettingsPanelProps) => {
     const lang = useContext(LangContext);
     const sr = sampleRate || 44100;
     const br = bitRate || 128;

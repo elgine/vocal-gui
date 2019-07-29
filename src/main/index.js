@@ -1,14 +1,26 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 const { isDev } = require('../../build/util');
 const config = require('../../build/config');
 
 let win;
 
 const createWindow = () => {
+    Menu.setApplicationMenu(null);
     win = new BrowserWindow({
         width: 800,
         height: 600,
+        frame: false,
         webPreferences: {
+            defaultFontFamily: {
+                standard: 'Roboto',
+                // serif:"",
+                // sansSerif:"",
+                // monospace:"",
+            },
+            defaultFontSize: 16,
+            // defaultFixedFontSize:20,
+            // minimumFontSize:0,
+            defaultEncoding: 'utf-8',
             nodeIntegration: true
         }
     });
@@ -18,6 +30,8 @@ const createWindow = () => {
     } else {
         win.loadFile('index.html');
     }
+
+    win.webContents.openDevTools();
 
     win.on('closed', () => {
         win = null;

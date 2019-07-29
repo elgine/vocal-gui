@@ -31,7 +31,6 @@ export default [
                 `editor/${ACTION_SWITCH_EFFECT}`,
                 `editor/${ACTION_EFFECT_OPTIONS_CHANGE}`,
                 `editor/${ACTION_SOURCE_CHANGE}`,
-                `editor/${ACTION_SEEK}`,
                 `editor/${ACTION_ZOOM}`,
                 `editor/${ACTION_CLIP_REGION_CHANGE}`
             ].indexOf(type) > -1;

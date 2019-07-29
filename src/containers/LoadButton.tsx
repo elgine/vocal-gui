@@ -2,15 +2,17 @@ import React, { useContext, useRef, useState } from 'react';
 import {
     Button, Menu, MenuItem, TextField,
     Dialog, DialogActions, DialogContentText, DialogContent, DialogTitle,
-    List, ListItemAvatar, ListItemText
+    List, ListItemIcon, ListItemText
 } from '@material-ui/core';
 import { DialogProps } from '@material-ui/core/Dialog';
 import { MenuProps } from '@material-ui/core/Menu';
-import { ButtonProps } from '@material-ui/core/Button';
 import { CloudUpload, Link, Mic } from '@material-ui/icons';
 import { getLang, LangContext } from '../lang';
 import { SUPPORT_MIME } from '../constant';
 import RecordPanel from './RecordPanel';
+import { useDispatch } from 'react-redux';
+import { RematchDispatch } from '@rematch/core';
+import { ACTION_LOAD_SOURCE } from '../store/models/editor/types';
 
 export interface UploadedProps extends Omit<React.HtmlHTMLAttributes<{}>, 'onChange'>{
     accept?: string;
@@ -58,22 +60,22 @@ export const LoadMethodPanel = ({ onLoadSource, ...others }: LoadMethodPanelProp
                 <List>
                     <Uploaded accept={SUPPORT_MIME} onChange={onLocalFileListChange}>
                         <MenuItem button>
-                            <ListItemAvatar>
+                            <ListItemIcon>
                                 <CloudUpload />
-                            </ListItemAvatar>
+                            </ListItemIcon>
                             <ListItemText primary={getLang('LOAD_FROM_LOCAL', lang)} />
                         </MenuItem>
                     </Uploaded>
                     <MenuItem button onClick={onUrlBtnClick}>
-                        <ListItemAvatar>
+                        <ListItemIcon>
                             <Link />
-                        </ListItemAvatar>
+                        </ListItemIcon>
                         <ListItemText primary={getLang('LOAD_FROM_URL', lang)} />
                     </MenuItem>
                     <MenuItem button onClick={onMicBtnClcik}>
-                        <ListItemAvatar>
+                        <ListItemIcon>
                             <Mic />
-                        </ListItemAvatar>
+                        </ListItemIcon>
                         <ListItemText primary={getLang('LOAD_FROM_MIC', lang)} />
                     </MenuItem>
                 </List>
@@ -139,34 +141,37 @@ export const UrlDialog = ({ url, onUrlChange, onConfirm, onClose, ...others }: U
     );
 };
 
-export interface LoadButtonProps extends ButtonProps{
-    onLoadSource?: (v: {type: SourceType; value?: File | string | AudioBuffer}) => void;
+export interface LoadButtonProps{
+    Component: React.RefForwardingComponent<any, any>;
+    ComponentProps?: any;
+    onClose?: () => void;
 }
 
-export default ({ onLoadSource, children, ...others }: LoadButtonProps) => {
-    const btnRef = useRef<HTMLButtonElement>(null);
+export default React.forwardRef(({ Component, ComponentProps, onClose }: LoadButtonProps, ref: React.Ref<any>) => {
+    const dispatch = useDispatch<RematchDispatch>();
+    const onLoadSource = dispatch.editor[ACTION_LOAD_SOURCE];
+    const rootRef = ref as React.RefObject<any> || useRef<any>(null);
     const [showMethodPanel, setShowMethodPanel] = useState(false);
     const onLoadSourceWrapped = (v: any) => {
         setShowMethodPanel(false);
-        onLoadSource && onLoadSource(v);
+        onLoadSource(v);
     };
-    const onBtnClick = () => {
+    const onClick = () => {
         setShowMethodPanel(true);
     };
-    const onClose = () => {
+    const onMenuPanleClose = () => {
         setShowMethodPanel(false);
+        onClose && onClose();
     };
     return (
         <React.Fragment>
-            <Button ref={btnRef} onClick={onBtnClick} {...others}>
-                {children}
-            </Button>
-            <LoadMethodPanel anchorEl={btnRef.current}
+            <Component ref={rootRef} onClick={onClick} {...ComponentProps} />
+            <LoadMethodPanel anchorEl={rootRef.current}
                 anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 onLoadSource={onLoadSourceWrapped} open={showMethodPanel}
-                onClose={onClose}
+                onClose={onMenuPanleClose}
             />
         </React.Fragment>
     );
-};
+});

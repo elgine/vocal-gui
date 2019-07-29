@@ -37,7 +37,8 @@ const useStyles = makeStyles((theme: Theme) => {
         },
         root: {
             position: 'relative',
-            height: '100%'
+            height: '100%',
+            boxSizing: 'border-box'
         },
         content: {
             position: 'relative',
@@ -62,7 +63,8 @@ const useStyles = makeStyles((theme: Theme) => {
             top: 0,
             right: 0,
             height: '100%',
-            overflow: 'hidden auto',
+            overflowX: 'hidden',
+            overflowY: 'auto',
             boxSizing: 'border-box',
             width: EFFECT_DRAWER_WIDTH
         },

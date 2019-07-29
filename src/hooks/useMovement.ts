@@ -33,7 +33,9 @@ function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number)
             setCurPos(mouseCoordHandler(e, corrector));
         };
         const onMouseMove = throttle(mouseMoveFn, thi);
-        const onMouseUp = (e: MouseEvent) => setHasDown(false);
+        const onMouseUp = (e: MouseEvent) => {
+            setHasDown(false);
+        };
         const initMouseListeners = () => {
             document.body.addEventListener('mousemove', onMouseMove);
             document.body.addEventListener('mouseup', onMouseUp);

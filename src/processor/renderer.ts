@@ -9,7 +9,7 @@ export enum RenderTaskLevel{
 }
 
 export enum RenderTaskState{
-    FREE = 0,
+    WAITING = 0,
     COMPLETE = 1,
     STOPPED = -2,
     FAILED = -1
@@ -17,13 +17,14 @@ export enum RenderTaskState{
 
 export interface RenderTask{
     id: string;
-    source: AudioBuffer;
+    title: string;
+    source?: AudioBuffer;
     level: RenderTaskLevel;
     state: RenderTaskState;
     taskCreatedTime: number;
     effectType: EffectType;
     effectOptions: any;
-    segements: Segment[];
+    segments: Segment[];
     options: OfflineAudioContextOptions;
 }
 
@@ -57,6 +58,7 @@ export default class Renderer {
     }
 
     private* _buildGraph(task: RenderTask) {
+        if (!task.source) return;
         if (!this._effect || this._effect.type !== task.effectType) {
             let e = yield createEffect(task.effectType, this._offlineAudioCtx);
             if (!e) {

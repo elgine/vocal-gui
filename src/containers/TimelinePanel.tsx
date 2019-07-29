@@ -30,6 +30,7 @@ const TIME_SCALE_OTHER_PROPS = {
 const preSeekPointerStyles = makeStyles((theme: Theme) => {
     return {
         root: {
+            pointerEvents: 'none',
             position: 'absolute',
             width: '1px',
             backgroundColor: fade(theme.palette.text.primary, PRESEEK_FADE)
@@ -81,7 +82,8 @@ const useStyles = makeStyles((theme: Theme) => {
             position: 'relative',
             width: '100%',
             height: '100%',
-            overflow: 'auto hidden',
+            overflowX: 'auto',
+            overflowY: 'hidden',
             boxSizing: 'border-box'
         },
         main: {
@@ -129,7 +131,6 @@ export default withTheme(({
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onSeek = dispatch.editor[ACTION_SEEK];
     const onClipRegionChange = dispatch.editor[ACTION_CLIP_REGION_CHANGE];
-    const onLoadSource = dispatch.editor[ACTION_LOAD_SOURCE];
     const onCancelLoadSource = dispatch.editor[ACTION_CANCEL_LOAD_SORUCE];
     const primary = theme.palette.primary[theme.palette.type];
     const lang = useContext(LangContext);
@@ -150,11 +151,13 @@ export default withTheme(({
         return arr;
     }, [audioBuffer]);
 
+    const mainRef = useRef<HTMLDivElement>(null);
+
     const [openPreseek, setOpenPreseek] = useState(false);
     const [preseek, setPreseek] = useState(0);
     const preseekPointerLeft = preseek * pixelsPerMSec;
-    const onTimelineMove = (e: React.MouseEvent) => {
-        setPreseek(e.pageX / pixelsPerMSec);
+    const onTimelineMove = (e: React.MouseEvent<HTMLElement>) => {
+        setPreseek((e.pageX + (mainRef.current ? mainRef.current.scrollLeft : 0)) / pixelsPerMSec);
     };
     const onTimelineOver = () => {
         setOpenPreseek(true);
@@ -164,9 +167,8 @@ export default withTheme(({
     };
 
     const pointerLeft = currentTime * pixelsPerMSec;
-    const mainRef = useRef<HTMLDivElement>(null);
 
-    const onTimeScaleClick = (e: React.MouseEvent) => {
+    const onTimelineClick = (e: React.MouseEvent) => {
         onSeek((e.pageX + (mainRef.current ? mainRef.current.scrollLeft : 0)) / pixelsPerMSec);
     };
 
@@ -250,10 +252,12 @@ export default withTheme(({
         height: `${wh * channels + tsh}px`
     };
     return (
-        <div className={clsx(
-            classes.root,
-            className
-        )} onMouseMove={onTimelineMove} onMouseOver={onTimelineOver} onMouseLeave={onTimelineOut} {...others}>
+        <div className={clsx(classes.root, className)}
+            onMouseMove={onTimelineMove}
+            onMouseOver={onTimelineOver}
+            onMouseLeave={onTimelineOut}
+            onClick={onTimelineClick}
+            {...others}>
             <div ref={mainRef} className={classes.main} style={mainStyle}>
                 <TimeScale
                     id="time-scale"
@@ -262,7 +266,6 @@ export default withTheme(({
                     pixelsPerMSec={pixelsPerMSec}
                     duration={duration}
                     height={tsh}
-                    onClick={onTimeScaleClick}
                     {...TIME_SCALE_OTHER_PROPS}
                 />
                 {
@@ -295,15 +298,24 @@ export default withTheme(({
                                         {getLang('CANCEL', lang)}
                                     </Button>
                                 </React.Fragment> : (
-                                    <LoadButton color="primary" variant="contained" onLoadSource={onLoadSource}>
-                                        <OpenInNew />
-                                        &nbsp;
+                                    <LoadButton Component={Button} ComponentProps={
                                         {
-                                            getLang('LOAD_SOURCE_FROM', lang)
+                                            color: 'primary',
+                                            variant: 'contained',
+                                            children: (
+                                                <React.Fragment>
+                                                    <OpenInNew />
+                                                    &nbsp;
+                                                    {
+                                                        getLang('LOAD_SOURCE', lang)
+                                                    }
+                                                    ...
+                                                    <ArrowDropDown />
+                                                </React.Fragment>
+                                            )
                                         }
-                                        ...
-                                        <ArrowDropDown />
-                                    </LoadButton>
+                                    }
+                                    />
                                 )
                             }
                         </Box>

@@ -3,7 +3,7 @@ import {
     Toolbar
 } from '@material-ui/core';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
-import Grow from '../components/Placeholder';
+import Placeholder from '../components/Placeholder';
 import { Tune } from '@material-ui/icons';
 import { getLang, LangContext } from '../lang';
 import ToggleButton from '../components/ToggleButton';
@@ -25,10 +25,10 @@ export default React.memo(({
     return (
         <Toolbar {...others}>
             <PlayerVolume />
-            <Grow id="player-control-list" display="flex" alignItems="center" justifyContent="center">
+            <Placeholder id="player-control-list" display="flex" alignItems="center" justifyContent="center">
                 <PlayerControls />
                 <PlayerCurrentTimeInput />
-            </Grow>
+            </Placeholder>
             <ToggleButton id="effect-panel-collapse-button" value={showEffectPanel} onChange={onToggleEffectPanel}>
                 <Tune />
                 &nbsp;

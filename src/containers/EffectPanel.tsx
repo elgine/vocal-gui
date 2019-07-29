@@ -87,7 +87,8 @@ const usePaneStyles = makeStyles((theme: Theme) => ({
         position: 'relative',
         zIndex: 1,
         height: '100%',
-        overflow: 'hidden auto',
+        overflowX: 'hidden',
+        overflowY: 'auto',
         boxSizing: 'border-box',
         padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`
     }

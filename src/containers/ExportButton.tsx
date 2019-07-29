@@ -1,50 +1,59 @@
 import React, { useState, useContext } from 'react';
 import { LangContext, getLang } from '../lang';
-import { IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@material-ui/core';
-import Export from '../components/Export';
-import ExportPanel from './ExportPanel';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@material-ui/core';
+import ExportSettingsPanel from './ExportSettingsPanel';
 import { useDispatch } from 'react-redux';
-import { RematchDispatch } from '@rematch/core';
 import { ACTION_RENDER } from '../store/models/render/types';
+import { RematchDispatch } from '@rematch/core';
 
-export default () => {
+export interface ExportButtonProps{
+    Component: React.ComponentType<any>;
+    ComponentProps?: any;
+    onClose?: () => void;
+}
+
+export default ({ Component, ComponentProps, onClose }: ExportButtonProps) => {
     const lang = useContext(LangContext);
+    const [showExport, setShowExport] = useState(false);
     const dispatch = useDispatch<RematchDispatch>();
     const onRender = dispatch.render[ACTION_RENDER];
-    const [showExport, setShowExport] = useState(false);
     const [sampleRate, setSampleRate] = useState(44100);
     const [bitRate, setBitRate] = useState(128);
     const [format, setFormat] = useState<ExportFormat>('MP3');
-    const onExport = () => {
+    const onAddTask = () => {
         onRender({
             sampleRate,
             bitRate,
             format
         });
-        setShowExport(false);
+        onClose && onClose();
     };
     return (
         <React.Fragment>
-            <Tooltip title={getLang('EXPORT', lang)} onClick={() => setShowExport(true)}>
-                <IconButton>
-                    <Export />
-                </IconButton>
-            </Tooltip>
-            <Dialog open={showExport} onClose={() => setShowExport(false)}>
+            <Component onClick={() => setShowExport(true)} {...ComponentProps} />
+            <Dialog fullWidth maxWidth="xs" open={showExport} onClose={() => setShowExport(false)}>
                 <DialogTitle>
                     {
                         getLang('EXPORT', lang)
                     }
                 </DialogTitle>
                 <DialogContent>
-                    <ExportPanel sampleRate={sampleRate} onSampleRateChange={setSampleRate}
+                    <ExportSettingsPanel sampleRate={sampleRate} onSampleRateChange={setSampleRate}
                         bitRate={bitRate} onBitRateChange={setBitRate}
                         format={format} onFormatChange={setFormat}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setShowExport(false)}>{getLang('CANCEL', lang)}</Button>
-                    <Button onClick={onExport} color="primary">{getLang('EXPORT', lang)}</Button>
+                    <Button onClick={() => setShowExport(false)}>
+                        {
+                            getLang('CANCEL', lang)
+                        }
+                    </Button>
+                    <Button color="primary" onClick={onAddTask}>
+                        {
+                            getLang('EXPORT', lang)
+                        }
+                    </Button>
                 </DialogActions>
             </Dialog>
         </React.Fragment>
