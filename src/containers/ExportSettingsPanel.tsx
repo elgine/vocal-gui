@@ -1,40 +1,23 @@
 import React, { useContext } from 'react';
 import {
-    FormGroup, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup,
+    FormControl, FormLabel, FormControlLabel, Radio, RadioGroup,
     Select, MenuItem
 } from '@material-ui/core';
 import { LangContext, getLang } from '../lang';
 
 export interface ExportSettingsPanelProps{
-    sampleRate: number;
     bitRate: number;
     format: ExportFormat;
-    onSampleRateChange: (v: number) => void;
     onBitRateChange: (v: number) => void;
     onFormatChange: (v: ExportFormat) => void;
 }
 
-export default ({ sampleRate, bitRate, format, onSampleRateChange, onBitRateChange, onFormatChange }: ExportSettingsPanelProps) => {
+export default ({ bitRate, format, onBitRateChange, onFormatChange }: ExportSettingsPanelProps) => {
     const lang = useContext(LangContext);
-    const sr = sampleRate || 44100;
     const br = bitRate || 128;
     const f = format || 'MP3';
     return (
         <React.Fragment>
-            <FormControl fullWidth variant="outlined" margin="normal" component="fieldset">
-                <FormLabel component="legend">
-                    {getLang('SAMPLE_RATE', lang)}
-                </FormLabel>
-                <FormGroup>
-                    <Select value={sr} onChange={(e) => onSampleRateChange(e.target.value as number)} required fullWidth>
-                        <MenuItem value={44100}>44100</MenuItem>
-                        <MenuItem value={48000}>48000</MenuItem>
-                        <MenuItem value={22050}>22050</MenuItem>
-                        <MenuItem value={11025}>11025</MenuItem>
-                        <MenuItem value={8000}>8000</MenuItem>
-                    </Select>
-                </FormGroup>
-            </FormControl>
             <FormControl fullWidth margin="normal" component="fieldset">
                 <FormLabel component="legend">
                     {getLang('BIT_RATE', lang)}

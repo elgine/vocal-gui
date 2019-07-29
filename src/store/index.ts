@@ -22,7 +22,7 @@ const store = init({
 
 // Run sagas
 importSagas(saga);
-renderSagas(saga);
+// renderSagas(saga);
 
 export type Models = typeof models;
 export type RootState = StateWithHistory<RematchRootState<Models>>;

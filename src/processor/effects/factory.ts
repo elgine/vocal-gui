@@ -63,6 +63,13 @@ export const createEffect = async (type: EffectType, ctx: BaseAudioContext) => {
     return effect;
 };
 
+export const getDurationAfterApplyEffect = (type: EffectType, options: any, duration: number) => {
+    if (type === EffectType.OLD_FEMALE || type === EffectType.OLD_MALE) {
+        return duration * (options.tempo || 1);
+    }
+    return duration;
+};
+
 export const getEffectDescriptor = (type: EffectType) => {
     let descriptor: any = {};
     switch (type) {

@@ -11,7 +11,7 @@ const mouseCoordHandler = (e: React.MouseEvent|MouseEvent, corrector?: (v: Point
     return corrector ? corrector(c) : c;
 };
 
-function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number) {
+function useMovement(corrector?: (v: Point) => Point, stopPropagation?: boolean, throttleInterval?: number) {
     const thi = throttleInterval || 33;
     const [hasDown, setHasDown] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -19,7 +19,8 @@ function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number)
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
     const [curPos, setCurPos] = useState({ x: 0, y: 0 });
     const onMouseDown = (e: React.MouseEvent) => {
-        // e.preventDefault();
+        e.preventDefault();
+        stopPropagation && e.stopPropagation();
         setHasDown(true);
         setIsDragging(false);
         setDownPos(mouseCoordHandler(e, corrector));
@@ -29,7 +30,10 @@ function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number)
     useLayoutEffect(() => {
         const mouseMoveFn = (e: MouseEvent) => {
             e.preventDefault();
-            e.stopPropagation();
+            if (stopPropagation) {
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            }
             setCurPos(mouseCoordHandler(e, corrector));
         };
         const onMouseMove = throttle(mouseMoveFn, thi);
@@ -48,7 +52,7 @@ function useMovement(corrector?: (v: Point) => Point, throttleInterval?: number)
             initMouseListeners();
         }
         return uninitMouseListeners;
-    }, [hasDown, corrector, thi]);
+    }, [hasDown, corrector, stopPropagation, thi]);
     useLayoutEffect(() => {
         if (hasDown && !isDragging && distance(curPos, downPos) >= DELTA_FOR_DRAG_DETECTION) {
             setIsDragging(true);

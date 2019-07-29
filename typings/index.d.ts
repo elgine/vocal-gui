@@ -30,6 +30,11 @@ type SourceTypeUrl = 'URL';
 type SourceTypeMic = 'MIC';
 type SourceType = SourceTypeLocal | SourceTypeUrl | SourceTypeMic;
 
+interface ExportParams{
+    bitRate: number;
+    format: ExportFormat;
+}
+
 interface ScrollBarProperties{
     width: number;
     trackBgColor: string;

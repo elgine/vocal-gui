@@ -85,6 +85,7 @@ export default {
     EFFECT: 'Effect',
     EXPORT_LIST: 'Export task list',
     EXPORT: 'Export',
+    NEW_EXPORT_TASK: 'New export task',
     EXPORT_FORMAT: 'Export format',
     REQUIRED: 'Required',
     SAMPLE_RATE: 'Sample rate',

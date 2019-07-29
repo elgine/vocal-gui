@@ -1,5 +1,5 @@
 import { EffectType } from './effectType';
-import { createEffect } from './effects/factory';
+import { createEffect, getDurationAfterApplyEffect } from './effects/factory';
 import { eq } from 'lodash';
 import Effect from './effects/effect';
 
@@ -25,22 +25,22 @@ export interface RenderTask{
     effectType: EffectType;
     effectOptions: any;
     segments: Segment[];
-    options: OfflineAudioContextOptions;
+    options: ExportParams;
 }
 
 export default class Renderer {
 
     private _offlineAudioCtx!: OfflineAudioContext;
-    private _lastOptions!: OfflineAudioContextOptions;
     private _effect!: Effect;
     private _rendering: boolean = false;
 
     * render(task: RenderTask) {
         this._rendering = true;
-        if (!this._offlineAudioCtx || !eq(this._lastOptions, task.options)) {
-            this._offlineAudioCtx = new OfflineAudioContext(task.options);
-            this._lastOptions = task.options;
-        }
+        this._offlineAudioCtx = new OfflineAudioContext(
+            task.source!.numberOfChannels,
+            getDurationAfterApplyEffect(task.effectType, task.effectOptions, task.source!.duration * 1000),
+            task.source!.sampleRate
+        );
         yield this._buildGraph(task);
         let buffer = yield this._offlineAudioCtx.startRendering();
         this._rendering = false;

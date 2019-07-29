@@ -17,6 +17,7 @@ import {
 import { RenderTask, RenderTaskState, RenderTaskLevel } from '../../../processor/renderer';
 import { RootState } from '../..';
 import { EffectType } from '../../../processor/effectType';
+import uuid from 'uuid/v4';
 
 const tasksExample: Dictionary<RenderTask> = {
     '0': {
@@ -29,9 +30,8 @@ const tasksExample: Dictionary<RenderTask> = {
         level: RenderTaskLevel.NORMAL,
         taskCreatedTime: Date.now(),
         options: {
-            length: 2,
-            numberOfChannels: 2,
-            sampleRate: 44100
+            bitRate: 128,
+            format: 'MP3'
         }
     },
     '1': {
@@ -44,9 +44,8 @@ const tasksExample: Dictionary<RenderTask> = {
         level: RenderTaskLevel.NORMAL,
         taskCreatedTime: Date.now(),
         options: {
-            length: 2,
-            numberOfChannels: 2,
-            sampleRate: 44100
+            bitRate: 128,
+            format: 'MP3'
         }
     },
     '2': {
@@ -59,9 +58,8 @@ const tasksExample: Dictionary<RenderTask> = {
         level: RenderTaskLevel.NORMAL,
         taskCreatedTime: Date.now(),
         options: {
-            length: 2,
-            numberOfChannels: 2,
-            sampleRate: 44100
+            bitRate: 128,
+            format: 'MP3'
         }
     },
     '3': {
@@ -74,9 +72,8 @@ const tasksExample: Dictionary<RenderTask> = {
         level: RenderTaskLevel.NORMAL,
         taskCreatedTime: Date.now(),
         options: {
-            length: 2,
-            numberOfChannels: 2,
-            sampleRate: 44100
+            bitRate: 128,
+            format: 'MP3'
         }
     },
     '4': {
@@ -89,9 +86,8 @@ const tasksExample: Dictionary<RenderTask> = {
         level: RenderTaskLevel.NORMAL,
         taskCreatedTime: Date.now(),
         options: {
-            length: 2,
-            numberOfChannels: 2,
-            sampleRate: 44100
+            bitRate: 128,
+            format: 'MP3'
         }
     },
     '5': {
@@ -104,9 +100,8 @@ const tasksExample: Dictionary<RenderTask> = {
         level: RenderTaskLevel.NORMAL,
         taskCreatedTime: Date.now(),
         options: {
-            length: 2,
-            numberOfChannels: 2,
-            sampleRate: 44100
+            bitRate: 128,
+            format: 'MP3'
         }
     },
     '6': {
@@ -119,16 +114,15 @@ const tasksExample: Dictionary<RenderTask> = {
         level: RenderTaskLevel.NORMAL,
         taskCreatedTime: Date.now(),
         options: {
-            length: 2,
-            numberOfChannels: 2,
-            sampleRate: 44100
+            bitRate: 128,
+            format: 'MP3'
         }
     }
 };
 
 const initialState: RendererState = {
     rendering: true,
-    tasks: tasksExample
+    tasks: {}
 };
 
 const existsFreeRenderTask = (tasks: Dictionary<RenderTask>) => {
@@ -184,12 +178,23 @@ export default {
                     }
                 });
             },
-            [ACTION_RENDER](payload: RenderTask) {
+            [ACTION_RENDER](payload: ExportParams, { present }: RootState) {
                 batch(() => {
-                    dispatch.render[REDUCER_ADD_RENDER_TASK]({
+                    const { editor } = present;
+                    const newTask: RenderTask = {
+                        id: uuid(),
+                        title: editor.title,
+                        level: RenderTaskLevel.NORMAL,
+                        state: RenderTaskState.WAITING,
                         taskCreatedTime: Date.now(),
-                        ...payload
-                    });
+                        effectType: editor.effect,
+                        effectOptions: editor.effectOptions,
+                        segments: [
+                            { start: editor.clipRegion[0], end: editor.clipRegion[1] }
+                        ],
+                        options: payload
+                    };
+                    dispatch.render[REDUCER_ADD_RENDER_TASK](newTask);
                     dispatch.render[ACTION_START_RENDERING]();
                 });
             },

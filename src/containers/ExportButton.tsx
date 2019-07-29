@@ -1,61 +1,72 @@
-import React, { useState, useContext } from 'react';
-import { LangContext, getLang } from '../lang';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@material-ui/core';
-import ExportSettingsPanel from './ExportSettingsPanel';
-import { useDispatch } from 'react-redux';
-import { ACTION_RENDER } from '../store/models/render/types';
-import { RematchDispatch } from '@rematch/core';
+import React, { useState, useContext, useRef } from 'react';
+import { IconButton, Menu, MenuItem, ListItemIcon, Typography, Tooltip } from '@material-ui/core';
+import NewExportTaskButton from './NewExportTaskButton';
+import { useSelector, shallowEqual } from 'react-redux';
+import { RootState } from '../store';
+import { SaveAlt, QueueMusic } from '@material-ui/icons';
+import { getLang, LangContext } from '../lang';
+import ExportListButton from './ExportListButton';
 
-export interface ExportButtonProps{
-    Component: React.ComponentType<any>;
-    ComponentProps?: any;
-    onClose?: () => void;
-}
+const ExportIcon = () => {
+    return (
+        <svg version="1.1" width="1em" height="1em" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12,1L8,5H11V14H13V5H16M18,23H6C4.89,23 4,22.1 4,21V9A2,2 0 0,1 6,7H9V9H6V21H18V9H15V7H18A2,2 0 0,1 20,9V21A2,2 0 0,1 18,23Z" />
+        </svg>
+    );
+};
 
-export default ({ Component, ComponentProps, onClose }: ExportButtonProps) => {
-    const lang = useContext(LangContext);
-    const [showExport, setShowExport] = useState(false);
-    const dispatch = useDispatch<RematchDispatch>();
-    const onRender = dispatch.render[ACTION_RENDER];
-    const [sampleRate, setSampleRate] = useState(44100);
-    const [bitRate, setBitRate] = useState(128);
-    const [format, setFormat] = useState<ExportFormat>('MP3');
-    const onAddTask = () => {
-        onRender({
-            sampleRate,
-            bitRate,
-            format
-        });
-        onClose && onClose();
+const mapStateToProps = ({ present }: RootState) => {
+    return {
+        disabledExport: present.editor.audioBuffer === undefined
     };
+};
+
+export default () => {
+    const lang = useContext(LangContext);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const { disabledExport } = useSelector(mapStateToProps, shallowEqual);
+    const [openMenu, setOpenMenu] = useState(false);
+    const onMenuItemClose = () => setOpenMenu(false);
     return (
         <React.Fragment>
-            <Component onClick={() => setShowExport(true)} {...ComponentProps} />
-            <Dialog fullWidth maxWidth="xs" open={showExport} onClose={() => setShowExport(false)}>
-                <DialogTitle>
-                    {
-                        getLang('EXPORT', lang)
-                    }
-                </DialogTitle>
-                <DialogContent>
-                    <ExportSettingsPanel sampleRate={sampleRate} onSampleRateChange={setSampleRate}
-                        bitRate={bitRate} onBitRateChange={setBitRate}
-                        format={format} onFormatChange={setFormat}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setShowExport(false)}>
-                        {
-                            getLang('CANCEL', lang)
-                        }
-                    </Button>
-                    <Button color="primary" onClick={onAddTask}>
-                        {
-                            getLang('EXPORT', lang)
-                        }
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <Tooltip title={getLang('EXPORT', lang)}>
+                <IconButton ref={buttonRef} onClick={() => setOpenMenu(true)}>
+                    <ExportIcon />
+                </IconButton>
+            </Tooltip>
+            <Menu open={openMenu} anchorEl={buttonRef.current} onClose={() => setOpenMenu(false)}>
+                <NewExportTaskButton Component={MenuItem} ComponentProps={{
+                    disabled: disabledExport,
+                    children: (
+                        <React.Fragment>
+                            <ListItemIcon>
+                                <SaveAlt />
+                            </ListItemIcon>
+                            <Typography variant="inherit">
+                                {
+                                    getLang('EXPORT', lang)
+                                }
+                            </Typography>
+                        </React.Fragment>
+                    )
+                }} onClose={onMenuItemClose}
+                />
+                <ExportListButton Component={MenuItem} ComponentProps={{
+                    children: (
+                        <React.Fragment>
+                            <ListItemIcon>
+                                <QueueMusic />
+                            </ListItemIcon>
+                            <Typography>
+                                {
+                                    getLang('EXPORT_LIST', lang)
+                                }
+                            </Typography>
+                        </React.Fragment>
+                    )
+                }} onClose={onMenuItemClose}
+                />
+            </Menu>
         </React.Fragment>
     );
 };

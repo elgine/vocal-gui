@@ -88,6 +88,47 @@ const TaskState = ({ state }: {state: RenderTaskState}) => {
     );
 };
 
+const TASK_TITLE_STYLE: React.CSSProperties = {
+    maxWidth: '200px',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
+};
+
+interface TaskProps{
+    id: string;
+    state: RenderTaskState;
+    title?: string;
+    selected?: boolean;
+    onSelected: (v: string) => void;
+    onCancel: (v: string) => void;
+    onStop: (v: string) => void;
+}
+
+const Task = ({ id, state, selected, title, onSelected, onCancel, onStop }: TaskProps) => {
+    const onListItemClick = () => {
+        onSelected && onSelected(id);
+    };
+    return (
+        <ListItem button onClick={onListItemClick}>
+            <ListItemIcon>
+                <Checkbox checked={selected} />
+            </ListItemIcon>
+            <ListItemText style={TASK_TITLE_STYLE}>
+                {title}
+            </ListItemText>
+            <ListItemSecondaryAction>
+                <TaskState state={state} />
+                <ActionButton id={id}
+                    disabledStop={state >= 1 || state < 0}
+                    onStop={onStop}
+                    onCancel={onCancel}
+                />
+            </ListItemSecondaryAction>
+        </ListItem>
+    );
+};
+
 export default () => {
     const lang = useContext(LangContext);
     const { tasks } = useSelector(mapStateToProps);
@@ -143,23 +184,13 @@ export default () => {
         <React.Fragment>
             <List style={LIST_STYLE}>
                 {
-                    taskArr.map((task) => (
-                        <ListItem button key={task.id} onClick={() => onTaskSelected(task.id)}>
-                            <ListItemIcon>
-                                <Checkbox checked={selectedTaskIds[task.id] !== undefined} />
-                            </ListItemIcon>
-                            <ListItemText>
-                                {task.title}
-                            </ListItemText>
-                            <ListItemSecondaryAction>
-                                <TaskState state={task.state} />
-                                <ActionButton id={task.id}
-                                    disabledStop={task.state >= 1 || task.state < 0}
-                                    onStop={onTaskStop}
-                                    onCancel={onTaskCancel}
-                                />
-                            </ListItemSecondaryAction>
-                        </ListItem>
+                    taskArr.map(({ id, title, state }) => (
+                        <Task key={id} id={id} title={title} state={state}
+                            selected={selectedTaskIds[id] !== undefined}
+                            onSelected={onTaskSelected}
+                            onStop={onTaskStop}
+                            onCancel={onTaskCancel}
+                        />
                     ))
                 }
             </List>

@@ -150,11 +150,12 @@ export interface LoadButtonProps{
 export default React.forwardRef(({ Component, ComponentProps, onClose }: LoadButtonProps, ref: React.Ref<any>) => {
     const dispatch = useDispatch<RematchDispatch>();
     const onLoadSource = dispatch.editor[ACTION_LOAD_SOURCE];
-    const rootRef = ref as React.RefObject<any> || useRef<any>(null);
+    const rootRef = useRef<any>(null);
     const [showMethodPanel, setShowMethodPanel] = useState(false);
     const onLoadSourceWrapped = (v: any) => {
         setShowMethodPanel(false);
         onLoadSource(v);
+        onClose && onClose();
     };
     const onClick = () => {
         setShowMethodPanel(true);

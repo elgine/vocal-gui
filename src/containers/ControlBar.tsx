@@ -14,7 +14,8 @@ import ZoomControls from './ZoomControls';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
 import { RematchDispatch } from '@rematch/core';
 import { Models } from '../store';
-import AudioFileButton from './AudioFileButton';
+import ImportButton from './ImportButton';
+import ExportButton from './ExportButton';
 
 export default React.memo(({ ...others }: ToolbarProps) => {
     const lang = useContext(LangContext);
@@ -23,7 +24,8 @@ export default React.memo(({ ...others }: ToolbarProps) => {
     const onRedo = useCallback(() => dispatch({ type: ACTION_REDO }), []);
     return (
         <Toolbar {...others}>
-            <AudioFileButton />
+            <ImportButton />
+            <ExportButton />
             <Tooltip title={getLang('UNDO', lang)}>
                 <IconButton onClick={onUndo}>
                     <Undo />
