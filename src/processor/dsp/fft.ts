@@ -1,8 +1,22 @@
 export default (x: Float32Array|number[], y: Float32Array|number[], dir: number, normalize: boolean = true) => {
     const n = x.length;
-    let i; let i1; let j; let k; let i2; let l; let l1; let l2;
-    let c1; let c2; let tx; let ty; let t1; let t2; let u1; let u2;
-    let z;
+    let i = 0;
+    let i1 = 0;
+    let j = 0;
+    let k = 0;
+    let i2 = 0;
+    let l = 0;
+    let l1 = 0;
+    let l2 = 0;
+    let c1 = 0;
+    let c2 = 0;
+    let tx = 0;
+    let ty = 0;
+    let t1 = 0;
+    let t2 = 0;
+    let u1 = 0;
+    let u2 = 0;
+    let z = 0;
     let m = Math.log2(n);
     /* Do the bit reversal */
     i2 = n >> 1;

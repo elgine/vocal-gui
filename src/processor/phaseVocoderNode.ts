@@ -1,4 +1,5 @@
-import PhaseVocoder, { PhaseVocoderOptions } from './dsp/phaseVocoder';
+import { PhaseVocoderOptions } from './dsp/phaseVocoder';
+import PhaseVocoder from './dsp/phaseVocoder2';
 
 export default class PhaseVocoderNode {
 
@@ -39,8 +40,10 @@ export default class PhaseVocoderNode {
             vocoder.pitch = this.pitch;
             vocoder.tempo = this.tempo;
             vocoder.process(inputBuffer.getChannelData(i));
+            this._out.fill(0);
             if (vocoder.pop(this._out, frameSize) > 0) {
-                outputBuffer.copyToChannel(this._out, i);
+                // outputBuffer.copyToChannel(this._out, i);
+                outputBuffer.getChannelData(i).set(this._out);
             }
         }
     }
