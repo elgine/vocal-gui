@@ -59,7 +59,9 @@ export default class Jungle extends Composite {
         this._mod1Gain = this._audioContext.createGain();
         this._mod2Gain = this._audioContext.createGain();
         this._mod3Gain = this._audioContext.createGain();
+        this._mod3Gain.gain.value = 0;
         this._mod4Gain = this._audioContext.createGain();
+        this._mod4Gain.gain.value = 0;
 
         this._mod1.connect(this._mod1Gain);
         this._mod2.connect(this._mod2Gain);
@@ -91,6 +93,7 @@ export default class Jungle extends Composite {
         this._mix2 = this._audioContext.createGain();
         this._mix1.gain.value = 0;
         this._mix2.gain.value = 0;
+
         this._fade1.connect(this._mix1.gain);
         this._fade2.connect(this._mix2.gain);
 
@@ -101,7 +104,7 @@ export default class Jungle extends Composite {
         this._mix1.connect(this._wet);
         this._mix2.connect(this._wet);
 
-        let t = 0.05;
+        let t = this._audioContext.currentTime + 0.05;
         let t2 = t + bufferTime - fadeTime;
         this._mod1.start(t);
         this._mod2.start(t2);
@@ -128,7 +131,7 @@ export default class Jungle extends Composite {
                 this._mod3Gain.gain.value = 0;
                 this._mod4Gain.gain.value = 0;
             }
-            this._setDelay(0.1 * Math.abs(mul));
+            this._setDelay(delayTime * Math.abs(mul));
         }
     }
 

@@ -5,7 +5,6 @@ import {
     EditorState,
     ACTION_ZOOM,
     ACTION_CLIP_REGION_CHANGE,
-    ACTION_SOURCE_CHANGE,
     REDUCER_SET_DURATION,
     REDUCER_SET_ZOOM,
     REDUCER_SET_CLIP_REGION,
@@ -136,7 +135,6 @@ const timelineModel: ModelConfig<EditorState> = {
             state.baseTimeUnit = calcProperTimeUnit(state.duration);
             state.zoomUnit.out = Math.max(2, Math.ceil(1000 / state.baseTimeUnit));
             state.zoomUnit.in = Math.max(2, Math.ceil((state.duration * 0.01) / state.baseTimeUnit));
-            console.log(state.zoomUnit.out, state.zoomUnit.in);
             updateTimeUnits(state);
             return state;
         },
@@ -148,7 +146,7 @@ const timelineModel: ModelConfig<EditorState> = {
             state.loading = payload;
             return state;
         },
-        [REDUCER_SET_TITLE](state: EditorState, payload: string){
+        [REDUCER_SET_TITLE](state: EditorState, payload: string) {
             state.title = payload;
             return state;
         },
@@ -164,9 +162,11 @@ const timelineModel: ModelConfig<EditorState> = {
         return {
             async [ACTION_SWITCH_EFFECT](payload: EffectType) {
                 await player.setEffect(payload);
+                const options = getEffectOptions(payload);
+                player.setEffectState(options);
                 batch(() => {
                     dispatch.editor[REDUCER_SET_EFFECT](payload);
-                    dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](getEffectOptions(payload));
+                    dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](options);
                 });
             },
             [ACTION_EFFECT_OPTIONS_CHANGE](payload: any) {
@@ -205,13 +205,11 @@ const timelineModel: ModelConfig<EditorState> = {
             },
             [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}) {
                 if (!payload.value) return;
-                if(payload.type === 'MIC'){
-                    dispatch.editor[ACTION_LOAD_SOURCE_SUCCESS](
-                        {
-                            title: `Record${Date.now()}`,
-                            buffer: payload.value as AudioBuffer
-                        }
-                    );
+                if (payload.type === 'MIC') {
+                    dispatch.editor[ACTION_LOAD_SOURCE_SUCCESS]({
+                        title: `Record${Date.now()}`,
+                        buffer: payload.value as AudioBuffer
+                    });
                 } else {
                     dispatch.editor[ACTION_LOAD_FROM_EXTERNAL](payload.value);
                 }
@@ -273,7 +271,7 @@ const timelineModel: ModelConfig<EditorState> = {
                 player.setRegion(payload);
                 dispatch.editor[REDUCER_SET_CLIP_REGION](payload);
             }
-        }
+        };
     }
 };
 

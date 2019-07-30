@@ -59,6 +59,6 @@ export const maleDescriptor = {
 
 export const maleDefaultOptions = {
     lowpassFreq: Male.LOWPASS_FREQ_DEFAULT,
-    ...jungleDefaultOptions,
+    pitchOffset: -0.35,
     ...effectDefaultOptions
 };

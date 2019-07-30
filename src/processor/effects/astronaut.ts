@@ -21,10 +21,22 @@ export default class Astronaut extends Effect {
         this._distortion.curve = buildCurve();
 
         this._b1 = this._audioContext.createBiquadFilter();
+        this._b1.frequency.value = 1300;
+
         this._b2 = this._audioContext.createBiquadFilter();
+        this._b2.frequency.value = 2000;
+
         this._b3 = this._audioContext.createBiquadFilter();
+        this._b3.frequency.value = 2000;
+
         this._b4 = this._audioContext.createBiquadFilter();
+        this._b4.type = 'highpass';
+        this._b4.frequency.value = 500;
+
         this._b5 = this._audioContext.createBiquadFilter();
+        this._b5.type = 'highpass';
+        this._b5.frequency.value = 500;
+
         this._compressor = this._audioContext.createDynamicsCompressor();
 
         this._b1.connect(this._distortion);

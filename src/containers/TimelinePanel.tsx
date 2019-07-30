@@ -109,7 +109,7 @@ export default withTheme(({
     const mainRef = useRef<HTMLDivElement>(null);
     const pointerLeft = currentTime * pixelsPerMSec;
 
-    const onTimelineClick = (e: React.MouseEvent) => {
+    const onTimeScaleClick = (e: React.MouseEvent) => {
         onSeek((e.pageX + (mainRef.current ? mainRef.current.scrollLeft : 0)) / pixelsPerMSec);
     };
 
@@ -195,7 +195,6 @@ export default withTheme(({
     };
     return (
         <div className={clsx(classes.root, className)}
-            onMouseDown={onTimelineClick}
             {...others}>
             <div ref={mainRef} className={classes.main} style={mainStyle}>
                 <TimeScale
@@ -205,6 +204,7 @@ export default withTheme(({
                     pixelsPerMSec={pixelsPerMSec}
                     duration={duration}
                     height={tsh}
+                    onMouseDown={onTimeScaleClick}
                     {...TIME_SCALE_OTHER_PROPS}
                 />
                 {

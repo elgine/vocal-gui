@@ -1,5 +1,15 @@
 import generateWin, { WindowType } from '../window';
 
+const splice = (arr: Float32Array, count: number, offset: number) => {
+    for (let i = 0; i < count; i++) {
+        if (i + offset >= count) {
+            arr[i] = 0;
+        } else {
+            arr[i] = arr[i + offset];
+        }
+    }
+};
+
 export default class OverlapAdd {
 
     protected _hopA: number;
@@ -43,18 +53,10 @@ export default class OverlapAdd {
                 this._buffer[i] += this._frame[i] * this._win[i];
             }
             this._pushToOutputQueue(this._buffer, this._hopS);
-            // for (let i = 0; i < this._frameSize; i++) {
-            //     if (i + this._hopS >= this._frameSize) {
-            //         this._buffer[i] = 0;
-            //     } else {
-            //         this._buffer[i] = this._buffer[i + this._hopS];
-            //     }
-            // }
-            this._buffer.copyWithin(0, this._hopS, this._frameSize - this._hopS);
-            this._buffer.fill(0, this._frameSize - this._hopS);
+            splice(this._buffer, this._frameSize, this._hopS);
             offset += this._hopA;
         }
-        this._inputQueue.copyWithin(0, offset);
+        splice(this._inputQueue, this._frameSize * 2, offset);
         this._inputSize -= offset;
     }
 
@@ -64,7 +66,7 @@ export default class OverlapAdd {
         for (let i = 0; i < popSize; i++) {
             output[i] = this._outputQueue[i];
         }
-        this._outputQueue.copyWithin(0, popSize);
+        splice(this._outputQueue, this._frameSize * 2, popSize);
         this._outputSize -= popSize;
         return popSize;
     }
@@ -83,7 +85,8 @@ export default class OverlapAdd {
 
     protected _pushToOutputQueue(b: ArrayLike<number>, size: number) {
         for (let i = 0; i < size; i++) {
-            this._outputQueue[this._outputSize++] = b[i];
+            this._outputQueue[this._outputSize + i] = b[i];
         }
+        this._outputSize += size;
     }
 }

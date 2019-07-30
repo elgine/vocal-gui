@@ -43,6 +43,6 @@ export const femaleDescriptor = {
 };
 
 export const femaleDefaultOptions = {
-    ...jungleDefaultOptions,
+    pitchOffset: -0.45,
     ...effectDefaultOptions
 };

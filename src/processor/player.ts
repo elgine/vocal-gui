@@ -1,9 +1,10 @@
 import { clamp } from 'lodash';
 import { EffectType } from './effectType';
-import { createEffect } from './effects/factory';
+import { createEffect, getTimeScaleApplyEffect, getLantencyApplyEffect } from './effects/factory';
 import Effect from './effects/effect';
-import Ticker from '../utils/ticker';
 import Emitter from '../utils/emitter';
+import CorrectTicker from './correctTicker';
+import Ticker from '../utils/ticker';
 
 export default class Player extends Emitter {
 
@@ -26,10 +27,8 @@ export default class Player extends Emitter {
     constructor() {
         super();
         this._onEnded = this._onEnded.bind(this);
-        this._ticker.timeGetter = () => {
-            return Math.max(0, (this._audioCtx.currentTime - this._audioCtx.baseLatency)) * 1000;
-        };
-        this._ticker.cb = this._onTick.bind(this);
+        this._ticker.timeGetter = this._getTime.bind(this);
+        this._ticker.onTick.on(this._onTick.bind(this));
     }
 
     async setEffect(effectType: EffectType, initialState?: any) {
@@ -71,25 +70,24 @@ export default class Player extends Emitter {
     }
 
     seek(time: number) {
-        if (this._ticker.t === time) return;
-        this._ticker.t = time;
+        if (this._ticker.rt === time) return;
+        this._ticker.rt = time;
         if (this._playing) {
             this._initInput();
             this._updateGraph();
-            this._input!.start(0, this._ticker.t * 0.001);
+            this._input!.start(0, this._ticker.rt * 0.001);
         }
     }
 
-    async play(time?: number) {
+    async play() {
         if (!this._inputBuffer) return;
         this._playing = true;
         this._init();
         this._initInput();
         await this._updateEffect();
         this._updateGraph();
-        if (time) this._ticker.t = time;
         this._ticker.run();
-        this._input!.start(0, this._ticker.t * 0.001);
+        this._input!.start(0, this._ticker.rt * 0.001);
     }
 
     stop() {
@@ -101,32 +99,36 @@ export default class Player extends Emitter {
         this._ticker.stop();
     }
 
+    private _getTime() {
+        return Math.max(0, (this._audioCtx.currentTime - this._audioCtx.baseLatency)) * 1000;
+    }
+
     private _onEnded() {
         if (this._loop) {
             this.seek(this._region[0] || 0);
         } else {
             this.stop();
-            this.emit(Player.ON_ENDED, this._ticker.t);
+            this.emit(Player.ON_ENDED, this._ticker.rt);
         }
     }
 
     private _onTick() {
         const s = this._region[0] || 0;
         const e = this._region[1] || 0;
-        if (this._ticker.t < s) {
+        if (this._ticker.rt < s) {
             this.seek(s);
         }
-        if (this._ticker.t >= e) {
+        if (this._ticker.rt >= e) {
             if (this._loop) {
                 this.seek(s);
             } else {
                 this.seek(e);
                 this.stop();
-                this.emit(Player.ON_ENDED, this._ticker.t);
+                this.emit(Player.ON_ENDED, this._ticker.rt);
                 return;
             }
         }
-        this.emit(Player.ON_TICK, this._ticker.t);
+        this.emit(Player.ON_TICK, this._ticker.rt);
     }
 
     private _disposeInput() {

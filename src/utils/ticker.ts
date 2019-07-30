@@ -1,3 +1,5 @@
+import Signal from './signal';
+
 // Copyright (c) 2019 Elgine
 //
 // This software is released under the MIT License.
@@ -31,78 +33,71 @@ export default class Ticker {
 
     timeGetter?: () => number;
 
+    onTick: Signal = new Signal();
+
     /**
      * Tick fps
      * @type {number}
      */
-    private _fps: number = 60;
+    protected _fps: number = 60;
 
-    private _intervalPerSec: number = 1000 / 60;
-
-    private _tickTime: number;
+    protected _intervalPerSec: number = 1000 / 60;
 
     // In order to prevent the situation that requestAnimationFrame
     // will be suspensed when browser window is inactive, so capture
     // both requestAnimationFrame and setTimeout to make sure ticking
     // and remove ticker ortimer when another is reached.
     // RequestAnimationFrame ticker id
-    private _tickerId: number = -1;
+    protected _tickerId: number = -1;
     // SetTimeout timer id
-    private _timerId: number = -1;
+    protected _timerId: number = -1;
 
     /**
      * Time-stamp from start time-stamp
      * @type {Number}
-     * @private
+     * @protected
      */
-    private _t: number;
+    protected _rt: number;
 
     /**
      * Start time-stamp
      * @type {Number}
-     * @private
+     * @protected
      */
-    private _st: number;
+    protected _st: number;
 
     /**
      * Last time-stamp
      * @type {Number}
-     * @private
+     * @protected
      */
-    private _lt: number;
+    protected _lt: number;
 
     /**
      * Delta time-stamp
      * @type {Number}
-     * @private
+     * @protected
      */
-    private _dt: number;
+    protected _dt: number;
 
     /**
      * Current time-stamp
      * @type {Number}
-     * @private
+     * @protected
      */
-    private _ct: number;
+    protected _ct: number;
 
-    /**
-     * Callback fun
-     * @type {Function}
-     * @private
-     */
-    private _cb: Function|null;
-
-    private _isRunning: boolean;
+    protected _tt: number;
+    protected _isRunning: boolean;
 
     constructor() {
         this.fps = 60;
-        this._t = 0;
+        this._rt = 0;
         this._st = -1;
         this._lt = 0;
         this._dt = 0;
         this._ct = 0;
-        this._tickTime = 0;
-        this._cb = null;
+        this._tt = 0;
         this._isRunning = false;
         this._run = this._run.bind(this);
     }
@@ -124,12 +119,14 @@ export default class Ticker {
     _run() {
         this._ct = this._getTime();
         this._dt = this._ct - this._lt;
-        this._t += this._dt;
+        this._rt += this._dt;
         this._lt = this._ct;
-        this._tickTime += this._dt;
-        if (this._tickTime > this._intervalPerSec) {
-            this._isRunning && this._cb && this._cb(this);
-            this._tickTime -= this._intervalPerSec;
+        this._tt += this._dt;
+        if (this._tt > this._intervalPerSec) {
+            if (this._isRunning) {
+                this.onTick.emit(this);
+            }
+            this._tt -= this._intervalPerSec;
         }
         if (this._isRunning) {
             this._tick();
@@ -141,11 +138,11 @@ export default class Ticker {
         this._cancelTick();
     }
 
-    private _getTime() {
+    protected _getTime() {
         return this.timeGetter ? this.timeGetter() : Date.now();
     }
 
-    private _tick() {
+    protected _tick() {
         this._tickerId = requestAnimationFrame(() => {
             clearTimeout(this._timerId);
             this._run();
@@ -156,7 +153,7 @@ export default class Ticker {
         }, 1000 / 60);
     }
 
-    private _cancelTick() {
+    protected _cancelTick() {
         cancelAnimationFrame(this._tickerId);
         clearTimeout(this._timerId);
     }
@@ -176,20 +173,16 @@ export default class Ticker {
         }
     }
 
-    set t(v: number) {
-        this._t = v;
+    set rt(v: number) {
+        this._rt = v;
     }
 
-    get t(): number {
-        return this._t;
+    get rt(): number {
+        return this._rt;
     }
 
     get ct(): number {
         return this._ct;
-    }
-
-    set cb(f: Function) {
-        this._cb = f;
     }
 
     get dt(): number {

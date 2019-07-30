@@ -39,6 +39,7 @@ export default class UnderWater extends Effect {
         this._compressor = this._audioContext.createDynamicsCompressor();
         this._underWater = this._audioContext.createBufferSource();
         this._underWater.buffer = buffer;
+        this._underWater.loop = true;
         this._underWaterGain = this._audioContext.createGain();
         this._wahwah = new AutoWah(this._audioContext);
 
@@ -47,13 +48,13 @@ export default class UnderWater extends Effect {
         this._lowpass.connect(this._compressor);
         this._compressor.connect(this._gain);
         this._underWater.connect(this._underWaterGain);
-        this._underWater.connect(this._compressor);
+        this._underWaterGain.connect(this._compressor);
         this._underWater.start();
-        this.set({
-            lowpassFreq: UnderWater.LOWPASS_FREQ_DEFAULT,
-            inputGain: UnderWater.INPUT_GAIN_DEFAULT,
-            underWaterBgGain: UnderWater.UNDER_WATER_BG_GAIN_DEFAULT
-        });
+        this.set(underWaterDefaultOptions);
+    }
+
+    get input() {
+        return this._inputGain;
     }
 
     set(options: AnyOf<UnderWaterOptions>) {

@@ -2,10 +2,10 @@
     "include": [
         "./src/**/*",
         "./typings/**/*",
-        "./example/**/*",
-        "example/**/*", 
+        "./example/**/*"
     ],
     "compilerOptions": {
+        "noEmit": true,
         "typeRoots": ["./node_modules/@types", "./typings"],
         "sourceMap": true,
         "module": "ESNext",
@@ -28,6 +28,7 @@
         ]
     },
     "exclude": [
+        "build",
         "node_modules"
     ]
 }

@@ -11,7 +11,7 @@ export default class PhaseVocoderNode {
 
     private _out: Float32Array;
 
-    constructor(audioContext: BaseAudioContext, bufferSize?: number, inChannels?: number, outChannels?: number) {
+    constructor(audioContext: BaseAudioContext, bufferSize: number = 1024, inChannels?: number, outChannels?: number) {
         this._node = audioContext.createScriptProcessor(bufferSize, inChannels, outChannels);
         this._node.onaudioprocess = this._onProcess.bind(this);
         this._out = new Float32Array(this._node.bufferSize);
@@ -38,7 +38,6 @@ export default class PhaseVocoderNode {
             }
             vocoder.pitch = this.pitch;
             vocoder.tempo = this.tempo;
-            vocoder.overlap = this.overlap;
             vocoder.process(inputBuffer.getChannelData(i));
             if (vocoder.pop(this._out, frameSize) > 0) {
                 outputBuffer.copyToChannel(this._out, i);

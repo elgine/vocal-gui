@@ -1,5 +1,5 @@
 import { clamp } from 'lodash';
-import Effect, { EffectOptions } from './effect';
+import Effect, { EffectOptions, effectDescriptor, effectDefaultOptions } from './effect';
 import { PhaseVocoderOptions, phaseVocoderDefaultOptions, phaseVocoderDescriptor } from '../dsp/phaseVocoder';
 import Vibrato, { VibratoOptions, vibrartoDefaultOptions, vibratoDescriptor } from '../composite/vibrato';
 import PhaseVocoderNode from '../phaseVocoderNode';
@@ -27,9 +27,10 @@ export default class OldMale extends Effect {
         this._vocoder = new PhaseVocoderNode(this._audioContext);
         this._vibrato = new Vibrato(this._audioContext);
 
-        this._lowpass.connect(this._vocoder.node);
-        this._vocoder.node.connect(this._vibrato.input);
-        this._vibrato.output.connect(this._gain);
+        // this._lowpass.connect(this._vocoder.node);
+        this._vocoder.node.connect(this._gain);
+        // this._vocoder.node.connect(this._vibrato.input);
+        // this._vibrato.output.connect(this._gain);
 
         this.set({
             lowpassFreq: OldMale.LOWPASS_FREQ_DEFAULT
@@ -53,7 +54,8 @@ export default class OldMale extends Effect {
     }
 
     get input() {
-        return this._lowpass;
+        // return this._lowpass;
+        return this._vocoder.node;
     }
 }
 
@@ -65,11 +67,13 @@ export const oldMaleDescriptor = {
         title: 'LOWPASS_FREQ'
     },
     ...phaseVocoderDescriptor,
-    ...vibratoDescriptor
+    ...vibratoDescriptor,
+    ...effectDescriptor
 };
 
 export const oldMaleDefaultOptions = {
     lowpassFreq: OldMale.LOWPASS_FREQ_DEFAULT,
     ...phaseVocoderDefaultOptions,
-    ...vibrartoDefaultOptions
+    ...vibrartoDefaultOptions,
+    ...effectDefaultOptions
 };

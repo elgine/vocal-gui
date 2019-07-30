@@ -1,6 +1,5 @@
 import { EffectType } from './effectType';
-import { createEffect, getDurationAfterApplyEffect } from './effects/factory';
-import { eq } from 'lodash';
+import { createEffect, getTimeScaleApplyEffect } from './effects/factory';
 import Effect from './effects/effect';
 
 export enum RenderTaskLevel{
@@ -38,7 +37,7 @@ export default class Renderer {
         this._rendering = true;
         this._offlineAudioCtx = new OfflineAudioContext(
             task.source!.numberOfChannels,
-            getDurationAfterApplyEffect(task.effectType, task.effectOptions, task.source!.duration * 1000),
+            task.source!.duration * 1000 * getTimeScaleApplyEffect(task.effectType, task.effectOptions),
             task.source!.sampleRate
         );
         yield this._buildGraph(task);

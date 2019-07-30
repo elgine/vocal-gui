@@ -1,5 +1,4 @@
-export default (input: Float32Array|number[], inputLen: number, outputLen: number, output: Float32Array|number[]) => {
-    let ratio = outputLen / inputLen;
+export default (input: Float32Array|number[], inputLen: number, outputLen: number, ratio: number, output: Float32Array|number[]) => {
     for (let i = 0; i < outputLen; ++i) {
         let j = i / ratio;
         let j1 = Math.floor(j);

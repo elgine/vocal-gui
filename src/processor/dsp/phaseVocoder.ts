@@ -6,6 +6,28 @@ import { calculateMagnitude, calculatePhase } from './frequencyCalculator';
 import resample from './resample';
 import wrapToPI from './wrapToPI';
 
+// const resample = (src: Float32Array, n: number, scalar: number, dst: Float32Array) => {
+//     const srcLength = src.length;
+//     for (let i = 0; i < n; ++i) {
+//         let j = i / scalar;
+//         let j1 = Math.floor(j);
+//         let j2 = Math.ceil(j);
+//         if (j1 >= srcLength) {
+//             j1 = j1 = srcLength - 1;
+//         }
+//         if (j2 >= srcLength) {
+//             j2 = j2 = srcLength - 1;
+//         }
+
+//         if (j1 < 0)j1 = 0;
+//         if (j2 < 0)j2 = 0;
+
+//         let w = j - j1;
+//         dst[i] = src[j1] * w + src[j2] * (1 - w);
+//     }
+//     return n;
+// };
+
 export interface PhaseVocoderOptions{
     pitch: number;
     tempo: number;
@@ -27,23 +49,24 @@ export default class PhaseVocoder extends OverlapAdd {
     private _lastPhase: Float32Array;
     private _newPhase: Float32Array;
 
-    private _stretch!: number;
+    private _stretch: number = 1;
     private _pitch: number = 1;
     private _tempo: number = 1;
-
-    private _overlap: number = 0.25;
 
     private _out: Float32Array;
 
     constructor(frameSize: number, overlap: number = 0.25, winType: WindowType = WindowType.HANNING) {
         super(frameSize, frameSize * overlap, frameSize * overlap, winType);
-        this._omega = new Float32Array(this._frameSize);
         this._real = new Float32Array(this._frameSize);
         this._imag = new Float32Array(this._frameSize);
         this._lastPhase = new Float32Array(this._frameSize);
         this._newPhase = new Float32Array(this._frameSize);
         this._out = new Float32Array(this._frameSize * 2);
-        this._updateOmega();
+
+        this._omega = new Float32Array(this._frameSize);
+        for (let i = 0; i < this._frameSize; i++) {
+            this._omega[i] = Math.PI * 2 * this._hopA * i / this._frameSize;
+        }
     }
 
     set(v: AnyOf<PhaseVocoderOptions>) {
@@ -53,18 +76,6 @@ export default class PhaseVocoder extends OverlapAdd {
         if (v.tempo) {
             this.tempo = clamp(v.tempo, PhaseVocoder.TEMPO_MIN, PhaseVocoder.TEMPO_MAX);
         }
-    }
-
-    set overlap(v: number) {
-        if (this._overlap === v) return;
-        this._overlap = v;
-        this._hopA = this._frameSize * this._overlap;
-        this._updateHotSize();
-        this._updateOmega();
-    }
-
-    get overlap() {
-        return this._overlap;
     }
 
     set pitch(v: number) {
@@ -87,14 +98,22 @@ export default class PhaseVocoder extends OverlapAdd {
         return this._tempo;
     }
 
-    protected _pushToOutputQueue(buffer: Float32Array|number[], len: number) {
-        let frameLen = Math.round(this._hopA);
-        resample(buffer, len, frameLen, this._out);
-        super._pushToOutputQueue(this._out, frameLen);
+    protected _pushToOutputQueue(buffer: Float32Array, len: number) {
+        let bufferLen: number = len;
+        if (this._pitch === 1) {
+            this._out.set(buffer);
+        } else {
+            bufferLen = Math.round(this._hopA * this._tempo);
+            let ratio = 1 / (this._hopS / bufferLen);
+            resample(buffer, len, bufferLen, ratio, this._out);
+        }
+        super._pushToOutputQueue(this._out, bufferLen);
     }
 
     protected _analyse() {
         this._shiftWindow(this._frame);
+        this._real.set(this._frame);
+        this._imag.fill(0);
         fft(this._real, this._imag, 1);
     }
 
@@ -142,15 +161,8 @@ export default class PhaseVocoder extends OverlapAdd {
         }
     }
 
-    private _updateOmega() {
-        for (let i = 0; i < this._frameSize; i++) {
-            this._omega[i] = Math.PI * 2 * this._hopA * i / this._frameSize;
-        }
-    }
-
     private _updateHotSize() {
-        this._stretch = this._pitch * this._tempo;
-        this._hopS = Math.floor(this._hopA * this._stretch);
+        this._hopS = Math.round(Math.round(this._hopA * this._tempo) * this._pitch);
         this._stretch = this._hopS / this._hopA;
     }
 }

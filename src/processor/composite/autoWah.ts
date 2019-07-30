@@ -1,5 +1,6 @@
 import Composite from './composite';
 import { clamp } from 'lodash';
+import { buildAutoWahCurve } from '../dsp/createBuffer';
 
 export interface AutoWahOptions{
     envelopeFollowerFilterFreq?: number;
@@ -29,9 +30,12 @@ export default class AutoWah extends Composite {
     constructor(audioContext: BaseAudioContext) {
         super(audioContext);
         this._waveShaper = this._audioContext.createWaveShaper();
+        this._waveShaper.curve = buildAutoWahCurve();
+
         this._awFollower = this._audioContext.createBiquadFilter();
         this._awDepth = this._audioContext.createGain();
         this._awFilter = this._audioContext.createBiquadFilter();
+        this._awFilter.frequency.value = 50;
 
         this._input.connect(this._waveShaper);
         this._waveShaper.connect(this._awFollower);
@@ -41,11 +45,7 @@ export default class AutoWah extends Composite {
         this._input.connect(this._awFilter);
         this._awFilter.connect(this._wet);
 
-        this.set({
-            envelopeFollowerFilterFreq: AutoWah.ENVELOPE_FOLLOWER_FILTER_FREQ_DEFAULT,
-            filterDepth: AutoWah.FILTER_DEPTH_DEFAULT,
-            filterQ: AutoWah.FILTER_Q_DEFAULT
-        });
+        this.set(autoWahDefaultOptions);
     }
 
     dispose() {
@@ -61,7 +61,7 @@ export default class AutoWah extends Composite {
             this._awFollower.frequency.value = clamp(options.envelopeFollowerFilterFreq, AutoWah.ENVELOPE_FOLLOWER_FILTER_FREQ_MIN, AutoWah.ENVELOPE_FOLLOWER_FILTER_FREQ_MAX);
         }
         if (options.filterDepth !== undefined) {
-            this._awDepth.gain.value = clamp(Math.pow(2, 10 + options.filterDepth), AutoWah.FILTER_DEPTH_MIN, AutoWah.FILTER_DEPTH_MAX);
+            this._awDepth.gain.value = Math.pow(2, 10 + clamp(options.filterDepth, AutoWah.FILTER_DEPTH_MIN, AutoWah.FILTER_DEPTH_MAX));
         }
         if (options.filterQ !== undefined) {
             this._awFilter.Q.value = clamp(options.filterQ, AutoWah.FILTER_Q_MIN, AutoWah.FILTER_Q_MAX);

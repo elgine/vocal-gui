@@ -26,7 +26,7 @@ export default class Vibrato extends Composite {
     constructor(audioContext: BaseAudioContext) {
         super(audioContext);
         this._osc = this._audioContext.createOscillator();
-        this._delay = this._audioContext.createDelay();
+        this._delay = this._audioContext.createDelay(Vibrato.VIBRATO_DELAY_MAX);
         this._oscGain = this._audioContext.createGain();
 
         this._osc.connect(this._oscGain);

@@ -10,6 +10,14 @@ export const buildCurve = (sampleRate: number = 44100, gain: number = 0.5) => {
     return curve;
 };
 
+export const buildAutoWahCurve = () => {
+    let curve = new Float32Array(65536);
+    for (let i = -32768; i < 32768; i++) {
+        curve[i + 32768] = ((i > 0) ? i : -i) / 32768;
+    }
+    return curve;
+};
+
 export function createFadeBuffer(context: BaseAudioContext, activeTime: number, fadeTime: number) {
     let length1 = activeTime * context.sampleRate;
     let length2 = (activeTime - 2 * fadeTime) * context.sampleRate;
