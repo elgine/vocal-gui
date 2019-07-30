@@ -7,3 +7,5 @@
 /cmake-build-debug
 /target
 /**/*.rs.bk
+yarn-error.log
+yarn.lock
