@@ -1,5 +1,4 @@
-import { PhaseVocoderOptions } from './dsp/phaseVocoder';
-import PhaseVocoder from './dsp/phaseVocoder2';
+import PhaseVocoder, { PhaseVocoderOptions } from './dsp/phaseVocoder';
 
 export default class PhaseVocoderNode {
 
