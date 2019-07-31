@@ -1,5 +1,5 @@
 import { EffectType } from './effectType';
-import { createEffect, getTimeScaleApplyEffect } from './effects/factory';
+import { createEffect, getAllDurationApplyEffect, getDelayApplyEffect } from './effects/factory';
 import Effect from './effects/effect';
 
 export enum RenderTaskLevel{
@@ -23,7 +23,7 @@ export interface RenderTask{
     taskCreatedTime: number;
     effectType: EffectType;
     effectOptions: any;
-    segments: Segment[];
+    clipRegion: number[];
     options: ExportParams;
 }
 
@@ -34,16 +34,35 @@ export default class Renderer {
     private _rendering: boolean = false;
 
     * render(task: RenderTask) {
+        const { source, clipRegion, effectOptions, effectType } = task;
         this._rendering = true;
         this._offlineAudioCtx = new OfflineAudioContext(
-            task.source!.numberOfChannels,
-            task.source!.duration * 1000 * getTimeScaleApplyEffect(task.effectType, task.effectOptions),
-            task.source!.sampleRate
+            source!.numberOfChannels,
+            1000 * getAllDurationApplyEffect(effectType, effectOptions, source!.duration),
+            source!.sampleRate
         );
         yield this._buildGraph(task);
-        let buffer = yield this._offlineAudioCtx.startRendering();
+        let buffer: AudioBuffer = yield this._offlineAudioCtx.startRendering();
+        // Clip region
+        let delay = getDelayApplyEffect(effectType, effectOptions, source!.duration) * 1000;
+        let s = clipRegion[0] + delay;
+        let e = clipRegion[1] + delay;
+        let sb = s * buffer.sampleRate;
+        let se = e * buffer.sampleRate;
+        let final = this._offlineAudioCtx.createBuffer(
+            buffer.numberOfChannels,
+            (e - s) * buffer.sampleRate,
+            buffer.sampleRate
+        );
+        for (let i = 0; i < buffer.numberOfChannels; i++) {
+            let inChannel = buffer.getChannelData(i);
+            let outChannel = final.getChannelData(i);
+            for (let j = sb; j < se; j++) {
+                outChannel[j] = inChannel[j];
+            }
+        }
         this._rendering = false;
-        return buffer;
+        return final;
     }
 
     * stop() {

@@ -82,7 +82,7 @@ export default withTheme(({
     theme, className, timeScaleHeight, waveHeight,
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
-    const { loading, clipRegion, currentTime, audioBuffer, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps, shallowEqual);
+    const { loading, buffering, clipRegion, currentTime, audioBuffer, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onSeek = dispatch.editor[ACTION_SEEK];
     const onClipRegionChange = dispatch.editor[ACTION_CLIP_REGION_CHANGE];
@@ -259,6 +259,13 @@ export default withTheme(({
                             }
                         </Box>
                     )
+                }
+                {
+                    buffering ? (
+                        <Box position="absolute" bottom="32px" width="100%" textAlign="center">
+                            <CircularProgress />
+                        </Box>
+                    ) : undefined
                 }
                 {
                     showRegion ? (

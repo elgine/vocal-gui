@@ -1,3 +1,4 @@
+import { clamp } from 'lodash';
 import window, { WindowType } from './window';
 import fft from './fft';
 
@@ -21,6 +22,10 @@ export default class PhaseVocoder {
 
     private _frameSize: number = 1024;
     private _overlap: number = 0.25;
+
+    private _pitch: number = 1;
+    private _tempo: number = 1;
+    private _stretch: number = 1;
 
     private _ht: number = 256;
     private _ha: number = 256;
@@ -80,17 +85,28 @@ export default class PhaseVocoder {
 
     processFrame(buffer: Float32Array) {
         let output: number[];
-        const stretchFactor = this._getStretcher();
-        const hopSize = Math.round(stretchFactor * this._ha);
-        buffer = this._pvStep(stretchFactor, buffer);
-        let timeStretched = this._overlapAdd(hopSize, buffer);
-        const pitchFactor = this._getPitchStretchFactor();
-        if (pitchFactor !== 1.0) {
-            output = this._resample(timeStretched, this._ht, 1.0000 / pitchFactor);
+        const hopSize = Math.round(this._stretch * this._ha);
+        buffer = this._pvStep(this._stretch, buffer);
+        let chunk = this._overlapAdd(hopSize, buffer);
+        if (this._pitch !== 1.0) {
+            output = this._resample(chunk, this._ht, 1.0000 / this._pitch);
         } else {
-            output = timeStretched;
+            output = chunk;
         }
         return output;
+    }
+
+    set(options: AnyOf<PhaseVocoderOptions>) {
+        if (options.pitch !== undefined) {
+            this.pitch = clamp(options.pitch, PhaseVocoder.PITCH_MIN, PhaseVocoder.PITCH_MAX);
+        }
+        if (options.tempo !== undefined) {
+            this.tempo = clamp(options.tempo, PhaseVocoder.TEMPO_MIN, PhaseVocoder.TEMPO_MAX);
+        }
+    }
+
+    clear() {
+        this._outputQueue.length = 0;
     }
 
     /**
@@ -216,22 +232,19 @@ export default class PhaseVocoder {
         return (phase + Math.PI) % (-Math.PI * 2) + Math.PI;
     }
 
-    private _getPitchStretchFactor() {
-        return this._hs / this._ht;
-    }
-
-    private _getStretcher() {
-        return this._hs / this._ha;
-    }
-
     set pitch(p: number) {
-        this._hs = Math.round(p * this._ht);
+        if (this._pitch === p) return;
+        this._pitch = p;
+        this._hs = Math.round(this._pitch * this._ht);
+        this._stretch = this._hs / this._ha;
     }
 
     set tempo(t: number) {
-        const pitchStretch = this._getPitchStretchFactor();
-        this._ht = Math.round(this._ha * t);
-        this._hs = Math.round(pitchStretch * this._ht);
+        if (this._tempo === t) return;
+        this._tempo = t;
+        this._ht = Math.round(this._ha * this._tempo);
+        this._hs = Math.round(this._pitch * this._ht);
+        this._stretch = this._hs / this._ha;
     }
 
     get ha() {
@@ -239,7 +252,7 @@ export default class PhaseVocoder {
     }
 
     get hs() {
-        return this._ht;
+        return this._hs;
     }
 }
 

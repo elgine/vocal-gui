@@ -63,18 +63,22 @@ export const createEffect = async (type: EffectType, ctx: BaseAudioContext) => {
     return effect;
 };
 
-export const getTimeScaleApplyEffect = (type: EffectType, options: any) => {
-    if (type === EffectType.OLD_FEMALE || type === EffectType.OLD_MALE) {
-        return 1 / (options.tempo || 1);
-    }
-    return 1;
+export const getAllDurationApplyEffect = (type: EffectType, options: any, dur: number) => {
+    return getDurationApplyEffect(type, options, dur) + getDelayApplyEffect(type, options, dur);
 };
 
-export const getLantencyApplyEffect = (type: EffectType, options: any) => {
+export const getDelayApplyEffect = (type: EffectType, options: any, dur: number) => {
     if (type === EffectType.OLD_FEMALE || type === EffectType.OLD_MALE) {
-        return options.vibratoDelay;
+        return Math.max((1 - options.tempo), 0) * dur + options.vibratoDelay;
     }
     return 0;
+};
+
+export const getDurationApplyEffect = (type: EffectType, options: any, dur: number) => {
+    if (type === EffectType.OLD_FEMALE || type === EffectType.OLD_MALE) {
+        return dur * options.tempo;
+    }
+    return dur;
 };
 
 export const getEffectDescriptor = (type: EffectType) => {

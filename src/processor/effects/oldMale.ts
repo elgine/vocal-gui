@@ -27,14 +27,19 @@ export default class OldMale extends Effect {
         this._vocoder = new PhaseVocoderNode(this._audioContext);
         this._vibrato = new Vibrato(this._audioContext);
 
-        // this._lowpass.connect(this._vocoder.node);
-        this._vocoder.node.connect(this._gain);
-        // this._vocoder.node.connect(this._vibrato.input);
-        // this._vibrato.output.connect(this._gain);
+        this._lowpass.connect(this._vocoder.node);
+        this._vocoder.node.connect(this._vibrato.input);
+        this._vibrato.output.connect(this._gain);
 
-        this.set({
-            lowpassFreq: OldMale.LOWPASS_FREQ_DEFAULT
-        });
+        this.set(oldMaleDefaultOptions);
+    }
+
+    setSourceDuration(v: number) {
+        this._vocoder.setSourceDuration(v);
+    }
+
+    clear() {
+        this._vocoder.clear();
     }
 
     set(options: AnyOf<OldMaleOptions>) {
@@ -54,8 +59,7 @@ export default class OldMale extends Effect {
     }
 
     get input() {
-        // return this._lowpass;
-        return this._vocoder.node;
+        return this._lowpass;
     }
 }
 
@@ -67,13 +71,20 @@ export const oldMaleDescriptor = {
         title: 'LOWPASS_FREQ'
     },
     ...phaseVocoderDescriptor,
+    tempo: {
+        min: 1,
+        max: 2,
+        key: 'tempo',
+        title: 'TEMPO'
+    },
     ...vibratoDescriptor,
     ...effectDescriptor
 };
 
 export const oldMaleDefaultOptions = {
     lowpassFreq: OldMale.LOWPASS_FREQ_DEFAULT,
-    ...phaseVocoderDefaultOptions,
+    pitch: 0.75,
+    tempo: 1.3,
     ...vibrartoDefaultOptions,
     ...effectDefaultOptions
 };

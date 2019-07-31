@@ -59,6 +59,10 @@ export default class Vibrato extends Composite {
         this._oscGain.disconnect();
         this._delay.disconnect();
     }
+
+    get delay() {
+        return this._delay.delayTime.value;
+    }
 }
 
 export const vibratoDescriptor = {

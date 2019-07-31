@@ -33,7 +33,8 @@ import {
     ACTION_PLAY,
     ACTION_STOP,
     ACTION_SWITCH_REPEAT,
-    ACTION_SET_VOLUME
+    ACTION_SET_VOLUME,
+    REDUCER_SET_PLAYER_BUFFERING
 } from './types';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT, ZOOM_MAXIMUM, ZOOM_MINIMUM, UNDEFINED_STRING } from '../../../constant';
 import { getPlayer } from '../../../processor';
@@ -43,6 +44,8 @@ import { getEffectOptions } from '../../../processor/effects/factory';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
 import Player from '../../../processor/player';
 
+const player = getPlayer();
+
 const initialState: EditorState = {
     title: UNDEFINED_STRING,
     effect: EffectType.NONE,
@@ -50,6 +53,7 @@ const initialState: EditorState = {
     repeat: false,
     playing: false,
     loading: false,
+    buffering: false,
     volume: 1,
     pixelsPerMSec: 0.01,
     duration: 0,
@@ -98,6 +102,10 @@ const updateTimeUnits = (state: EditorState) => {
 const timelineModel: ModelConfig<EditorState> = {
     state: initialState,
     reducers: {
+        [REDUCER_SET_PLAYER_BUFFERING](state: EditorState, payload: boolean) {
+            state.buffering = payload;
+            return state;
+        },
         [REDUCER_SET_REPEAT](state: EditorState, payload: boolean) {
             state.repeat = payload;
             return state;
@@ -156,9 +164,9 @@ const timelineModel: ModelConfig<EditorState> = {
         }
     },
     effects: (dispatch: RematchDispatch<any>) => {
-        const player = getPlayer();
         player.on(Player.ON_TICK, dispatch.editor[REDUCER_SET_CURRENT_TIME]);
         player.on(Player.ON_ENDED, () => dispatch.editor[REDUCER_SET_PLAYING](false));
+        player.on(Player.ON_BUFFERING, dispatch.editor[REDUCER_SET_PLAYER_BUFFERING]);
         return {
             async [ACTION_SWITCH_EFFECT](payload: EffectType) {
                 await player.setEffect(payload);
@@ -166,13 +174,15 @@ const timelineModel: ModelConfig<EditorState> = {
                 player.setEffectState(options);
                 batch(() => {
                     dispatch.editor[REDUCER_SET_EFFECT](payload);
-                    dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](options);
+                    dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](options);     
                 });
             },
-            [ACTION_EFFECT_OPTIONS_CHANGE](payload: any) {
-                const player = getPlayer();
-                player.setEffectState(payload);
+            [ACTION_EFFECT_OPTIONS_CHANGE](payload: any, {present}: RootState) {
                 dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](payload);
+                player.setEffectState({
+                    ...present.editor.effectOptions,
+                    ...payload
+                });
             },
             [ACTION_SWITCH_PLAYING](payload: any, { present }: RootState) {
                 if (!present.editor.playing) {

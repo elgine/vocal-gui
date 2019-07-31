@@ -16,7 +16,7 @@ import { RootState, Models } from '../store';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        disabled: present.editor.audioBuffer === undefined,
+        disabled: present.editor.audioBuffer === undefined || present.editor.buffering,
         playing: present.editor.playing,
         repeat: present.editor.repeat
     };

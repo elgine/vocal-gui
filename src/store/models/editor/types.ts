@@ -7,6 +7,7 @@ export const REDUCER_SET_CLIP_REGION = 'REDUCER_SET_CLIP_REGION';
 export const REDUCER_SET_EFFECT = 'REDUCER_SET_EFFECT';
 export const REDUCER_SET_EFFECT_OPTIONS = 'REDUCER_SET_EFFECT_OPTIONS';
 export const REDUCER_SET_PLAYING = 'REDUCER_SET_PLAYING';
+export const REDUCER_SET_PLAYER_BUFFERING = 'REDUCER_SET_PLAYER_BUFFERING';
 export const REDUCER_SET_VOLUME = 'REDUCER_SET_VOLUME';
 export const REDUCER_SET_REPEAT = 'REDUCER_SET_REPEAT';
 export const REDUCER_SET_TITLE = 'REDUCER_SET_TITLE';
@@ -44,6 +45,7 @@ export interface EditorState{
     audioBuffer?: AudioBuffer;
     loading: boolean;
     playing: boolean;
+    buffering: boolean;
     repeat: boolean;
     volume: number;
     effect: EffectType;

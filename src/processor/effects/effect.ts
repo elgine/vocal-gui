@@ -20,6 +20,14 @@ export default class Effect {
         this._gain = this._audioContext.createGain();
     }
 
+    setSourceDuration(b: number) {
+
+    }
+
+    clear() {
+
+    }
+
     set<T extends EffectOptions>(options: AnyOf<T>) {
         if (options.gain !== undefined) {
             this._gain.gain.value = options.gain;
