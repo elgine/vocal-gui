@@ -19,6 +19,8 @@ export default class Composite {
 
     set(options: any) {}
 
+    clear() {}
+
     crossFade(v: number) {
         let gain1 = Math.cos(v * 0.5 * Math.PI);
         let gain2 = Math.cos((1 - v) * 0.5 * Math.PI);

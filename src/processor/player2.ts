@@ -68,6 +68,7 @@ export default class Player extends Emitter {
     setEffect(e: EffectType) {
         if (this._effectType === e) return;
         this._effectType = e;
+        this._interrupt();
         if (this._playing) {
             this._restart();
         }
@@ -98,6 +99,7 @@ export default class Player extends Emitter {
     seek(v: number) {
         if (this._actualTime === v) return;
         this._actualTime = v;
+        this._interrupt();
         // 检查是否正在播放，中断停止并重新播放
         if (this._playing) {
             this._restart();
@@ -105,7 +107,6 @@ export default class Player extends Emitter {
     }
 
     private _restart() {
-        this._interrupt();
         this.stop();
         this.play();
     }

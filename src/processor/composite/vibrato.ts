@@ -53,6 +53,17 @@ export default class Vibrato extends Composite {
         }
     }
 
+    clear() {
+        this._input.disconnect();
+        this._delay.disconnect();
+
+        let oldDelay = this._delay;
+        this._delay = this._audioContext.createDelay();
+        this._delay.delayTime.value = oldDelay.delayTime.value;
+        this._input.connect(this._delay);
+        this._delay.connect(this._wet);
+    }
+
     dispose() {
         super.dispose();
         this._osc.disconnect();

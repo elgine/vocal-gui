@@ -35,6 +35,11 @@ export default class OldFemale extends Effect {
         this.set(oldFemaleDefaultOptions);
     }
 
+    clear() {
+        this._vibrato.clear();
+        this._vocoder.clear();
+    }
+
     setSourceDuration(sourceDuration: number) {
         this._vocoder.setSourceDuration(sourceDuration);
     }
