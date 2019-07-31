@@ -38,7 +38,7 @@ export default class Player extends Emitter {
         this._effectType = effectType;
         if (this._playing) {
             this.stop();
-            this.play();
+            await this.play();
         }
         initialState && this.setEffectState(initialState);
     }
@@ -70,12 +70,12 @@ export default class Player extends Emitter {
         this._inputBuffer = source;
     }
 
-    seek(time: number) {
+    async seek(time: number) {
         if (this._actualTime === time) return;
         this._ticker.rt = this._actualTime = time;
         if (this._playing) {
             this.stop();
-            this.play();
+            await this.play();
         }
     }
 

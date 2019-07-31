@@ -35,8 +35,8 @@ export default class OldFemale extends Effect {
         this.set(oldFemaleDefaultOptions);
     }
 
-    setSourceDuration(v: number) {
-        this._vocoder.setSourceDuration(v);
+    setSourceDuration(sourceDuration: number) {
+        this._vocoder.setSourceDuration(sourceDuration);
     }
 
     set(options: AnyOf<OldFemaleOptions>) {

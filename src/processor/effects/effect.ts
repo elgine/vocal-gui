@@ -20,8 +20,7 @@ export default class Effect {
         this._gain = this._audioContext.createGain();
     }
 
-    setSourceDuration(b: number) {
-
+    setSourceDuration(sourceDuration: number) {
     }
 
     clear() {

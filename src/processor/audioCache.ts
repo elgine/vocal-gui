@@ -15,10 +15,27 @@ export default class AudioCache {
 
     private static _audioCaches: Dictionary<AudioBuffer> = {};
 
-    static async get(url: string) {
-        if (Reflect.has(this._audioCaches, url)) return Reflect.get(this._audioCaches, url);
+    static async init() {
+        await Promise.all([CHURCH,
+            FIRE,
+            LARGE_LONG_ECHO_HALL,
+            LARGE_WIDE_ECHO_HALL,
+            MUFFLER,
+            PARKING,
+            RADIO,
+            SPRING,
+            TELEPHONE,
+            UNDER_WATER
+        ].map((url) => this.load(url)));
+    }
+
+    static async load(url: string) {
+        if (Reflect.has(this._audioCaches, url)) return;
         let audioBuffer = await loadFromUrl(url);
         this._audioCaches[url] = audioBuffer;
-        return audioBuffer;
+    }
+
+    static get(url: string) {
+        return Reflect.get(this._audioCaches, url);
     }
 }

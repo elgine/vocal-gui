@@ -6,7 +6,7 @@ import {
     ACTION_SWITCH_REPEAT,
     ACTION_SWITCH_PLAYING
 } from '../store/models/editor/types';
-import { Tooltip, IconButton } from '@material-ui/core';
+import { Tooltip, IconButton, CircularProgress, Chip } from '@material-ui/core';
 import { SkipPrevious, SkipNext } from '@material-ui/icons';
 import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
@@ -18,14 +18,14 @@ const mapStateToProps = ({ present }: RootState) => {
     return {
         disabled: present.editor.audioBuffer === undefined || present.editor.buffering,
         playing: present.editor.playing,
-        repeat: present.editor.repeat
+        repeat: present.editor.repeat,
+        buffering: present.editor.buffering
     };
 };
 
-
 export default React.memo(() => {
     const lang = useContext(LangContext);
-    const { playing, repeat, disabled } = useSelector(mapStateToProps, shallowEqual);
+    const { playing, buffering, repeat, disabled } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onSkipPrevious = dispatch.editor[ACTION_SKIP_PREVIOUS];
     const onSkipNext = dispatch.editor[ACTION_SKIP_NEXT];
@@ -40,7 +40,9 @@ export default React.memo(() => {
                     </IconButton>
                 </div>
             </Tooltip>
-            <PlayButton disabled={disabled} value={playing} onChange={onPlayingChange} />
+            <PlayButton loading={buffering} disabled={disabled}
+                value={playing} onChange={onPlayingChange}
+            />
             <Tooltip title={getLang('SKIP_NEXT', lang)}>
                 <div>
                     <IconButton disabled={disabled} onClick={onSkipNext}>

@@ -42,7 +42,7 @@ import { RootState } from '../../index';
 import { EffectType } from '../../../processor/effectType';
 import { getEffectOptions } from '../../../processor/effects/factory';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
-import Player from '../../../processor/player';
+import Player from '../../../processor/player2';
 
 const player = getPlayer();
 
@@ -169,9 +169,9 @@ const timelineModel: ModelConfig<EditorState> = {
         player.on(Player.ON_BUFFERING, dispatch.editor[REDUCER_SET_PLAYER_BUFFERING]);
         return {
             async [ACTION_SWITCH_EFFECT](payload: EffectType) {
-                await player.setEffect(payload);
                 const options = getEffectOptions(payload);
-                player.setEffectState(options);
+                await player.setEffect(payload);
+                player.setEffectOptions(options);
                 batch(() => {
                     dispatch.editor[REDUCER_SET_EFFECT](payload);
                     dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](options);     
@@ -179,7 +179,7 @@ const timelineModel: ModelConfig<EditorState> = {
             },
             [ACTION_EFFECT_OPTIONS_CHANGE](payload: any, {present}: RootState) {
                 dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](payload);
-                player.setEffectState({
+                player.setEffectOptions({
                     ...present.editor.effectOptions,
                     ...payload
                 });
@@ -258,8 +258,8 @@ const timelineModel: ModelConfig<EditorState> = {
             [ACTION_ZOOM_OUT](payload: any, { present }: RootState) {
                 dispatch.editor[ACTION_ZOOM](clamp(present.editor.zoom + (ZOOM_MAXIMUM - ZOOM_MINIMUM) * 0.1, ZOOM_MINIMUM, ZOOM_MAXIMUM));
             },
-            [ACTION_SEEK](payload: number) {
-                player.seek(payload);
+            async [ACTION_SEEK](payload: number) {
+                await player.seek(payload);
                 dispatch.editor[REDUCER_SET_CURRENT_TIME](payload);
             },
             [ACTION_SKIP_PREVIOUS](payload: any, { present }: RootState) {
@@ -277,8 +277,7 @@ const timelineModel: ModelConfig<EditorState> = {
                 }
                 payload[0] = clamp(payload[0], 0, timeline.duration);
                 payload[1] = clamp(payload[1], 0, timeline.duration);
-                const player = getPlayer();
-                player.setRegion(payload);
+                player.setClipRegion(payload);
                 dispatch.editor[REDUCER_SET_CLIP_REGION](payload);
             }
         };

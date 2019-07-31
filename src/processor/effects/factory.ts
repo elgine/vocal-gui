@@ -22,7 +22,7 @@ import Radio from './radio';
 import Megaphone from './megaphone';
 import AudioCache, { FIRE, LARGE_WIDE_ECHO_HALL, LARGE_LONG_ECHO_HALL, UNDER_WATER, CHURCH, MUFFLER, RADIO } from '../audioCache';
 
-export const createEffect = async (type: EffectType, ctx: BaseAudioContext) => {
+export const createEffect = (type: EffectType, ctx: BaseAudioContext) => {
     let effect: Effect|null = null;
     switch (type) {
         case EffectType.ALIEN: effect = new Alien(ctx); break;
@@ -37,25 +37,25 @@ export const createEffect = async (type: EffectType, ctx: BaseAudioContext) => {
         case EffectType.OLD_FEMALE: effect = new OldFemale(ctx); break;
         case EffectType.TRANSFORMER: effect = new Transformer(ctx); break;
         case EffectType.BALROG:
-            effect = new Balrog(ctx, await AudioCache.get(LARGE_WIDE_ECHO_HALL), await AudioCache.get(FIRE));
+            effect = new Balrog(ctx, AudioCache.get(LARGE_WIDE_ECHO_HALL), AudioCache.get(FIRE));
             break;
         case EffectType.CAVE:
-            effect = new Cave(ctx, await AudioCache.get(LARGE_LONG_ECHO_HALL));
+            effect = new Cave(ctx, AudioCache.get(LARGE_LONG_ECHO_HALL));
             break;
         case EffectType.BROAD_ROOM:
-            effect = new BroadRoom(ctx, await AudioCache.get(LARGE_WIDE_ECHO_HALL));
+            effect = new BroadRoom(ctx, AudioCache.get(LARGE_WIDE_ECHO_HALL));
             break;
         case EffectType.UNDER_WATER:
-            effect = new UnderWater(ctx, await AudioCache.get(UNDER_WATER));
+            effect = new UnderWater(ctx, AudioCache.get(UNDER_WATER));
             break;
         case EffectType.HALL:
-            effect = new Hall(ctx, await AudioCache.get(CHURCH));
+            effect = new Hall(ctx, AudioCache.get(CHURCH));
             break;
         case EffectType.MUFFLER:
-            effect = new Muffler(ctx, await AudioCache.get(MUFFLER));
+            effect = new Muffler(ctx, AudioCache.get(MUFFLER));
             break;
         case EffectType.RADIO:
-            effect = new Radio(ctx, await AudioCache.get(RADIO));
+            effect = new Radio(ctx, AudioCache.get(RADIO));
             break;
         case EffectType.TELEPHONE: effect = new Telephone(ctx); break;
         case EffectType.MEGAPHONE: effect = new Megaphone(ctx); break;

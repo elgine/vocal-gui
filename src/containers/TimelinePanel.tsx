@@ -261,13 +261,6 @@ export default withTheme(({
                     )
                 }
                 {
-                    buffering ? (
-                        <Box position="absolute" bottom="32px" width="100%" textAlign="center">
-                            <CircularProgress />
-                        </Box>
-                    ) : undefined
-                }
-                {
                     showRegion ? (
                         <React.Fragment>
                             <Pointer headShape="circular" color={primary} left={clipRegion[0] * pixelsPerMSec} style={pointerStyle}

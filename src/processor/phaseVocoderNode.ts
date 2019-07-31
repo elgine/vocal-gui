@@ -65,8 +65,6 @@ export default class PhaseVocoderNode {
             if (this._passedBytes >= this._delayBytes) {
                 if (vocoder.pop(this._out, frameSize) > 0) {
                     outputBuffer.copyToChannel(this._out, i);
-                } else {
-                    console.log('not enough');
                 }
             }
             if (i === channels - 1) { this._passedBytes += frameSize }
