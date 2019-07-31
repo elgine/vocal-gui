@@ -86,6 +86,7 @@ export default {
     EXPORT_LIST: 'Export task list',
     EXPORT: 'Export',
     NEW_EXPORT_TASK: 'New export task',
+    NO_EXPORT_TASK: 'No export tasks',
     EXPORT_FORMAT: 'Export format',
     REQUIRED: 'Required',
     SAMPLE_RATE: 'Sample rate',

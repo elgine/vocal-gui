@@ -85,6 +85,7 @@ export default {
     EXPORT_LIST: '导出任务列表',
     EXPORT: '导出',
     NEW_EXPORT_TASK: '新建导出任务',
+    NO_EXPORT_TASK: '无导出任务',
     EXPORT_FORMAT: '导出格式',
     REQUIRED: '必须',
     SAMPLE_RATE: '采样率',

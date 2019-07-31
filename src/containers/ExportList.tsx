@@ -2,12 +2,13 @@ import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import { RootState, Models } from '../store';
-import { List, ListItem, ListItemIcon, Checkbox, ListItemText, ListItemSecondaryAction, Typography, IconButton, Menu, MenuItem, Divider, Toolbar, Tooltip, Button } from '@material-ui/core';
+import { List, ListItem, ListItemIcon, Checkbox, ListItemText, ListItemSecondaryAction, Typography, IconButton, Menu, MenuItem, Divider, Toolbar, Tooltip, Button, Box } from '@material-ui/core';
 import { RenderTaskState } from '../processor/renderer';
 import { LangContext, getLang } from '../lang';
 import { MoreVert, PlayArrow, Stop, Cancel } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
 import { ACTION_STOP_RENDERING, ACTION_CANCEL_RENDERING_ALL, ACTION_CANCEL_RENDERING, ACTION_STOP_RENDERING_ALL, ACTION_START_RENDERING } from '../store/models/render/types';
+import Empty from '../components/Empty';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
@@ -182,18 +183,31 @@ export default () => {
     }, [tasks, selectedTaskIds]);
     return (
         <React.Fragment>
-            <List style={LIST_STYLE}>
-                {
-                    taskArr.map(({ id, title, state }) => (
-                        <Task key={id} id={id} title={title} state={state}
-                            selected={selectedTaskIds[id] !== undefined}
-                            onSelected={onTaskSelected}
-                            onStop={onTaskStop}
-                            onCancel={onTaskCancel}
-                        />
-                    ))
-                }
-            </List>
+            {
+                taskArr.length > 0 ? (
+                    <List style={LIST_STYLE}>
+                        {
+                            taskArr.map(({ id, title, state }) => (
+                                <Task key={id} id={id} title={title} state={state}
+                                    selected={selectedTaskIds[id] !== undefined}
+                                    onSelected={onTaskSelected}
+                                    onStop={onTaskStop}
+                                    onCancel={onTaskCancel}
+                                />
+                            ))
+                        }
+                    </List>
+                ) : (
+                    <Box py={2} textAlign="center">
+                        <Empty size={96} />
+                        <Typography variant="subtitle2" paragraph>
+                            {
+                                getLang('NO_EXPORT_TASK', lang)
+                            }
+                        </Typography>
+                    </Box>
+                )
+            }
             <Divider />
             <Toolbar>
                 <Tooltip title={getLang('START', lang)}>
