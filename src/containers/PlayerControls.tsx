@@ -6,7 +6,7 @@ import {
     ACTION_SWITCH_REPEAT,
     ACTION_SWITCH_PLAYING
 } from '../store/models/editor/types';
-import { Tooltip, IconButton, CircularProgress, Chip } from '@material-ui/core';
+import { Tooltip, IconButton } from '@material-ui/core';
 import { SkipPrevious, SkipNext } from '@material-ui/icons';
 import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
@@ -16,7 +16,7 @@ import { RootState, Models } from '../store';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        disabled: present.editor.audioBuffer === undefined,
+        disabled: present.editor.source === undefined,
         playing: present.editor.playing,
         repeat: present.editor.repeat,
         buffering: present.editor.buffering

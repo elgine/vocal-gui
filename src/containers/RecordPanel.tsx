@@ -6,9 +6,9 @@ import {  Close, Done } from '@material-ui/icons';
 import RecorderWaveform from '../components/RecorderWaveform';
 import { getLang, LangContext } from '../lang';
 import { toTimeString } from '../utils/time';
-import { getRecorder } from '../processor';
 import Placeholder from '../components/Placeholder';
 import PlayButton from '../components/PlayButton';
+import Recorder from '../services/recorder';
 
 enum RecorderState{
     UNINITED,
@@ -26,7 +26,7 @@ export default React.memo(withTheme(({
     theme, open, onClose, onConfirm,
     ...others
 }: RecordPanelProps & {theme: Theme}) => {
-    const recorder = getRecorder();
+    const recorder = Recorder.instance();
     const [state, setState] = useState(RecorderState.UNINITED);
     const lang = useContext(LangContext);
     const [hasBegan, setHasBegan] = useState(false);

@@ -7,6 +7,7 @@ import models from './models';
 import plugins from './plugins';
 import { StateWithHistory } from 'redux-undo';
 import importSagas from './models/editor/importSaga';
+import prerenderSaga from './models/editor/prerenderSaga';
 
 const saga = createSagaMiddleware();
 const worker = createWorkerMiddleware(workers);
@@ -21,6 +22,7 @@ const store = init({
 
 // Run sagas
 importSagas(saga);
+prerenderSaga(saga);
 
 export type Models = typeof models;
 export type RootState = StateWithHistory<RematchRootState<Models>>;

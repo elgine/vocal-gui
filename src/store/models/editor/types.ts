@@ -7,7 +7,9 @@ export const REDUCER_SET_CLIP_REGION = 'REDUCER_SET_CLIP_REGION';
 export const REDUCER_SET_EFFECT = 'REDUCER_SET_EFFECT';
 export const REDUCER_SET_EFFECT_OPTIONS = 'REDUCER_SET_EFFECT_OPTIONS';
 export const REDUCER_SET_PLAYING = 'REDUCER_SET_PLAYING';
-export const REDUCER_SET_PLAYER_BUFFERING = 'REDUCER_SET_PLAYER_BUFFERING';
+export const REDUCER_SET_BUFFERING = 'REDUCER_SET_BUFFERING';
+export const REDUCER_SET_PLAY_AFTER_BUFFERING = 'REDUCER_SET_PLAY_AFTER_BUFFERING';
+export const REDUCER_SET_NEED_BUFFERING = 'REDUCER_SET_NEED_BUFFERING';
 export const REDUCER_SET_VOLUME = 'REDUCER_SET_VOLUME';
 export const REDUCER_SET_REPEAT = 'REDUCER_SET_REPEAT';
 export const REDUCER_SET_TITLE = 'REDUCER_SET_TITLE';
@@ -29,6 +31,7 @@ export const ACTION_LOAD_FROM_MIC = 'ACTION_LOAD_FROM_MIC';
 
 export const ACTION_SWITCH_REPEAT = 'ACTION_SWITCH_REPEAT';
 export const ACTION_SWITCH_PLAYING = 'ACTION_SWITCH_PLAYING';
+export const ACTION_PREPARE_TO_PLAY = 'ACTION_PREPARE_TO_PLAY';
 export const ACTION_PLAY = 'ACTION_PLAY';
 export const ACTION_STOP = 'ACTION_STOP';
 export const ACTION_SET_VOLUME = 'ACTION_SET_VOLUME';
@@ -50,14 +53,16 @@ export const ACTION_SKIP_NEXT = 'ACTION_SKIP_NEXT';
 
 export interface EditorState{
     title: string;
-    audioBuffer?: AudioBuffer;
+    source?: AudioBuffer;
     initializing: boolean;
     loading: boolean;
     playing: boolean;
+    playAfterBuffering: boolean;
+    needBuffering: boolean;
     buffering: boolean;
     repeat: boolean;
     volume: number;
-    effect: EffectType;
+    effectType: EffectType;
     effectOptions: any;
     pixelsPerMSec: number;
     baseTimeUnit: number;

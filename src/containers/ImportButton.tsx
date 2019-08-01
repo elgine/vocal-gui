@@ -20,7 +20,7 @@ const LoadButtonWrappedTooltip = React.forwardRef((props: IconButtonProps, ref: 
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        disabledExport: present.editor.audioBuffer === undefined
+        disabledExport: present.editor.source === undefined
     };
 };
 

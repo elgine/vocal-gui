@@ -1,5 +1,5 @@
-import { createEffect, getAllDurationApplyEffect, getDelayApplyEffect } from './effects/factory';
-import Effect from './effects/effect';
+import { createEffect, getAllDurationApplyEffect, getDelayApplyEffect } from '../processor/effects/factory';
+import Effect from '../processor/effects/effect';
 
 export default class Renderer {
 

@@ -82,7 +82,7 @@ export default withTheme(({
     theme, className, timeScaleHeight, waveHeight,
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
-    const { loading, buffering, clipRegion, currentTime, audioBuffer, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps, shallowEqual);
+    const { loading, buffering, clipRegion, currentTime, source, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onSeek = dispatch.editor[ACTION_SEEK];
     const onClipRegionChange = dispatch.editor[ACTION_CLIP_REGION_CHANGE];
@@ -94,17 +94,17 @@ export default withTheme(({
     const showRegion = clipRegion[0] !== clipRegion[1];
     const classes = useStyles();
 
-    const sourceDuration = audioBuffer ? audioBuffer.duration * 1000 : 0;
-    const channels = audioBuffer ? audioBuffer.numberOfChannels : 0;
+    const sourceDuration = source ? source.duration * 1000 : 0;
+    const channels = source ? source.numberOfChannels : 0;
     const sourceBuffers: Float32Array[] = useMemo(() => {
         const arr: Float32Array[] = [];
-        if (audioBuffer) {
+        if (source) {
             for (let i = 0; i < channels; i++) {
-                arr.push(audioBuffer.getChannelData(i));
+                arr.push(source.getChannelData(i));
             }
         }
         return arr;
-    }, [audioBuffer]);
+    }, [source]);
 
     const mainRef = useRef<HTMLDivElement>(null);
     const pointerLeft = currentTime * pixelsPerMSec;
@@ -221,9 +221,9 @@ export default withTheme(({
                                 showRegion ? <ClipRegion pixelsPerMSec={pixelsPerMSec} region={clipRegion} style={clipRegionStyle} /> : undefined
                             }
                             {
-                                audioBuffer ? <SourceInfo className={classes.sourceInfo}
-                                    sampleRate={audioBuffer.sampleRate}
-                                    channels={audioBuffer.numberOfChannels}
+                                source ? <SourceInfo className={classes.sourceInfo}
+                                    sampleRate={source.sampleRate}
+                                    channels={source.numberOfChannels}
                                 /> : undefined
                             }
                         </div>
@@ -273,7 +273,7 @@ export default withTheme(({
                     ) : undefined
                 }
                 {
-                    audioBuffer ? (
+                    source ? (
                         <Pointer left={pointerLeft} style={pointerStyle}
                             onMouseDown={onPointerMouseDown}
                         />

@@ -17,7 +17,7 @@ const ExportIcon = () => {
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        disabledExport: present.editor.audioBuffer === undefined,
+        disabledExport: present.editor.source === undefined,
         taskCount: Object.values(present.render.tasks).filter((t) => t.state >= 0 && t.state < 1).length
     };
 };

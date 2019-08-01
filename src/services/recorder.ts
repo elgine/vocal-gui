@@ -26,6 +26,11 @@ const createAudioBuffer = (ctx: AudioContext, duration: number, chunks: Float32A
 };
 
 export default class Recorder {
+    private static _instance: Recorder;
+    static instance() {
+        if (!this._instance) this._instance = new Recorder();
+        return this._instance;
+    }
 
     public readonly onProcess: Signal = new Signal();
 

@@ -34,25 +34,32 @@ import {
     ACTION_STOP,
     ACTION_SWITCH_REPEAT,
     ACTION_SET_VOLUME,
-    REDUCER_SET_PLAYER_BUFFERING,
+    REDUCER_SET_BUFFERING,
     REDUCER_SET_INITIALIZING,
-    ACTION_INITIALIZE
+    ACTION_INITIALIZE,
+    ACTION_PRERENDER,
+    ACTION_PRERENDER_SUCCESS,
+    REDUCER_SET_PLAY_AFTER_BUFFERING,
+    REDUCER_SET_NEED_BUFFERING,
+    ACTION_PREPARE_TO_PLAY
 } from './types';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT, ZOOM_MAXIMUM, ZOOM_MINIMUM, UNDEFINED_STRING } from '../../../constant';
 import { RootState } from '../../index';
 import { EffectType } from '../../../processor/effectType';
-import { getEffectOptions } from '../../../processor/effects/factory';
+import { getEffectOptions, isEffectNeedBuffering } from '../../../processor/effects/factory';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
-import Player from '../../../processor/player';
+import Player from '../../../services/player';
 import AudioCache from '../../../processor/audioCache';
 
 const initialState: EditorState = {
     title: UNDEFINED_STRING,
-    effect: EffectType.NONE,
+    effectType: EffectType.NONE,
     effectOptions: getEffectOptions(EffectType.NONE),
     initializing: false,
     repeat: false,
     playing: false,
+    playAfterBuffering: false,
+    needBuffering: false,
     loading: false,
     buffering: false,
     volume: 1,
@@ -103,12 +110,20 @@ const updateTimeUnits = (state: EditorState) => {
 const timelineModel: ModelConfig<EditorState> = {
     state: initialState,
     reducers: {
-        [REDUCER_SET_PLAYER_BUFFERING](state: EditorState, payload: boolean) {
+        [REDUCER_SET_NEED_BUFFERING](state: EditorState, payload: boolean) {
+            state.needBuffering = payload;
+            return state;
+        },
+        [REDUCER_SET_BUFFERING](state: EditorState, payload: boolean) {
             state.buffering = payload;
             return state;
         },
         [REDUCER_SET_REPEAT](state: EditorState, payload: boolean) {
             state.repeat = payload;
+            return state;
+        },
+        [REDUCER_SET_PLAY_AFTER_BUFFERING](state: EditorState, payload: boolean) {
+            state.playAfterBuffering = payload;
             return state;
         },
         [REDUCER_SET_PLAYING](state: EditorState, payload: boolean) {
@@ -120,14 +135,12 @@ const timelineModel: ModelConfig<EditorState> = {
             return state;
         },
         [REDUCER_SET_EFFECT](state: EditorState, payload: EffectType) {
-            state.effect = payload;
+            state.effectType = payload;
             return state;
         },
         [REDUCER_SET_EFFECT_OPTIONS](state: EditorState, payload: any) {
             /* eslint-disable */
-            for (let k in payload) {
-                state.effectOptions[k] = payload[k];
-            }
+            state.effectOptions = payload;
             return state;
         },
         [REDUCER_SET_ZOOM](state: EditorState, payload: number) {
@@ -160,7 +173,7 @@ const timelineModel: ModelConfig<EditorState> = {
             return state;
         },
         [REDUCER_SET_BUFFER](state: EditorState, payload: AudioBuffer) {
-            state.audioBuffer = payload;
+            state.source = payload;
             return state;
         },
         [REDUCER_SET_INITIALIZING](state: EditorState, payload: boolean){
@@ -170,38 +183,85 @@ const timelineModel: ModelConfig<EditorState> = {
     },
     effects: (dispatch: RematchDispatch<any>) => {
         let player = new Player(dispatch);
+
+        const replay = (payload: {needBuffering: boolean; source?: AudioBuffer; effectType: EffectType; effectOptions: any}) => {
+            if(!payload.source)return;
+            dispatch({type: `editor/${ACTION_STOP}`});
+            checkBufferingAndPlay(payload);
+        };
+
+        const checkBufferingAndPlay = (payload:{needBuffering: boolean; source?: AudioBuffer; effectType: EffectType; effectOptions: any}) => {
+            if(!payload.source)return;
+            const {source, needBuffering, effectType, effectOptions} = payload;
+            dispatch({type: `editor/${REDUCER_SET_PLAY_AFTER_BUFFERING}`, payload: true}); 
+            if(needBuffering){  
+                dispatch({type: `editor/${ACTION_PRERENDER}`, payload: {
+                    source,
+                    effectType,
+                    effectOptions
+                }});
+            } else {
+                dispatch({type: `editor/${ACTION_PRERENDER_SUCCESS}`});
+            }
+        };
+
         return {
             async [ACTION_INITIALIZE](){
                 dispatch.editor[REDUCER_SET_INITIALIZING](true);
                 await AudioCache.init();
                 dispatch.editor[REDUCER_SET_INITIALIZING](false);
             },
-            async [ACTION_SWITCH_EFFECT](payload: EffectType) {
-                const options = getEffectOptions(payload);      
-                batch(() => {
-                    dispatch.editor[REDUCER_SET_EFFECT](payload);
-                    dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](options);     
-                });
-                await player.setEffect(payload, options);
+            [ACTION_PRERENDER](){
+                dispatch.editor[REDUCER_SET_BUFFERING](true);
             },
-            async [ACTION_EFFECT_OPTIONS_CHANGE](payload: any, {present}: RootState) {
+            [ACTION_PRERENDER_SUCCESS](payload: AudioBuffer|undefined, {present}: RootState){
+                batch(() => {
+                    dispatch.editor[REDUCER_SET_BUFFERING](false);
+                    dispatch.editor[REDUCER_SET_NEED_BUFFERING](false);
+                    player.setPrerenderBuffer(payload);
+                    if(present.editor.playAfterBuffering)
+                        dispatch.editor[ACTION_PLAY]();
+                });      
+            },
+            [ACTION_SWITCH_EFFECT](effectType: EffectType, {present}: RootState) {
+                const { editor } = present;
+                const effectOptions = getEffectOptions(effectType);      
+                const needBuffering = isEffectNeedBuffering(effectType);
+                player.setEffect(effectType, effectOptions);
+                batch(() => {
+                    dispatch.editor[REDUCER_SET_EFFECT](effectType);
+                    dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](effectOptions);     
+                    dispatch.editor[REDUCER_SET_NEED_BUFFERING](needBuffering);
+                    if(editor.playing)
+                        replay({source: editor.source, effectType, effectOptions, needBuffering});
+                });       
+            },
+            [ACTION_EFFECT_OPTIONS_CHANGE](payload: any, {present}: RootState) {
+                const {editor} = present;
                 let changed = false;
                 for(let k in payload){
-                    if(present.editor.effectOptions[k] && present.editor.effectOptions[k] !== payload[k]){
+                    if(editor.effectOptions[k] && editor.effectOptions[k] !== payload[k]){
                         changed = true;
                         break;
                     }
                 }
                 if(!changed)return;
-                dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](payload);
-                await player.setEffectOptions({
-                    ...present.editor.effectOptions,
+                const needBuffering = changed && isEffectNeedBuffering(editor.effectType);
+                const effectOptions = {
+                    ...editor.effectOptions,
                     ...payload
-                });
+                };
+                batch(() => {
+                    dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](effectOptions);
+                    dispatch.editor[REDUCER_SET_NEED_BUFFERING](needBuffering);
+                    player.setEffectOptions(effectOptions);
+                    if(editor.playing)
+                        replay({source: editor.source, needBuffering, effectOptions, effectType: editor.effectType });
+                });     
             },
             [ACTION_SWITCH_PLAYING](payload: any, { present }: RootState) {
                 if (!present.editor.playing) {
-                    dispatch.editor[ACTION_PLAY]();
+                    dispatch.editor[ACTION_PREPARE_TO_PLAY]();
                 } else {
                     dispatch.editor[ACTION_STOP]();
                 }
@@ -211,15 +271,26 @@ const timelineModel: ModelConfig<EditorState> = {
                 player.setRepeat(r);
                 dispatch.editor[REDUCER_SET_REPEAT](r);
             },
-            async [ACTION_PLAY](payload: any, { present }: RootState) {
-                if (!present.editor.audioBuffer) return;
-                await player.play();
+            [ACTION_PREPARE_TO_PLAY](payload: any, {present}: RootState){
+                const {editor} = present;
+                batch(() => {
+                    checkBufferingAndPlay(editor);
+                });     
+            },
+            [ACTION_PLAY](payload: any, { present }: RootState) {
+                if (!present.editor.source) return;
+                player.play();
                 dispatch.editor[REDUCER_SET_PLAYING](true);
             },
             [ACTION_STOP](payload: any, { present }: RootState) {
-                if (!present.editor.audioBuffer) return;
+                if (!present.editor.source) return;
                 player.stop();
-                dispatch.editor[REDUCER_SET_PLAYING](false);
+                batch(() => {
+                    dispatch.editor[REDUCER_SET_PLAYING](false);
+                    if(present.editor.buffering){
+                        dispatch.editor[REDUCER_SET_PLAY_AFTER_BUFFERING](false);
+                    }
+                });
             },
             [ACTION_SET_VOLUME](payload: number) {
                 player.setVolume(payload);

@@ -1,5 +1,4 @@
 import { Action } from 'redux';
-import { RenderTask } from '../../../processor/renderer';
 
 export const REDUCER_SET_TASKS_STATE = 'REDUCER_SET_TASKS_STATE';
 export const REDUCER_SET_RENDERING = 'REDUCER_SET_RENDERING';

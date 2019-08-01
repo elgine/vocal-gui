@@ -59,7 +59,7 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        effect: present.editor.effect,
+        effectType: present.editor.effectType,
         effectOptions: present.editor.effectOptions
     };
 };
@@ -117,7 +117,7 @@ const Pane = ({ header, children, className, style, height, ...others }: PanePro
 
 export default React.memo(() => {
     const filterBtnRef = useRef<HTMLButtonElement>(null);
-    const { effect, effectOptions } = useSelector(mapStateToProps, shallowEqual);
+    const { effectType, effectOptions } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onEffectChange = dispatch.editor[ACTION_SWITCH_EFFECT];
     const onEffectOptionsChange = dispatch.editor[ACTION_EFFECT_OPTIONS_CHANGE];
@@ -125,14 +125,14 @@ export default React.memo(() => {
     const [effectCategory, setEffectCategory] = useState(EMPTY_STRING);
     const [currentEffectsVM, setCurrentEffectsVM] = useState<EffectType[]>([]);
     const lang = useContext(LangContext);
-    const descriptor = useMemo(() => getEffectDescriptor(effect), [effect]);
+    const descriptor = useMemo(() => getEffectDescriptor(effectType), [effectType]);
     const onCategoryitemClick = (v: string) => {
         if (effectCategory === v) return;
         setEffectCategory(v);
         setShowFilterList(false);
     };
     const onEffectItemClick = (v: EffectType) => {
-        if (v === effect) {
+        if (v === effectType) {
             onEffectChange(EffectType.NONE);
         } else {
             onEffectChange(v);
@@ -180,7 +180,7 @@ export default React.memo(() => {
                 <Grid container>
                     {
                         currentEffectsVM.map((e) => (
-                            <EffectItem key={e} xs={3} selected={effect === e}
+                            <EffectItem key={e} xs={3} selected={effectType === e}
                                 title={getLang(EFFECT_LANG_MAP[e], lang)}
                                 onClick={() => onEffectItemClick(e)}
                             />

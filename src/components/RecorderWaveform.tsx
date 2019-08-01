@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { clamp } from 'lodash';
-import { getRecorder } from '../processor';
+import Recorder from '../services/recorder';
 
 const WIDTH = 600;
 const HEIGHT = 400;
@@ -13,7 +13,7 @@ export interface RecorderWaveformProps extends React.HTMLAttributes<{}>{
 }
 
 export default React.memo(({ color, sampleRate, style, ...others }: RecorderWaveformProps) => {
-    const recorder = getRecorder();
+    const recorder = Recorder.instance();
     const offscreenRef = useRef<HTMLCanvasElement>(document.createElement('canvas'));
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const sampleRateRef = useRef(5);

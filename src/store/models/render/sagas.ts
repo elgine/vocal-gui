@@ -9,7 +9,7 @@ import {
     ACTION_ENCODE_SUCCESS,
     RenderAction,
 } from './types';
-import Renderer from '../../../processor/renderer';
+import Renderer from '../../../services/renderer';
 
 const RENDER_BG_ASYNC = 'RENDER_BG_ASYNC';
 const MAX_CONCURRENCY = 3;
