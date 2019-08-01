@@ -107,7 +107,7 @@ const updateTimeUnits = (state: EditorState) => {
     state.pixelsPerMSec = PIXELS_PER_TIME_UNIT / state.timeUnits[0];
 };
 
-const timelineModel: ModelConfig<EditorState> = {
+const editorModel: ModelConfig<EditorState> = {
     state: initialState,
     reducers: {
         [REDUCER_SET_NEED_BUFFERING](state: EditorState, payload: boolean) {
@@ -370,4 +370,4 @@ const timelineModel: ModelConfig<EditorState> = {
     }
 };
 
-export default timelineModel;
+export default editorModel;

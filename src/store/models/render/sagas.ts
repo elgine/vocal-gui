@@ -85,7 +85,7 @@ export function* cancelTaskSaga() {
     }
 }
 
-export function* renderSaga() {
+function* renderSaga() {
     const chan = yield call(channel);
     for (let i = 0; i < MAX_CONCURRENCY; i++) {
         yield fork(popRenderTask, chan);
