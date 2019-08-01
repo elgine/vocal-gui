@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RematchDispatch } from '@rematch/core';
-import { useDispatch } from 'react-redux';
-import { Slide, useMediaQuery, Paper } from '@material-ui/core';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { Slide, useMediaQuery, Paper, Fade, Box } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import PlayerControlBar from './PlayerControlBar';
@@ -12,7 +12,9 @@ import ControlBar from './ControlBar';
 import EffectPanel from './EffectPanel';
 import { ACTION_CALL_HOTKEY } from '../store/models/hotkeys/types';
 import HelpButton from './HelpButton';
-import { Models } from '../store';
+import { Models, RootState } from '../store';
+import { ACTION_INITIALIZE } from '../store/models/editor/types';
+import LoadingMask from '../components/LoadingMask';
 
 const PLAYER_CONTROLS_HEIGHT = 64;
 const CONTROL_BAR_HEIGHT = 64;
@@ -79,7 +81,14 @@ const useStyles = makeStyles((theme: Theme) => {
     };
 });
 
+const mapStateToProps = ({ present }: RootState) => {
+    return {
+        initializing: present.editor.initializing
+    };
+};
+
 export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
+    const { initializing } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const classes = useStyles();
     const matches = useMediaQuery('(min-width: 600px)');
@@ -100,6 +109,7 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
             });
         };
         window.addEventListener('keydown', onKeyDown);
+        dispatch.editor[ACTION_INITIALIZE]();
         return () => {
             window.removeEventListener('keydown', onKeyDown);
         };
@@ -109,7 +119,6 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
             classes.root,
             className
         )} {...others}>
-            {/* <Guide /> */}
             <ControlBar className={classes.controlBar} />
             <div className={clsx(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
                 <Slide direction="left" in={openEffectPanel}>
@@ -127,6 +136,9 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
                 showEffectPanel={openEffectPanel}
                 onToggleEffectPanel={onToggleEffectPanel}
             />
+            <Fade in={initializing}>
+                <LoadingMask />
+            </Fade>
         </div>
     );
 };

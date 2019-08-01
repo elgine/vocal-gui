@@ -78,6 +78,7 @@ export default {
     CLIP: '截取区域',
     CURRENT_TIME: '当前时间',
     POINTER: '指针',
+    INITIALIZING: '初始化中',
     NO_EFFECT_SELECTED: '没选中效果',
     EFFECT_PROPERTIES: '效果属性',
     EFFECT_LIST: '效果列表',

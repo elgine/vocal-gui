@@ -79,6 +79,7 @@ export default {
     CLIP: 'Clip region',
     CURRENT_TIME: 'Current time',
     POINTER: 'Pointer',
+    INITIALIZING: 'Initializing',
     NO_EFFECT_SELECTED: 'No effect selected',
     EFFECT_PROPERTIES: 'Effect properties',
     EFFECT_LIST: 'Effect list',

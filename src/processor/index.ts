@@ -1,5 +1,5 @@
 import Recorder from './recorder';
-import Player from './player2';
+import Player from './player';
 import Renderer from './renderer';
 
 let recorder: Recorder;

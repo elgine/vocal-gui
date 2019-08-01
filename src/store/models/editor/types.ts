@@ -13,6 +13,7 @@ export const REDUCER_SET_REPEAT = 'REDUCER_SET_REPEAT';
 export const REDUCER_SET_TITLE = 'REDUCER_SET_TITLE';
 export const REDUCER_SET_LOADING = 'REDUCER_SET_LOADING';
 export const REDUCER_SET_BUFFER = 'REDUCER_SET_BUFFER';
+export const REDUCER_SET_INITIALIZING = 'REDUCER_SET_INITIALIZING';
 
 export const ACTION_LOAD_SOURCE = 'ACTION_LOAD_SOURCE';
 export const ACTION_LOAD_SOURCE_SUCCESS = 'ACTION_LOAD_SOURCE_SUCCESS';
@@ -29,6 +30,8 @@ export const ACTION_SET_VOLUME = 'ACTION_SET_VOLUME';
 export const ACTION_START_PLAYING = 'ACTION_START_PLAYING';
 export const ACTION_STOP_PLAYING = 'ACTION_STOP_PLAYING';
 
+export const ACTION_INITIALIZE = 'ACTION_INITIALIZE';
+
 export const ACTION_SWITCH_EFFECT = 'ACTION_SWITCH_EFFECT';
 export const ACTION_EFFECT_OPTIONS_CHANGE = 'ACTION_EFFECT_OPTIONS_CHANGE';
 
@@ -43,6 +46,7 @@ export const ACTION_SKIP_NEXT = 'ACTION_SKIP_NEXT';
 export interface EditorState{
     title: string;
     audioBuffer?: AudioBuffer;
+    initializing: boolean;
     loading: boolean;
     playing: boolean;
     buffering: boolean;

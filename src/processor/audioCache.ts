@@ -38,4 +38,9 @@ export default class AudioCache {
     static get(url: string) {
         return Reflect.get(this._audioCaches, url);
     }
+
+    static async getAsync(url: string) {
+        await this.load(url);
+        return this.get(url);
+    }
 }
