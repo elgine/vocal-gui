@@ -19,12 +19,12 @@ export interface BalrogOptions extends EffectOptions{
 export default class Balrog extends Effect {
 
     static LFO_FREQ_DEFAULT = 50.0;
-    static LFO_FREQ_MIN = -22050.0;
-    static LFO_FREQ_MAX = 22050.0;
+    static LFO_FREQ_MIN = 0.0;
+    static LFO_FREQ_MAX = 100.0;
 
     static LFO_GAIN_DEFAULT = 0.004;
     static LFO_GAIN_MIN = 0.0;
-    static LFO_GAIN_MAX = 4.0;
+    static LFO_GAIN_MAX = 0.006;
 
     static DELAY_DEFAULT = 0.01;
     static DELAY_MIN = 0.0;
