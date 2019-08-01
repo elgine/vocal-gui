@@ -43,6 +43,6 @@ export const femaleDescriptor = {
 };
 
 export const femaleDefaultOptions = {
-    pitchOffset: -0.45,
+    pitchOffset: 0.45,
     ...effectDefaultOptions
 };

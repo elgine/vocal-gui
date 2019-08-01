@@ -69,14 +69,14 @@ export const getAllDurationApplyEffect = (type: EffectType, options: any, dur: n
 
 export const getDelayApplyEffect = (type: EffectType, options: any, dur: number) => {
     if (type === EffectType.OLD_FEMALE || type === EffectType.OLD_MALE) {
-        return Math.max((1 - options.tempo), 0) * dur + options.vibratoDelay;
+        return Math.max((1 - (options.tempo || 1)), 0) * dur + (options.vibratoDelay || 0);
     }
     return 0;
 };
 
 export const getDurationApplyEffect = (type: EffectType, options: any, dur: number) => {
     if (type === EffectType.OLD_FEMALE || type === EffectType.OLD_MALE) {
-        return dur * options.tempo;
+        return dur * (options.tempo || 1);
     }
     return dur;
 };

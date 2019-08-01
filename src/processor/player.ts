@@ -61,13 +61,14 @@ export default class Player extends Emitter {
         this._updateEffect();
         this._updateGraph();
         this._updateOptions();
-        this._ticker.run();
         this._input!.start(0, this._actualTime * 0.001);
+        this._ticker.run();
     }
 
-    setEffect(e: EffectType) {
+    setEffect(e: EffectType, initialOptions?: any) {
         if (this._effectType === e) return;
         this._effectType = e;
+        initialOptions && this.setEffectOptions(initialOptions);
         if (this._playing) {
             this._restart();
         }
@@ -87,7 +88,9 @@ export default class Player extends Emitter {
     stop() {
         if (!this._playing) return;
         this._playing = false;
+        this._interrupt();
         this._disposeInput();
+        this._disposeEffect();
         this._ticker.stop();
     }
 
@@ -105,7 +108,6 @@ export default class Player extends Emitter {
     }
 
     private _restart() {
-        this._interrupt();
         this.stop();
         this.play();
     }
@@ -135,16 +137,16 @@ export default class Player extends Emitter {
         this._input.buffer = this._source;
     }
 
-    private _updateEffect() {
-        if (this._effect && this._effect.type !== this._effectType || (
-            !this._effect && this._effectType !== EffectType.NONE
-        )) {
-            if (this._effect) {
-                this._effect.dispose();
-                this._effect.output.disconnect();
-            }
-            this._effect = createEffect(this._effectType, this._audioCtx);
+    private _disposeEffect() {
+        if (this._effect) {
+            this._effect.dispose();
+            this._effect.output.disconnect();
         }
+    }
+
+    private _updateEffect() {
+        this._disposeEffect();
+        this._effect = createEffect(this._effectType, this._audioCtx);
     }
 
     private _updateOptions() {
@@ -172,9 +174,6 @@ export default class Player extends Emitter {
      */
     private _interrupt() {
         this._suspendTime = this._ticker.rt = this._actualTime;
-        if (this._effect) {
-            this._effect.clear();
-        }
     }
 
     private _calcActualTime() {
@@ -182,6 +181,7 @@ export default class Player extends Emitter {
         const ct = this._ticker.rt;
         const diff = ct - this._suspendTime;
         const duration = this._source.duration;
+        console.log(this._effectOptions);
         const delay = getDelayApplyEffect(this._effectType, this._effectOptions, duration) * 1000;
         const timeScale = getDurationApplyEffect(this._effectType, this._effectOptions, duration) / duration;
         // 判断是否小于延迟时间，若小于，不做处理
@@ -199,6 +199,7 @@ export default class Player extends Emitter {
                 this.emit(Player.ON_BUFFERING, false);
             }
             this._actualTime = (diff - delay) / timeScale + this._suspendTime;
+            console.log(diff, delay, timeScale);
         }
     }
 
@@ -214,7 +215,6 @@ export default class Player extends Emitter {
         if (!this._playing) return;
         this._calcActualTime();
         const ct = this._actualTime;
-        console.log('tick: ', ct);
         const s = this._clipRegion[0];
         const e = this._clipRegion[1];
         if (ct <= s) {

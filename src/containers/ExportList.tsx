@@ -172,6 +172,8 @@ export default () => {
         }
     };
     const taskArr = Object.values(tasks);
+    const isTaskArrEmpty = taskArr.length <= 0;
+    const isNoneTaskSelected = Object.values(selectedTaskIds).length <= 0;
     useEffect(() => {
         let newTaskIds = {};
         for (let k in selectedTaskIds) {
@@ -184,7 +186,7 @@ export default () => {
     return (
         <React.Fragment>
             {
-                taskArr.length > 0 ? (
+                !isTaskArrEmpty ? (
                     <List style={LIST_STYLE}>
                         {
                             taskArr.map(({ id, title, state }) => (
@@ -211,27 +213,33 @@ export default () => {
             <Divider />
             <Toolbar>
                 <Tooltip title={getLang('START', lang)}>
-                    <IconButton onClick={onStart}>
-                        <PlayArrow />
-                    </IconButton>
+                    <div>
+                        <IconButton disabled={isNoneTaskSelected} onClick={onStart}>
+                            <PlayArrow />
+                        </IconButton>
+                    </div>
                 </Tooltip>
                 <Tooltip title={getLang('STOP', lang)}>
-                    <IconButton onClick={onStop}>
-                        <Stop />
-                    </IconButton>
+                    <div>
+                        <IconButton disabled={isNoneTaskSelected} onClick={onStop}>
+                            <Stop />
+                        </IconButton>
+                    </div>
                 </Tooltip>
                 <Tooltip title={getLang('CANCEL', lang)}>
-                    <IconButton onClick={onCancel}>
-                        <Cancel />
-                    </IconButton>
+                    <div>
+                        <IconButton disabled={isNoneTaskSelected} onClick={onCancel}>
+                            <Cancel />
+                        </IconButton>
+                    </div>
                 </Tooltip>
                 <Placeholder />
-                <Button onClick={onStopAll}>
+                <Button disabled={isTaskArrEmpty} onClick={onStopAll}>
                     {
                         getLang('STOP_ALL', lang)
                     }
                 </Button>
-                <Button onClick={onCancelAll}>
+                <Button disabled={isTaskArrEmpty} onClick={onCancelAll}>
                     {
                         getLang('CANCEL_ALL', lang)
                     }

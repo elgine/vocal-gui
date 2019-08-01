@@ -183,8 +183,7 @@ const timelineModel: ModelConfig<EditorState> = {
             },
             [ACTION_SWITCH_EFFECT](payload: EffectType) {
                 const options = getEffectOptions(payload);
-                player.setEffect(payload);
-                player.setEffectOptions(options);
+                player.setEffect(payload, options);
                 batch(() => {
                     dispatch.editor[REDUCER_SET_EFFECT](payload);
                     dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](options);     
