@@ -68,3 +68,29 @@ interface EffectItem{
     title: string;
     thumb: string;
 }
+
+type RenderTaskLevelNormal = 0;
+type RenderTaskLevelHigh = 1;
+type RenderTaskLevel = RenderTaskLevelNormal | RenderTaskLevelHigh;
+
+type RenderTaskStateWaiting = 0;
+type RenderTaskStateComplete = 1;
+type RenderTaskStateStopped = -2;
+type RenderTaskStateFailed = -1;
+type RenderTaskState = RenderTaskStateWaiting |
+RenderTaskStateComplete |
+RenderTaskStateStopped |
+RenderTaskStateFailed;
+
+interface RenderTask{
+    id: string;
+    title: string;
+    source?: AudioBuffer;
+    level: number;
+    state: number;
+    taskCreatedTime: number;
+    effectType: number;
+    effectOptions: any;
+    clipRegion: number[];
+    options: ExportParams;
+}

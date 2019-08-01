@@ -22,7 +22,7 @@ import Radio from './radio';
 import Megaphone from './megaphone';
 import AudioCache, { FIRE, LARGE_WIDE_ECHO_HALL, LARGE_LONG_ECHO_HALL, UNDER_WATER, CHURCH, MUFFLER, RADIO } from '../audioCache';
 
-export const createEffect = (type: EffectType, ctx: BaseAudioContext) => {
+export const createEffect = (type: EffectType, ctx: BaseAudioContext, ...args: any[]) => {
     let effect: Effect|null = null;
     switch (type) {
         case EffectType.ALIEN: effect = new Alien(ctx); break;
@@ -33,8 +33,8 @@ export const createEffect = (type: EffectType, ctx: BaseAudioContext) => {
         case EffectType.FEMALE: effect = new Female(ctx); break;
         case EffectType.CHILD: effect = new Child(ctx); break;
         case EffectType.MALE: effect = new Male(ctx); break;
-        case EffectType.OLD_MALE: effect = new OldMale(ctx); break;
-        case EffectType.OLD_FEMALE: effect = new OldFemale(ctx); break;
+        case EffectType.OLD_MALE: effect = new OldMale(ctx, ...args); break;
+        case EffectType.OLD_FEMALE: effect = new OldFemale(ctx, ...args); break;
         case EffectType.TRANSFORMER: effect = new Transformer(ctx); break;
         case EffectType.BALROG:
             effect = new Balrog(ctx, AudioCache.get(LARGE_WIDE_ECHO_HALL), AudioCache.get(FIRE));
@@ -79,6 +79,13 @@ export const getDurationApplyEffect = (type: EffectType, options: any, dur: numb
         return dur * (options.tempo || 1);
     }
     return dur;
+};
+
+export const isEffectNeedBuffering = (type: EffectType) => {
+    if (type === EffectType.OLD_FEMALE || type === EffectType.OLD_MALE) {
+        return true;
+    }
+    return false;
 };
 
 export const getEffectDescriptor = (type: EffectType) => {

@@ -39,15 +39,12 @@ import {
     ACTION_INITIALIZE
 } from './types';
 import { TIME_UNITS, PIXELS_PER_TIME_UNIT, ZOOM_MAXIMUM, ZOOM_MINIMUM, UNDEFINED_STRING } from '../../../constant';
-import { getPlayer } from '../../../processor';
 import { RootState } from '../../index';
 import { EffectType } from '../../../processor/effectType';
 import { getEffectOptions } from '../../../processor/effects/factory';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
 import Player from '../../../processor/player';
 import AudioCache from '../../../processor/audioCache';
-
-const player = getPlayer();
 
 const initialState: EditorState = {
     title: UNDEFINED_STRING,
@@ -172,26 +169,32 @@ const timelineModel: ModelConfig<EditorState> = {
         }
     },
     effects: (dispatch: RematchDispatch<any>) => {
-        player.on(Player.ON_TICK, dispatch.editor[REDUCER_SET_CURRENT_TIME]);
-        player.on(Player.ON_ENDED, () => dispatch.editor[REDUCER_SET_PLAYING](false));
-        player.on(Player.ON_BUFFERING, dispatch.editor[REDUCER_SET_PLAYER_BUFFERING]);
+        let player = new Player(dispatch);
         return {
             async [ACTION_INITIALIZE](){
                 dispatch.editor[REDUCER_SET_INITIALIZING](true);
                 await AudioCache.init();
                 dispatch.editor[REDUCER_SET_INITIALIZING](false);
             },
-            [ACTION_SWITCH_EFFECT](payload: EffectType) {
-                const options = getEffectOptions(payload);
-                player.setEffect(payload, options);
+            async [ACTION_SWITCH_EFFECT](payload: EffectType) {
+                const options = getEffectOptions(payload);      
                 batch(() => {
                     dispatch.editor[REDUCER_SET_EFFECT](payload);
                     dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](options);     
                 });
+                await player.setEffect(payload, options);
             },
-            [ACTION_EFFECT_OPTIONS_CHANGE](payload: any, {present}: RootState) {
+            async [ACTION_EFFECT_OPTIONS_CHANGE](payload: any, {present}: RootState) {
+                let changed = false;
+                for(let k in payload){
+                    if(present.editor.effectOptions[k] && present.editor.effectOptions[k] !== payload[k]){
+                        changed = true;
+                        break;
+                    }
+                }
+                if(!changed)return;
                 dispatch.editor[REDUCER_SET_EFFECT_OPTIONS](payload);
-                player.setEffectOptions({
+                await player.setEffectOptions({
                     ...present.editor.effectOptions,
                     ...payload
                 });
@@ -208,9 +211,9 @@ const timelineModel: ModelConfig<EditorState> = {
                 player.setRepeat(r);
                 dispatch.editor[REDUCER_SET_REPEAT](r);
             },
-            [ACTION_PLAY](payload: any, { present }: RootState) {
+            async [ACTION_PLAY](payload: any, { present }: RootState) {
                 if (!present.editor.audioBuffer) return;
-                player.play();
+                await player.play();
                 dispatch.editor[REDUCER_SET_PLAYING](true);
             },
             [ACTION_STOP](payload: any, { present }: RootState) {

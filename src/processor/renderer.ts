@@ -1,31 +1,5 @@
-import { EffectType } from './effectType';
 import { createEffect, getAllDurationApplyEffect, getDelayApplyEffect } from './effects/factory';
 import Effect from './effects/effect';
-
-export enum RenderTaskLevel{
-    NORMAL,
-    HIGH
-}
-
-export enum RenderTaskState{
-    WAITING = 0,
-    COMPLETE = 1,
-    STOPPED = -2,
-    FAILED = -1
-}
-
-export interface RenderTask{
-    id: string;
-    title: string;
-    source?: AudioBuffer;
-    level: RenderTaskLevel;
-    state: RenderTaskState;
-    taskCreatedTime: number;
-    effectType: EffectType;
-    effectOptions: any;
-    clipRegion: number[];
-    options: ExportParams;
-}
 
 export default class Renderer {
 
@@ -33,7 +7,7 @@ export default class Renderer {
     private _effect!: Effect;
     private _rendering: boolean = false;
 
-    * render(task: RenderTask) {
+    * render(task: Pick<RenderTask, 'clipRegion' | 'source' | 'effectOptions' | 'effectType'>) {
         const { source, clipRegion, effectOptions, effectType } = task;
         this._rendering = true;
         this._offlineAudioCtx = new OfflineAudioContext(
@@ -75,7 +49,7 @@ export default class Renderer {
         this._rendering = true;
     }
 
-    private* _buildGraph(task: RenderTask) {
+    private* _buildGraph(task: Pick<RenderTask, | 'source' | 'effectOptions' | 'effectType'>) {
         if (!task.source) return;
         if (!this._effect || this._effect.type !== task.effectType) {
             let e = yield createEffect(task.effectType, this._offlineAudioCtx);

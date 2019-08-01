@@ -34,7 +34,7 @@ const PropertyField = ({ label, min, max, value, onChange }: PropertyFieldProps)
     const step = (max - min) / SLIDER_STEP_COUNT;
     const val = value || 0;
     useEffect(() => {
-        setInputVal(val.toFixed(2));
+        setInputVal(val.toFixed(3));
     }, [val]);
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let v = e.target.value.replace(/[^0-9\.]*/g, '');

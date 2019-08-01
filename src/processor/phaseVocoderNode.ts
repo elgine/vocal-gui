@@ -33,7 +33,7 @@ export default class PhaseVocoderNode {
         if (options.tempo !== undefined) { this.tempo = options.tempo }
     }
 
-    setSourceDuration(dur: number) {
+    setBufferDuration(dur: number) {
         this._bufferDuration = dur;
         this._updateDelayBytes();
     }

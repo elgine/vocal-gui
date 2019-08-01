@@ -21,10 +21,11 @@ export default class OldMale extends Effect {
     private _vocoder: PhaseVocoderNode;
     private _vibrato: Vibrato;
 
-    constructor(audioContext: BaseAudioContext) {
+    constructor(audioContext: BaseAudioContext, sourceDuration?: number) {
         super(audioContext);
         this._lowpass = this._audioContext.createBiquadFilter();
         this._vocoder = new PhaseVocoderNode(this._audioContext);
+        sourceDuration && this._vocoder.setBufferDuration(sourceDuration);
         this._vibrato = new Vibrato(this._audioContext);
 
         this._lowpass.connect(this._vocoder.node);
@@ -32,15 +33,6 @@ export default class OldMale extends Effect {
         this._vibrato.output.connect(this._gain);
 
         this.set(oldMaleDefaultOptions);
-    }
-
-    setSourceDuration(v: number) {
-        this._vocoder.setSourceDuration(v);
-    }
-
-    clear() {
-        this._vibrato.clear();
-        this._vocoder.clear();
     }
 
     set(options: AnyOf<OldMaleOptions>) {

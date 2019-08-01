@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import { RootState, Models } from '../store';
 import { List, ListItem, ListItemIcon, Checkbox, ListItemText, ListItemSecondaryAction, Typography, IconButton, Menu, MenuItem, Divider, Toolbar, Tooltip, Button, Box } from '@material-ui/core';
-import { RenderTaskState } from '../processor/renderer';
 import { LangContext, getLang } from '../lang';
 import { MoreVert, PlayArrow, Stop, Cancel } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
@@ -72,15 +71,15 @@ const ActionButton = ({ id, disabledCancel, disabledStop, onCancel, onStop }: Ac
 
 const TaskState = ({ state }: {state: RenderTaskState}) => {
     const lang = useContext(LangContext);
-    const color = state === RenderTaskState.FAILED ? 'error' : (
-        state === RenderTaskState.COMPLETE ? 'primary' : 'inherit'
+    const color = state === -1 ? 'error' : (
+        state === 1 ? 'primary' : 'inherit'
     );
     return (
         <Typography variant="button" color={color}>
             {
-                state === RenderTaskState.WAITING ? getLang('WAITING', lang) : (
-                    state === RenderTaskState.FAILED ? getLang('FAILED', lang) : (
-                        state === RenderTaskState.STOPPED ? getLang('STOPPED', lang) :
+                state === 0 ? getLang('WAITING', lang) : (
+                    state === -1 ? getLang('FAILED', lang) : (
+                        state === -2 ? getLang('STOPPED', lang) :
                         `${Number(state) * 100} %`
                     )
                 )

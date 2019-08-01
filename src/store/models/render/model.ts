@@ -14,7 +14,6 @@ import {
     ACTION_STOP_RENDERING,
     ACTION_STOP_RENDERING_ALL
 } from './types';
-import { RenderTask, RenderTaskState, RenderTaskLevel } from '../../../processor/renderer';
 import { RootState } from '../..';
 import uuid from 'uuid/v4';
 
@@ -24,7 +23,7 @@ const initialState: RendererState = {
 };
 
 const existsFreeRenderTask = (tasks: Dictionary<RenderTask>) => {
-    return Object.values(tasks).filter((t) => t.state === RenderTaskState.WAITING).length > 0;
+    return Object.values(tasks).filter((t) => t.state === 0).length > 0;
 };
 
 export default {
@@ -69,7 +68,7 @@ export default {
             [ACTION_RENDER_SUCCESS]({ id }: {id: string; result: Uint8Array[]}, { present }: RootState) {
                 batch(() => {
                     dispatch.render[REDUCER_SET_TASKS_STATE]({
-                        [id]: { state: RenderTaskState.COMPLETE },
+                        [id]: { state: 1 },
                     });
                     if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.render[REDUCER_SET_RENDERING](false);
@@ -82,14 +81,12 @@ export default {
                     const newTask: RenderTask = {
                         id: uuid(),
                         title: editor.title,
-                        level: RenderTaskLevel.NORMAL,
-                        state: RenderTaskState.WAITING,
+                        level: 0,
+                        state: 0,
                         taskCreatedTime: Date.now(),
                         effectType: editor.effect,
                         effectOptions: editor.effectOptions,
-                        segments: [
-                            { start: editor.clipRegion[0], end: editor.clipRegion[1] }
-                        ],
+                        clipRegion: editor.clipRegion,
                         options: payload
                     };
                     dispatch.render[REDUCER_ADD_RENDER_TASK](newTask);
@@ -102,8 +99,8 @@ export default {
                     /* eslint-disable */
                     for (let k in payload) {
                         const task = present.render.tasks[k];
-                        if(task && task.state === RenderTaskState.STOPPED)
-                            newPayload[k] = { state: RenderTaskState.WAITING };
+                        if(task && task.state === -2)
+                            newPayload[k] = { state: 0 };
                     }
                     dispatch.render[REDUCER_SET_TASKS_STATE](newPayload);
                     dispatch.render[REDUCER_SET_RENDERING](true);
@@ -130,7 +127,7 @@ export default {
                     for (let k in payload) {
                         const task = present.render.tasks[k];
                         if(task && task.state >= 0 && task.state < 1)
-                            newPayload[k] = { state: RenderTaskState.STOPPED };
+                            newPayload[k] = { state: -2 };
                     }
                     dispatch.render[REDUCER_SET_TASKS_STATE](newPayload);
                     if (existsFreeRenderTask(present.render.tasks)) {
@@ -141,7 +138,7 @@ export default {
             [ACTION_STOP_RENDERING_ALL](payload: any, { present }: RootState) {
                 batch(() => {
                     dispatch.render[REDUCER_SET_TASKS_STATE](Object.keys(present.render.tasks).reduce((map, id) => {
-                        map[id] = { state: RenderTaskState.STOPPED };
+                        map[id] = { state: -2 };
                         return map;
                     }, {}));
                     dispatch.render[REDUCER_SET_RENDERING](false);

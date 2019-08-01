@@ -21,11 +21,12 @@ export default class OldFemale extends Effect {
     private _vocoder: PhaseVocoderNode;
     private _vibrato: Vibrato;
 
-    constructor(audioContext: BaseAudioContext) {
+    constructor(audioContext: BaseAudioContext, sourceDuration?: number) {
         super(audioContext);
         this._highpass = this._audioContext.createBiquadFilter();
         this._highpass.type = 'highpass';
         this._vocoder = new PhaseVocoderNode(this._audioContext);
+        sourceDuration && this._vocoder.setBufferDuration(sourceDuration);
         this._vibrato = new Vibrato(this._audioContext);
 
         this._vocoder.node.connect(this._highpass);
@@ -33,15 +34,6 @@ export default class OldFemale extends Effect {
         this._vibrato.output.connect(this._gain);
 
         this.set(oldFemaleDefaultOptions);
-    }
-
-    clear() {
-        this._vibrato.clear();
-        this._vocoder.clear();
-    }
-
-    setSourceDuration(sourceDuration: number) {
-        this._vocoder.setSourceDuration(sourceDuration);
     }
 
     set(options: AnyOf<OldFemaleOptions>) {

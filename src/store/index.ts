@@ -2,12 +2,11 @@ import { init, RematchRootState } from '@rematch/core';
 import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
 import createWorkerMiddleware from './middlewares/workerMiddleware';
-import renderSagas from './models/render/sagas';
 import workers from '../workers';
 import models from './models';
 import plugins from './plugins';
 import { StateWithHistory } from 'redux-undo';
-import importSagas from './models/editor/sagas';
+import importSagas from './models/editor/importSaga';
 
 const saga = createSagaMiddleware();
 const worker = createWorkerMiddleware(workers);
@@ -22,7 +21,6 @@ const store = init({
 
 // Run sagas
 importSagas(saga);
-// renderSagas(saga);
 
 export type Models = typeof models;
 export type RootState = StateWithHistory<RematchRootState<Models>>;
