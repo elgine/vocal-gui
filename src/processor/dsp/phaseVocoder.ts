@@ -107,6 +107,8 @@ export default class PhaseVocoder {
 
     clear() {
         this._outputQueue.length = 0;
+        this._inputQueue.length = 0;
+        this._last.fill(0);
     }
 
     /**

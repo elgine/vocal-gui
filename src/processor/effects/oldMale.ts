@@ -39,6 +39,7 @@ export default class OldMale extends Effect {
     }
 
     clear() {
+        this._vibrato.clear();
         this._vocoder.clear();
     }
 

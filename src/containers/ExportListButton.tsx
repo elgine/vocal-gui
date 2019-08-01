@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Dialog, DialogTitle } from '@material-ui/core';
+import { Dialog, DialogTitle, Divider } from '@material-ui/core';
 import { getLang, LangContext } from '../lang';
 import ExportList from './ExportList';
 
