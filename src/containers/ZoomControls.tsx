@@ -37,7 +37,7 @@ export default React.memo(() => {
                     <ZoomOut />
                 </IconButton>
             </Tooltip>
-            <Box m={3} width="128px">
+            <Box mx={3} width="128px">
                 <Slider value={zoom}
                     step={step}
                     min={ZOOM_MINIMUM}

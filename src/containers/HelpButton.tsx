@@ -24,7 +24,7 @@ import { useSelector } from 'react-redux';
 import { FabProps } from '@material-ui/core/Fab';
 import { RootState } from '../store';
 
-const HotkeyMenuItem = ({ onClick, ...others }: Omit<MenuItemProps, 'button'>) => {
+const HotkeyMenuItem = ({ onClick, onClose, ...others }: Omit<MenuItemProps, 'button'> & {onClose?: () => void}) => {
     const lang = useContext(LangContext);
     const mapStateToProps = useCallback(({ present }: RootState) => {
         const { actionHotkeyMap, hotkeyActionMap } = present.hotkeys;
@@ -32,8 +32,13 @@ const HotkeyMenuItem = ({ onClick, ...others }: Omit<MenuItemProps, 'button'>) =
     }, []);
     const actionHotkeys = useSelector(mapStateToProps);
     const [openHotkeyDialog, setOpenHotkeyDialog] = useState(false);
-    const onMenuItemClick = (e: React.MouseEvent<Element>) => {
+    const onMenuItemClick = (e: React.MouseEvent<any>) => {
         setOpenHotkeyDialog(true);
+        onClick && onClick(e);
+    };
+    const onDialogClose = () => {
+        setOpenHotkeyDialog(false);
+        onClose && onClose();
     };
     return (
         <React.Fragment>
@@ -44,7 +49,7 @@ const HotkeyMenuItem = ({ onClick, ...others }: Omit<MenuItemProps, 'button'>) =
                     getLang('HOTKEY', lang)
                 }
             </MenuItem>
-            <Dialog fullWidth maxWidth="sm" open={openHotkeyDialog} onClose={() => setOpenHotkeyDialog(false)}>
+            <Dialog fullWidth maxWidth="sm" open={openHotkeyDialog} onClose={onDialogClose}>
                 <DialogTitle>
                     {
                         getLang('HOTKEY', lang)
@@ -107,12 +112,20 @@ const HotkeyMenuItem = ({ onClick, ...others }: Omit<MenuItemProps, 'button'>) =
 
 export interface HelpButtonProps extends Omit<FabProps, 'onClick'>{
     open?: boolean;
+    onOpenIntro?: () => void;
 }
 
-export default ({ open, ...others }: HelpButtonProps) => {
+export default ({ open, onOpenIntro, ...others }: HelpButtonProps) => {
     const lang = useContext(LangContext);
     const [openHelpMenu, setOpenHelpMenu] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
+    const onClickIntroMenuItem = () => {
+        onOpenIntro && onOpenIntro();
+        onClose();
+    };
+    const onClose = () => {
+        setOpenHelpMenu(false);
+    };
     return (
         <React.Fragment>
             <Zoom in={open}>
@@ -125,15 +138,15 @@ export default ({ open, ...others }: HelpButtonProps) => {
             <Menu anchorEl={buttonRef.current} open={openHelpMenu}
                 transformOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-                onClose={() => setOpenHelpMenu(false)}>
-                <MenuItem>
+                onClose={onClose}>
+                <MenuItem onClick={onClickIntroMenuItem}>
                     <Comment />
                     &nbsp;
                     {
                         getLang('GUIDE', lang)
                     }
                 </MenuItem>
-                <HotkeyMenuItem />
+                <HotkeyMenuItem onClose={onClose} />
             </Menu>
         </React.Fragment>
     );

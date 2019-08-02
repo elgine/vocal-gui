@@ -15,6 +15,7 @@ import HelpButton from './HelpButton';
 import { Models, RootState } from '../store';
 import { ACTION_INITIALIZE } from '../store/models/editor/types';
 import LoadingMask from '../components/LoadingMask';
+import Guide from './Guide';
 
 const PLAYER_CONTROLS_HEIGHT = 64;
 const CONTROL_BAR_HEIGHT = 64;
@@ -92,7 +93,8 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const classes = useStyles();
     const matches = useMediaQuery('(min-width: 600px)');
-    const [openEffectPanel, setOpenEffectPanel] = useState(true);
+    const [openEffectPanel, setOpenEffectPanel] = useState(false);
+    const [openIntro, setOpenIntro] = useState(false);
     const onToggleEffectPanel = (v: boolean) => {
         setOpenEffectPanel(v);
     };
@@ -119,6 +121,7 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
             classes.root,
             className
         )} {...others}>
+            <Guide open={openIntro} onClose={() => setOpenIntro(false)} />
             <ControlBar className={classes.controlBar} />
             <div className={clsx(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
                 <Slide direction="left" in={openEffectPanel}>
@@ -130,6 +133,7 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
                 <HelpButton open={!openEffectPanel}
                     color="secondary"
                     className={classes.helpButton}
+                    onOpenIntro={() => setOpenIntro(true)}
                 />
             </div>
             <PlayerControlBar className={classes.playerControls}

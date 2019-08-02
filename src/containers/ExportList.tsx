@@ -7,7 +7,6 @@ import { LangContext, getLang } from '../lang';
 import { MoreVert, PlayArrow, Stop, Cancel } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
 import { ACTION_STOP_RENDERING, ACTION_CANCEL_RENDERING_ALL, ACTION_CANCEL_RENDERING, ACTION_STOP_RENDERING_ALL, ACTION_START_RENDERING } from '../store/models/render/types';
-import Empty from '../components/Empty';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
@@ -69,7 +68,7 @@ const ActionButton = ({ id, disabledCancel, disabledStop, onCancel, onStop }: Ac
     );
 };
 
-const TaskState = ({ state }: {state: RenderTaskState}) => {
+const TaskState = ({ state }: {state: number}) => {
     const lang = useContext(LangContext);
     const color = state === -1 ? 'error' : (
         state === 1 ? 'primary' : 'inherit'
@@ -97,7 +96,7 @@ const TASK_TITLE_STYLE: React.CSSProperties = {
 
 interface TaskProps{
     id: string;
-    state: RenderTaskState;
+    state: number;
     title?: string;
     selected?: boolean;
     onSelected: (v: string) => void;
@@ -200,7 +199,6 @@ export default () => {
                     </List>
                 ) : (
                     <Box py={2} textAlign="center">
-                        <Empty size={96} />
                         <Typography variant="subtitle2" paragraph>
                             {
                                 getLang('NO_EXPORT_TASK', lang)

@@ -12,3 +12,7 @@ export const contrast = (c: string) => {
 export const fade = (c: string, r: number) => {
     return Color(c).fade(1 - r).string();
 };
+
+export const mix = (p: string, s: string, weight: number) => {
+    return Color(p).mix(Color(s), weight).string();
+};
