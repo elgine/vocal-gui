@@ -1,13 +1,12 @@
 import React, { useContext, useMemo } from 'react';
-import Intro, { IntroStep } from '../components/Intro';
+import Intro, { IntroStep, IntroProps } from '../components/Intro';
 import { getLang, LangContext } from '../lang';
 
-export interface GuideProps{
-    open?: boolean;
-    onClose?: () => void;
+export interface GuideProps extends Omit<IntroProps, 'steps' | 'locale'>{
+
 }
 
-export default ({ open, onClose }: GuideProps) => {
+export default (props: GuideProps) => {
     const lang = useContext(LangContext);
     const steps: IntroStep[] = useMemo(() => ([
         {
@@ -28,6 +27,7 @@ export default ({ open, onClose }: GuideProps) => {
         {
             target: '#effect-panel-collapse-button',
             placement: 'top',
+            controlled: true,
             content: getLang('EFFECT_PANEL_COLLAPSE_BUTTON_TIPS', lang)
         },
         {
@@ -42,8 +42,6 @@ export default ({ open, onClose }: GuideProps) => {
         close: getLang('CLOSE', lang)
     }), [lang]);
     return (
-        <Intro open={open} onClose={onClose}
-            continous steps={steps} locale={locale}
-        />
+        <Intro steps={steps} locale={locale} {...props} />
     );
 };

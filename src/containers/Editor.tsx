@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { RematchDispatch } from '@rematch/core';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { Slide, useMediaQuery, Paper, Fade, Box } from '@material-ui/core';
+import { Slide, useMediaQuery, Paper, Fade } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import PlayerControlBar from './PlayerControlBar';
@@ -16,6 +16,7 @@ import { Models, RootState } from '../store';
 import { ACTION_INITIALIZE } from '../store/models/editor/types';
 import LoadingMask from '../components/LoadingMask';
 import Guide from './Guide';
+import { IntroContext } from '../components/Intro';
 
 const PLAYER_CONTROLS_HEIGHT = 64;
 const CONTROL_BAR_HEIGHT = 64;
@@ -116,33 +117,39 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
             window.removeEventListener('keydown', onKeyDown);
         };
     }, []);
+
+    const intro = useContext(IntroContext);
+    const onAnimationCompleted = () => {
+        intro.next && intro.next();
+    };
     return (
         <div className={clsx(
             classes.root,
             className
         )} {...others}>
-            <Guide open={openIntro} onClose={() => setOpenIntro(false)} />
-            <ControlBar className={classes.controlBar} />
-            <div className={clsx(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
-                <Slide direction="left" in={openEffectPanel}>
-                    <Paper id="effect-panel" className={classes.effectPanel}>
-                        <EffectPanel />
-                    </Paper>
-                </Slide>
-                <TimelinePanel />
-                <HelpButton open={!openEffectPanel}
-                    color="secondary"
-                    className={classes.helpButton}
-                    onOpenIntro={() => setOpenIntro(true)}
+            <Guide open={openIntro} onClose={() => setOpenIntro(false)}>
+                <ControlBar className={classes.controlBar} />
+                <div className={clsx(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
+                    <Slide direction="left" in={openEffectPanel} onEntered={onAnimationCompleted} onExited={onAnimationCompleted}>
+                        <Paper id="effect-panel" className={classes.effectPanel}>
+                            <EffectPanel />
+                        </Paper>
+                    </Slide>
+                    <TimelinePanel />
+                    <HelpButton open={!openEffectPanel}
+                        color="secondary"
+                        className={classes.helpButton}
+                        onOpenIntro={() => setOpenIntro(true)}
+                    />
+                </div>
+                <PlayerControlBar className={classes.playerControls}
+                    showEffectPanel={openEffectPanel}
+                    onToggleEffectPanel={onToggleEffectPanel}
                 />
-            </div>
-            <PlayerControlBar className={classes.playerControls}
-                showEffectPanel={openEffectPanel}
-                onToggleEffectPanel={onToggleEffectPanel}
-            />
-            <Fade in={initializing}>
-                <LoadingMask />
-            </Fade>
+                <Fade in={initializing}>
+                    <LoadingMask />
+                </Fade>
+            </Guide>
         </div>
     );
 };

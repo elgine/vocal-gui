@@ -90,7 +90,7 @@ interface TourDialogProps extends PaperProps, IntroStep{
 }
 
 const TourDialog = React.forwardRef(({
-    title, content, className,
+    title, content, className, controlled,
     backLabel, nextLabel, closeLabel,
     showBackBtn, showNextBtn, showCloseBtn,
     onClickBack, onClickNext, onClose,
@@ -98,51 +98,49 @@ const TourDialog = React.forwardRef(({
 }: TourDialogProps, contentRef: React.Ref<any>) => {
     const classes = useTourDialogStyles();
     return (
-        <ClickAwayListener onClickAway={onClose as any}>
-            <Paper ref={contentRef} className={clsx(classes.root, className)} {...others}>
+        <Paper ref={contentRef} className={clsx(classes.root, className)} {...others}>
+            {
+                title ? (
+                    <DialogTitle>
+                        {title}
+                    </DialogTitle>
+                ) : undefined
+            }
+            <DialogContent>
                 {
-                    title ? (
-                        <DialogTitle>
-                            {title}
-                        </DialogTitle>
+                    content
+                }
+            </DialogContent>
+            <DialogActions>
+                {
+                    showBackBtn && !controlled ? (
+                        <Button size="small" onClick={onClickBack}>
+                            {
+                                backLabel || 'Back'
+                            }
+                        </Button>
                     ) : undefined
                 }
-                <DialogContent>
-                    {
-                        content
-                    }
-                </DialogContent>
-                <DialogActions>
-                    {
-                        showBackBtn ? (
-                            <Button size="small" onClick={onClickBack}>
-                                {
-                                    backLabel || 'Back'
-                                }
-                            </Button>
-                        ) : undefined
-                    }
-                    {
-                        showNextBtn ? (
-                            <Button variant="contained" size="small" color="primary" onClick={onClickNext}>
-                                {
-                                    nextLabel || 'Next'
-                                }
-                            </Button>
-                        ) : undefined
-                    }
-                    {
-                        showCloseBtn ? (
-                            <Button color="primary" size="small" onClick={onClose}>
-                                {
-                                    closeLabel || 'Close'
-                                }
-                            </Button>
-                        ) : undefined
-                    }
-                </DialogActions>
-            </Paper>
-        </ClickAwayListener>
+                {
+                    showNextBtn && !controlled ? (
+                        <Button variant="contained" size="small" color="primary" onClick={onClickNext}>
+                            {
+                                nextLabel || 'Next'
+                            }
+                        </Button>
+                    ) : undefined
+                }
+                {
+                    showCloseBtn && !controlled ? (
+                        <Button color="primary" size="small" onClick={onClose}>
+                            {
+                                closeLabel || 'Close'
+                            }
+                        </Button>
+                    ) : undefined
+                }
+            </DialogActions>
+        </Paper>
     );
 });
 
@@ -151,27 +149,36 @@ const useOverlayStyles = makeStyles((theme: Theme) => {
     return {
         root: {
             position: 'absolute',
-            boxShadow: '0 0 0 2000px transparent',
-            transition: '0.3s ease-out all',
+            '&.controlled': {
+                pointerEvents: 'none'
+            },
             '&.show-outline': {
-                outline: `${primary} solid 5px`
+                outline: `${primary} solid 3px`
             }
         }
     };
 });
 
-const Overlay = ({ className, children, showOutline, ...others }: React.HTMLAttributes<{}> & {showOutline?: boolean}) => {
+const Overlay = ({ className, children, controlled, showOutline, ...others }: React.HTMLAttributes<{}> & {controlled?: boolean;showOutline?: boolean}) => {
     const classes = useOverlayStyles();
     return (
-        <div className={clsx(classes.root, className, showOutline ? 'show-outline' : '')}
+        <div className={clsx(classes.root, className, controlled ? 'controlled' : '', showOutline ? 'show-outline' : '')}
             {...others}>
             {children}
         </div>
     );
 };
 
+export interface IntroContextProps{
+    running: boolean;
+    next: Function | null;
+}
+
+export const IntroContext = React.createContext<IntroContextProps>({ running: false, next: null });
+
 export interface IntroStep{
     title?: string;
+    controlled?: boolean;
     target: string;
     content: React.ReactNode;
     placement?: PopperPlacementType;
@@ -181,7 +188,6 @@ export interface IntroProps{
     open?: boolean;
     steps: IntroStep[];
     offset?: number;
-    continous?: boolean;
     index?: number;
     onClose?: Function;
     onNext?: Function;
@@ -194,6 +200,7 @@ export interface IntroProps{
         next?: string;
         close?: string;
     };
+    children?: React.ReactNode;
 }
 
 const positionContent = (
@@ -209,41 +216,58 @@ const positionContent = (
     const secAxis = axises[1];
     if (priAxis === 'left' || priAxis === 'right') {
         if (priAxis === 'left' || (priAxis === 'right' && (itemSize.width + targetBounds.right > boundary.width))) {
-            style.left = targetBounds.left - offset - itemSize.width;
+            style.right = boundary.width - (targetBounds.left - offset);
         } else {
             style.left = targetBounds.right + offset;
         }
         if (secAxis === 'start') {
             style.top = 0;
         } else if (secAxis === 'end') {
-            style.top = targetBounds.bottom - itemSize.height;
+            style.bottom = boundary.height - targetBounds.bottom;
         } else {
             style.top = targetBounds.height * 0.5 + targetBounds.top - itemSize.height * 0.5;
         }
-        if (style.top < 0) {
-            style.top = 0;
+        if (style.top) {
+            if (style.top < 0) {
+                style.top = 0;
+            } else if (Number(style.top) + itemSize.height > boundary.height) {
+                style.top = boundary.height - itemSize.height;
+            }
         }
-        if (style.top + itemSize.height > boundary.height) {
-            style.top = boundary.height - itemSize.height;
+        if (style.bottom) {
+            if (style.bottom < 0) {
+                style.bottom = 0;
+            } else if (Number(style.bottom) + itemSize.height > boundary.height) {
+                style.bottom = boundary.height - itemSize.height;
+            }
         }
+
     } else {
         if (priAxis === 'top' || (priAxis === 'bottom' && (itemSize.height + targetBounds.bottom > boundary.height))) {
-            style.top = targetBounds.top - offset - itemSize.height;
+            style.bottom = boundary.height - (targetBounds.top - offset);
         } else {
             style.top = targetBounds.bottom + offset;
         }
         if (secAxis === 'start') {
             style.left = 0;
         } else if (secAxis === 'end') {
-            style.left = targetBounds.right - itemSize.width;
+            style.right = boundary.width - targetBounds.right;
         } else {
             style.left = targetBounds.width * 0.5 + targetBounds.left - itemSize.width * 0.5;
         }
-        if (style.left < 0) {
-            style.left = 0;
+        if (style.left) {
+            if (style.left < 0) {
+                style.left = 0;
+            } else if (Number(style.left) + itemSize.width > boundary.width) {
+                style.left = boundary.width - itemSize.width;
+            }
         }
-        if (style.left + itemSize.width > boundary.width) {
-            style.left = boundary.width - itemSize.width;
+        if (style.right) {
+            if (style.right < 0) {
+                style.right = 0;
+            } else if (Number(style.right) + itemSize.width > boundary.width) {
+                style.right = boundary.width - itemSize.width;
+            }
         }
     }
 };
@@ -285,7 +309,8 @@ const positionBeacon = (
 };
 
 export default ({
-    offset, continous, locale, open, steps, hideCloseBtn, disabledModal, index,
+    offset, locale, open, steps,
+    hideCloseBtn, disabledModal, index, children,
     onStepChange, onClose, onNext, onBack
 }: IntroProps) => {
     const o = offset || 8;
@@ -311,16 +336,19 @@ export default ({
         setStepIndex(index || 0);
     }, [index]);
     const onClickBack = () => {
+        if (!openTooltip) return;
         let curIndex = stepIndex - 1;
         onStepChangeWrapped(curIndex);
         onBack && onBack(curIndex);
     };
     const onClickNext = () => {
+        if (!openTooltip) return;
         let curIndex = stepIndex + 1;
         onStepChangeWrapped(curIndex);
         onNext && onNext(curIndex);
     };
     const onClickClose = () => {
+        if (!openTooltip) return;
         onClose && onClose();
     };
 
@@ -358,11 +386,14 @@ export default ({
     };
     let beaconStyle: React.CSSProperties = {};
     let contentStyle: React.CSSProperties = {};
+    if (step && step.controlled) {
+        rootStyle.pointerEvents = 'none';
+    }
     if (openTooltip) {
         if (disabledModal) {
             overlayStyle.pointerEvents = 'none';
         }
-        overlayStyle.boxShadow = '0 0 0 2000px rgba(0, 0, 0, 0.4)';
+        overlayStyle.boxShadow = '0 0 0 2000px rgba(0, 0, 0, 0.6)';
         rootStyle.height = '100%';
     }
     positionBeacon(beaconStyle, {
@@ -377,25 +408,34 @@ export default ({
         o
     );
     return (
-        <Portal>
-            <Fade in={open}>
-                <div style={rootStyle}>
-                    <Overlay showOutline={openTooltip} style={overlayStyle}>
-                        {
-                            !openTooltip ? (
-                                <Beacon style={beaconStyle} onClick={onClickBeacon} />
-                            ) : undefined
-                        }
-                    </Overlay>
-                    <Fade in={openTooltip} unmountOnExit>
-                        <TourDialog ref={contentRef} {...step} style={contentStyle}
-                            backLabel={loc.back} nextLabel={loc.next} closeLabel={loc.close}
-                            showBackBtn={!isFirst} showNextBtn={continous && !isLast} showCloseBtn={!hideCloseBtn || isLast}
-                            onClickBack={onClickBack} onClickNext={onClickNext} onClose={onClickClose}
-                        />
-                    </Fade>
-                </div>
-            </Fade>
-        </Portal>
+        <React.Fragment>
+            <Portal>
+                <Fade in={open}>
+                    <div style={rootStyle}>
+                        <Overlay showOutline={openTooltip} controlled={step.controlled} style={overlayStyle}>
+                            {
+                                !openTooltip ? (
+                                    <Beacon style={beaconStyle} onClick={onClickBeacon} />
+                                ) : undefined
+                            }
+                        </Overlay>
+                        <Fade in={openTooltip} unmountOnExit>
+                            <TourDialog ref={contentRef} {...step} style={contentStyle}
+                                backLabel={loc.back} nextLabel={loc.next} closeLabel={loc.close}
+                                showBackBtn={!isFirst} showNextBtn={!isLast}
+                                showCloseBtn={!hideCloseBtn || isLast}
+                                onClickBack={onClickBack} onClickNext={onClickNext} onClose={onClickClose}
+                            />
+                        </Fade>
+                    </div>
+                </Fade>
+            </Portal>
+            <IntroContext.Provider value={{ running: openTooltip, next: step.controlled ? onClickNext : null }}>
+                {
+                    children
+                }
+            </IntroContext.Provider>
+        </React.Fragment>
+
     );
 };
