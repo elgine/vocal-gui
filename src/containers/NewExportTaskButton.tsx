@@ -12,7 +12,7 @@ export interface NewExportTaskButtonProps{
     onClose?: () => void;
 }
 
-export default ({ Component, ComponentProps, onClose }: NewExportTaskButtonProps) => {
+export default React.forwardRef(({ Component, ComponentProps, onClose }: NewExportTaskButtonProps, ref: React.Ref<any>) => {
     const lang = useContext(LangContext);
     const [showExport, setShowExport] = useState(false);
     const dispatch = useDispatch<RematchDispatch>();
@@ -56,4 +56,4 @@ export default ({ Component, ComponentProps, onClose }: NewExportTaskButtonProps
             </Dialog>
         </React.Fragment>
     );
-};
+});

@@ -70,9 +70,14 @@ const useTourDialogStyles = makeStyles((theme: Theme) => {
     return {
         root: {
             position: 'absolute',
-            width: '300px',
+            minWidth: '320px',
+            maxWidth: '400px',
             transition: '0.3s ease-in all',
-            backgroundColor: mix(surface, primary, 0.08)
+            backgroundColor: mix(surface, primary, 0.08),
+            padding: `${theme.spacing(1)}px 0`
+        },
+        actions: {
+            padding: `${theme.spacing(1)}px ${theme.spacing(3)}px`
         }
     };
 });
@@ -111,7 +116,7 @@ const TourDialog = React.forwardRef(({
                     content
                 }
             </DialogContent>
-            <DialogActions>
+            <DialogActions className={classes.actions}>
                 {
                     showBackBtn && !controlled ? (
                         <Button size="small" onClick={onClickBack}>
@@ -313,7 +318,7 @@ export default ({
     hideCloseBtn, disabledModal, index, children,
     onStepChange, onClose, onNext, onBack
 }: IntroProps) => {
-    const o = offset || 8;
+    const o = offset || 12;
     const loc = locale || {
         back: 'Back',
         next: 'Next',

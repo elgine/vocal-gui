@@ -7,20 +7,48 @@ export default class Renderer {
     private _effect!: Effect;
     private _rendering: boolean = false;
 
-    * render(task: Pick<RenderTask, 'clipRegion' | 'source' | 'effectOptions' | 'effectType'>) {
+    * render(task: Pick<RenderTask, 'clipRegion' | 'source' | 'effectOptions' | 'effectType'>, onProcess?: (v: number) => void) {
         const { source, clipRegion, effectOptions, effectType } = task;
+        if (!source) return;
         this._rendering = true;
         this._offlineAudioCtx = new OfflineAudioContext(
-            source!.numberOfChannels,
-            1000 * getAllDurationApplyEffect(effectType, effectOptions, source!.duration),
-            source!.sampleRate
+            source.numberOfChannels,
+            getAllDurationApplyEffect(effectType, effectOptions, source.duration) * source!.sampleRate,
+            source.sampleRate
         );
-        yield this._buildGraph(task);
+
+        if (!this._effect || this._effect.type !== task.effectType) {
+            let e = yield createEffect(task.effectType, this._offlineAudioCtx);
+            if (!e) {
+                throw new Error(`No specific effect, ${task.effectType}`);
+            }
+            this._effect = e;
+        }
+        this._effect.set(task.effectOptions);
+        let input = this._offlineAudioCtx.createBufferSource();
+        input.buffer = source;
+
+        let progressProcessor = this._offlineAudioCtx.createScriptProcessor(1024);
+        const onProgressProcess = () => {
+            let processed = 0;
+            const total = source.length;
+            return (e: AudioProcessingEvent) => {
+                processed += e.inputBuffer.length;
+                onProcess && onProcess(processed / total);
+            };
+        };
+        progressProcessor.onaudioprocess = onProgressProcess();
+        input.connect(progressProcessor);
+
+        progressProcessor.connect(this._effect.input);
+        this._effect.output.connect(this._offlineAudioCtx.destination);
+        input.start();
+
         let buffer: AudioBuffer = yield this._offlineAudioCtx.startRendering();
         // Clip region
-        let delay = getDelayApplyEffect(effectType, effectOptions, source!.duration) * 1000;
-        let s = clipRegion[0] + delay;
-        let e = clipRegion[1] + delay;
+        let delay = getDelayApplyEffect(effectType, effectOptions, buffer!.duration);
+        let s = clipRegion[0] * 0.001 + delay;
+        let e = clipRegion[1] * 0.001 + delay;
         let sb = s * buffer.sampleRate;
         let se = e * buffer.sampleRate;
         let final = this._offlineAudioCtx.createBuffer(
@@ -29,11 +57,7 @@ export default class Renderer {
             buffer.sampleRate
         );
         for (let i = 0; i < buffer.numberOfChannels; i++) {
-            let inChannel = buffer.getChannelData(i);
-            let outChannel = final.getChannelData(i);
-            for (let j = sb; j < se; j++) {
-                outChannel[j] = inChannel[j];
-            }
+            final.copyToChannel(buffer.getChannelData(i).subarray(sb, se), i);
         }
         this._rendering = false;
         return final;
@@ -47,22 +71,6 @@ export default class Renderer {
     * resume() {
         yield this._offlineAudioCtx.resume();
         this._rendering = true;
-    }
-
-    private* _buildGraph(task: Pick<RenderTask, | 'source' | 'effectOptions' | 'effectType'>) {
-        if (!task.source) return;
-        if (!this._effect || this._effect.type !== task.effectType) {
-            let e = yield createEffect(task.effectType, this._offlineAudioCtx);
-            if (!e) {
-                throw new Error(`No specific effect, ${task.effectType}`);
-            }
-            this._effect = e;
-        }
-        this._effect.set(task.effectOptions);
-        let input = this._offlineAudioCtx.createBufferSource();
-        input.buffer = task.source;
-        input.connect(this._effect.input);
-        this._effect.output.connect(this._offlineAudioCtx.destination);
     }
 
     get rendering() {

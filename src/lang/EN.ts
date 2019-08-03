@@ -1,4 +1,10 @@
 export default {
+    ZOOM_CONTROLS: 'Zoom controls',
+    TIME_SCALE: 'Time scale',
+    WAVEFORM: 'Waveform',
+    PLAYER_CONTROL_LIST: 'Player control list',
+    EFFECT_PANEL: 'Effect panel',
+
     ZOOM_CONTROLS_TIPS: '时间轴缩放组件拥有"放大"以及“缩小”时间轴的时间比例，允许以不同的时间粒度去浏览音频波形',
     TIME_SCALE_TIPS: '时间轴刻度会很方便的告知你所处时间频段',
     WAVEFORM_TIPS: '音频波形图让你更直观的浏览音频响度与时间的关系',
@@ -86,6 +92,7 @@ export default {
     EFFECT: 'Effect',
     EXPORT_LIST: 'Export task list',
     EXPORT: 'Export',
+    EXPORT_SUCCESS: 'Export succeed',
     NEW_EXPORT_TASK: 'New export task',
     NO_EXPORT_TASK: 'No export tasks',
     EXPORT_FORMAT: 'Export format',
@@ -102,6 +109,7 @@ export default {
     LOAD_FROM_LOCAL: 'Load from local file',
     LOAD_FROM_URL: 'Load from url',
     LOAD_FROM_MIC: 'Load from mic stream',
+    LOAD_SOURCE_FAILED: 'Load source failed',
     ZOOM_IN_TIMELINE: 'Zoom in timeline',
     ZOOM_OUT_TIMELINE: 'Zoom out timeline',
     GUIDE: 'Guide',
@@ -116,7 +124,7 @@ export default {
     STOP: 'Stop',
     CANCEL: 'Cancel',
     CONFIRM: 'Confirm',
-
+    SUCCESS: 'Success',
     MINIMIZE: 'Minimize',
     MAXIMIZE: 'Maximize',
     RESTORE: 'Restore',

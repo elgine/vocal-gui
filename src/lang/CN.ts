@@ -1,10 +1,16 @@
 export default {
+    ZOOM_CONTROLS: '时间轴缩放组件',
+    TIME_SCALE: '时间轴刻度',
+    WAVEFORM: '波形图',
+    PLAYER_CONTROL_LIST: '播放器组件',
+    EFFECT_PANEL: '效果面板',
+
     ZOOM_CONTROLS_TIPS: '时间轴缩放组件拥有"放大"以及“缩小”时间轴的时间比例，允许以不同的时间粒度去浏览音频波形',
     TIME_SCALE_TIPS: '时间轴刻度会很方便的告知你所处时间频段',
     WAVEFORM_TIPS: '音频波形图让你更直观的浏览音频响度与时间的关系',
     PLAYER_VOLUME_TIPS: '通过音量组件，你可以实时更改播放器的音量，然而此组件不会影响导出音频文件的音量',
     PLAYER_CONTROL_LIST_TIPS: '这是一组播放器组件，通过它们，你可以控制播放器的播放状态，比如：跳转到选择区域的开始结束位置；精确跳转到区域位置里某时间刻',
-    EFFECT_PANEL_COLLAPSE_BUTTON_TIPS: '你可以通过该按钮展开或收起效果面板',
+    EFFECT_PANEL_COLLAPSE_BUTTON_TIPS: '你可以通过该按钮展开或收起效果面板，请按下按钮打开效果面板',
     EFFECT_PANEL_TIPS: '效果面板里的上下两个区域分别表示“效果列表”以及“对应效果选项”，你可以很方便的浏览效果，切换效果，并在下方更改选项',
 
     GAIN: '增益',
@@ -85,6 +91,7 @@ export default {
     EFFECT: '效果',
     EXPORT_LIST: '导出任务列表',
     EXPORT: '导出',
+    EXPORT_SUCCESS: '导出成功',
     NEW_EXPORT_TASK: '新建导出任务',
     NO_EXPORT_TASK: '无导出任务',
     EXPORT_FORMAT: '导出格式',
@@ -101,6 +108,7 @@ export default {
     LOAD_FROM_LOCAL: '加载本地文件',
     LOAD_FROM_URL: '加载网络文件',
     LOAD_FROM_MIC: '捕获自麦克风流',
+    LOAD_SOURCE_FAILED: '加载源失败',
     ZOOM_IN_TIMELINE: '放大时间轴',
     ZOOM_OUT_TIMELINE: '缩小时间轴',
     GUIDE: '引导',
@@ -115,7 +123,7 @@ export default {
     STOP: '暂停',
     CANCEL: '取消',
     CONFIRM: '确定',
-
+    SUCCESS: '成功',
     MINIMIZE: '最小化',
     MAXIMIZE: '最大化',
     RESTORE: '还原',

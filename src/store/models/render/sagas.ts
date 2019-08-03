@@ -1,6 +1,7 @@
+import { cloneDeep } from 'lodash';
 import { Action } from 'redux';
 import { channel, Channel, SagaMiddleware } from 'redux-saga';
-import { put, fork, call, take, join, race, cancel } from 'redux-saga/effects';
+import { put, fork, call, take, join, race, cancel, delay } from 'redux-saga/effects';
 import {
     ACTION_RENDER,
     ACTION_RENDER_SUCCESS,
@@ -8,6 +9,9 @@ import {
     ACTION_ENCODE,
     ACTION_ENCODE_SUCCESS,
     RenderAction,
+    ACTION_RENDER_PROGRESS,
+    ACTION_RESUME_RENDERING,
+    ACTION_STOP_RENDERING,
 } from './types';
 import Renderer from '../../../services/renderer';
 
@@ -39,49 +43,61 @@ interface RenderBgAsyncAction extends Action{
 
 function* renderTask({ payload }: RenderBgAsyncAction) {
     const { renderer, task } = payload;
-    const buffer = yield* renderer.render(task);
+    const buffer = yield* renderer.render(task, (v: number) => {
+        console.log(v);
+        task.state = v;
+    });
     yield put({
-        type: `encode/${ACTION_ENCODE}`,
+        type: `render/${ACTION_RENDER_SUCCESS}`,
         payload: {
-            options: task.options,
+            id: task.id,
             buffer
         }
     });
-    const mp3Buf: Int8Array[] = (yield take(`render/${ACTION_ENCODE_SUCCESS}`)).payload;
-    yield put({
-        type: ACTION_RENDER_SUCCESS, payload: {
-            id: task.id,
-            result: mp3Buf
-        }
-    });
+    removeTask(task.id);
 }
 
-const cancelSelectorCreator = (id: string) => {
+const cancelSelectorCreator = (id?: string) => {
     return ({ type, payload }: any) => {
-        return (type === ACTION_CANCEL_RENDERING) && id === payload;
+        return (type === ACTION_CANCEL_RENDERING || type === ACTION_STOP_RENDERING) && (!id || id === payload);
     };
 };
 
-function* popRenderTask(chan: Channel<RenderAction>) {
+function* popRenderTask(chan: Channel<RenderTask>) {
     const renderer = new Renderer();
     while (true) {
-        const { payload } = yield take(chan);
-        if (hasTask(payload.id)) {
-            const task = yield fork(renderTask, { type: RENDER_BG_ASYNC, payload: { task: payload, renderer }});
+        const task: RenderTask = yield take(chan);
+        if (hasTask(task.id)) {
+            const bgThread = yield fork(renderTask, { type: RENDER_BG_ASYNC, payload: { task, renderer }});
             yield race({
                 cancel: take(cancelSelectorCreator(task.id)),
-                complete: join(task)
+                complete: join(bgThread)
             });
-            yield cancel(task);
-            removeTask(payload);
+            yield cancel(bgThread);
+            removeTask(task.id);
         }
     }
 }
 
-export function* cancelTaskSaga() {
+function* cancelTaskSaga() {
     while (true) {
-        const { payload } = yield take(ACTION_CANCEL_RENDERING);
+        const { payload } = yield take(cancelSelectorCreator());
         removeTask(payload);
+    }
+}
+
+function* renderProgressSaga() {
+    while (true) {
+        yield delay(100);
+        if (Object.values(tasks).filter(t => t.state >= 0 && t.state < 1).length <= 0) {
+            yield take(ACTION_RENDER);
+        }
+        let progress: Dictionary<{state: number}> = {};
+        // eslint-disable-next-line guard-for-in
+        for (let k in tasks) {
+            progress[k] = { state: tasks[k].state };
+        }
+        yield put({ type: `render/${ACTION_RENDER_PROGRESS}`, payload: progress });
     }
 }
 
@@ -91,13 +107,17 @@ function* renderSaga() {
         yield fork(popRenderTask, chan);
     }
     while (true) {
-        const action = yield take(ACTION_RENDER);
-        pushTask(action);
-        yield put(chan, action);
+        const { payload } = yield take(ACTION_RENDER);
+        const tasks = Array.isArray(payload) ? payload.map((t) => ({ ...t })) : [{ ...payload }];
+        for (let task of tasks) {
+            pushTask(task);
+            yield put(chan, task);
+        }
     }
 }
 
 export default (middleware: SagaMiddleware<{}>) => {
+    middleware.run(renderProgressSaga);
     middleware.run(renderSaga);
     middleware.run(cancelTaskSaga);
 };

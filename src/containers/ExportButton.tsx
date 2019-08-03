@@ -22,7 +22,7 @@ const mapStateToProps = ({ present }: RootState) => {
     };
 };
 
-export default () => {
+export default React.forwardRef((props, ref: React.Ref<any>) => {
     const lang = useContext(LangContext);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const { disabledExport, taskCount } = useSelector(mapStateToProps, shallowEqual);
@@ -74,4 +74,4 @@ export default () => {
             </Menu>
         </React.Fragment>
     );
-};
+});

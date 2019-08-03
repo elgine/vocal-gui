@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Snackbar, SnackbarContent, IconButton } from '@material-ui/core';
 import { SnackbarContentProps } from '@material-ui/core/SnackbarContent';
 import { ACTION_HIDE_MESSAGE } from '../store/models/message/type';
@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import { RootState, Models } from '../store';
+import { LangContext, getLang } from '../lang';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
     SUCCESS: {
@@ -53,6 +54,7 @@ interface SnackbarContentWrapperProps extends SnackbarContentProps {
 }
 
 const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
+    const lang = useContext(LangContext);
     const classes = useSnackbarContentStyles();
     const { className, message, onClose, variant, ...other } = props;
     const Icon = variantIcon[variant || 'INFO'];
@@ -63,7 +65,9 @@ const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
             message={
                 <span id="client-snackbar" className={classes.message}>
                     <Icon className={clsx(classes.icon, classes.iconVariant)} />
-                    {message}
+                    {typeof message === 'string' ? (
+                        getLang(message, lang) || message
+                    ) : message}
                 </span>
             }
             action={[
@@ -89,7 +93,9 @@ const mapStateToProps = ({ present }: RootState) => {
 export default React.memo(({ messageAutoHideDuraiton }: MessagerProps) => {
     const { showMsg, msgType, msg } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
-    const onMessageClose = () => dispatch.message[ACTION_HIDE_MESSAGE];
+    const onMessageClose = () => {
+        dispatch.message[ACTION_HIDE_MESSAGE]({ type: '' });
+    };
     return (
         <Snackbar autoHideDuration={messageAutoHideDuraiton || 6000}
             open={showMsg} anchorOrigin={{ horizontal: 'center', vertical: 'top' }}

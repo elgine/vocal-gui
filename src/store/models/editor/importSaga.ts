@@ -24,7 +24,11 @@ function* doImportFromExternal({ payload }: LoadFromExternalAction) {
             }
         });
     } catch (e) {
-        yield put({ type: `editor/${ACTION_LOAD_FAILED}`, payload: e });
+        yield put({
+            type: `editor/${ACTION_LOAD_FAILED}`, payload: {
+                message: 'LOAD_SOURCE_FAILED'
+            }
+        });
     }
 }
 

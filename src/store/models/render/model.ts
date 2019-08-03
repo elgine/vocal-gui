@@ -8,14 +8,16 @@ import {
     REDUCER_CLEAR_TASKS,
     ACTION_CANCEL_RENDERING,
     ACTION_RENDER,
-    ACTION_START_RENDERING,
+    ACTION_RESUME_RENDERING,
     ACTION_CANCEL_RENDERING_ALL,
     ACTION_RENDER_SUCCESS,
     ACTION_STOP_RENDERING,
-    ACTION_STOP_RENDERING_ALL
+    ACTION_STOP_RENDERING_ALL,
+    ACTION_RENDER_PROGRESS
 } from './types';
-import { RootState } from '../..';
+import { RootState } from '../../index';
 import uuid from 'uuid/v4';
+import { ACTION_SHOW_MESSAGE } from '../message/type';
 
 const initialState: RendererState = {
     rendering: true,
@@ -24,6 +26,15 @@ const initialState: RendererState = {
 
 const existsFreeRenderTask = (tasks: Dictionary<RenderTask>) => {
     return Object.values(tasks).filter((t) => t.state === 0).length > 0;
+};
+
+const getTaskIds = (tasks: Dictionary<RenderTask>) => {
+    let taskIds = {};
+    // eslint-disable-next-line guard-for-in
+    for (let k in tasks) {
+        taskIds[k] = k;
+    }
+    return taskIds;
 };
 
 export default {
@@ -65,7 +76,10 @@ export default {
     },
     effects: (dispatch: any) => {
         return {
-            [ACTION_RENDER_SUCCESS]({ id }: {id: string; result: Uint8Array[]}, { present }: RootState) {
+            [ACTION_RENDER_PROGRESS](payload: Dictionary<{state: number}>) {
+                dispatch.render[REDUCER_SET_TASKS_STATE](payload);
+            },
+            [ACTION_RENDER_SUCCESS]({ id }: {id: string; buffer: AudioBuffer}, { present }: RootState) {
                 batch(() => {
                     dispatch.render[REDUCER_SET_TASKS_STATE]({
                         [id]: { state: 1 },
@@ -73,6 +87,7 @@ export default {
                     if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.render[REDUCER_SET_RENDERING](false);
                     }
+                    dispatch.message[ACTION_SHOW_MESSAGE]({ msgType: 'SUCCESS', msg: 'EXPORT_SUCCESS' });
                 });
             },
             [ACTION_RENDER](payload: ExportParams, { present }: RootState) {
@@ -84,39 +99,51 @@ export default {
                         level: 0,
                         state: 0,
                         taskCreatedTime: Date.now(),
-                        effectType: editor.effect,
+                        source: editor.source,
+                        effectType: editor.effectType,
                         effectOptions: editor.effectOptions,
                         clipRegion: editor.clipRegion,
                         options: payload
                     };
                     dispatch.render[REDUCER_ADD_RENDER_TASK](newTask);
-                    dispatch.render[ACTION_START_RENDERING]();
+                    dispatch.render[REDUCER_SET_RENDERING](true);
+                    dispatch({ type: ACTION_RENDER, payload: newTask });
                 });
             },
-            [ACTION_START_RENDERING](payload: Dictionary<string> | undefined, { present }: RootState) {
+            [ACTION_RESUME_RENDERING](payload: Dictionary<string> | undefined, { present }: RootState) {
                 batch(() => {
-                    let newPayload = {};
+                    let tasks: RenderTask[] = [];
+                    let taskStates = {};
                     /* eslint-disable */
                     for (let k in payload) {
                         const task = present.render.tasks[k];
-                        if(task && task.state === -2)
-                            newPayload[k] = { state: 0 };
+                        if(task && task.state === -2){
+                            taskStates[k] = { state: 0 };
+                            tasks.push({
+                                ...task,
+                                state: 0
+                            });
+                        }          
                     }
-                    dispatch.render[REDUCER_SET_TASKS_STATE](newPayload);
+                    dispatch.render[REDUCER_SET_TASKS_STATE](taskStates);
                     dispatch.render[REDUCER_SET_RENDERING](true);
+                    dispatch({type: ACTION_RENDER, payload: tasks});
                 });
             },
             [ACTION_CANCEL_RENDERING](payload: Dictionary<string>, { present }: RootState) {
                 batch(() => {
                     dispatch.render[REDUCER_REMOVE_RENDER_TASK](payload);
+                    dispatch({type: ACTION_CANCEL_RENDERING, payload});
                     if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.render[REDUCER_SET_RENDERING](false);
                     }
                 });
             },
-            [ACTION_CANCEL_RENDERING_ALL]() {
+            [ACTION_CANCEL_RENDERING_ALL](payload: any, {present}: RootState) {
                 batch(() => {
-                    dispatch.render[REDUCER_CLEAR_TASKS]();
+                    const taskIds = getTaskIds(present.render.tasks);
+                    dispatch.render[REDUCER_REMOVE_RENDER_TASK](taskIds);
+                    dispatch({type: ACTION_CANCEL_RENDERING, payload: taskIds});
                     dispatch.render[REDUCER_SET_RENDERING](false);
                 });
             },
@@ -130,6 +157,7 @@ export default {
                             newPayload[k] = { state: -2 };
                     }
                     dispatch.render[REDUCER_SET_TASKS_STATE](newPayload);
+                    dispatch({type: ACTION_STOP_RENDERING, payload});
                     if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.render[REDUCER_SET_RENDERING](false);
                     }
@@ -141,6 +169,7 @@ export default {
                         map[id] = { state: -2 };
                         return map;
                     }, {}));
+                    dispatch({type: ACTION_STOP_RENDERING, payload: getTaskIds(present.render.tasks)});
                     dispatch.render[REDUCER_SET_RENDERING](false);
                 });
             }

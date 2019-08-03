@@ -6,7 +6,7 @@ import { List, ListItem, ListItemIcon, Checkbox, ListItemText, ListItemSecondary
 import { LangContext, getLang } from '../lang';
 import { MoreVert, PlayArrow, Stop, Cancel } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
-import { ACTION_STOP_RENDERING, ACTION_CANCEL_RENDERING_ALL, ACTION_CANCEL_RENDERING, ACTION_STOP_RENDERING_ALL, ACTION_START_RENDERING } from '../store/models/render/types';
+import { ACTION_STOP_RENDERING, ACTION_CANCEL_RENDERING_ALL, ACTION_CANCEL_RENDERING, ACTION_STOP_RENDERING_ALL, ACTION_RESUME_RENDERING } from '../store/models/render/types';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
@@ -78,8 +78,9 @@ const TaskState = ({ state }: {state: number}) => {
             {
                 state === 0 ? getLang('WAITING', lang) : (
                     state === -1 ? getLang('FAILED', lang) : (
-                        state === -2 ? getLang('STOPPED', lang) :
-                        `${Number(state) * 100} %`
+                        state === -2 ? getLang('STOPPED', lang) : (
+                            state === 1 ? getLang('SUCCESS', lang) : `${Number(state) * 100} %`
+                        )
                     )
                 )
             }
@@ -132,14 +133,14 @@ export default () => {
     const lang = useContext(LangContext);
     const { tasks } = useSelector(mapStateToProps);
     const dispatch = useDispatch<RematchDispatch<Models>>();
-    const onStartRendering = dispatch.render[ACTION_START_RENDERING];
+    const onResumeRendering = dispatch.render[ACTION_RESUME_RENDERING];
     const onStopRendering = dispatch.render[ACTION_STOP_RENDERING];
     const onStopAll = dispatch.render[ACTION_STOP_RENDERING_ALL];
     const onCancelRendering = dispatch.render[ACTION_CANCEL_RENDERING];
     const onCancelAll = dispatch.render[ACTION_CANCEL_RENDERING_ALL];
     const [selectedTaskIds, setSelectedTaskIds] = useState({});
-    const onStart = () => {
-        onStartRendering(selectedTaskIds);
+    const onResume = () => {
+        onResumeRendering(selectedTaskIds);
     };
     const onStop = () => {
         onStopRendering(selectedTaskIds);
@@ -211,7 +212,7 @@ export default () => {
             <Toolbar>
                 <Tooltip title={getLang('START', lang)}>
                     <div>
-                        <IconButton disabled={isNoneTaskSelected} onClick={onStart}>
+                        <IconButton disabled={isNoneTaskSelected} onClick={onResume}>
                             <PlayArrow />
                         </IconButton>
                     </div>
