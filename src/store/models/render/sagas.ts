@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import { Action } from 'redux';
 import { channel, Channel, SagaMiddleware } from 'redux-saga';
 import { put, fork, call, take, join, race, cancel, delay } from 'redux-saga/effects';
@@ -8,9 +7,7 @@ import {
     ACTION_CANCEL_RENDERING,
     ACTION_ENCODE,
     ACTION_ENCODE_SUCCESS,
-    RenderAction,
     ACTION_RENDER_PROGRESS,
-    ACTION_RESUME_RENDERING,
     ACTION_STOP_RENDERING,
 } from './types';
 import Renderer from '../../../services/renderer';
@@ -41,17 +38,26 @@ interface RenderBgAsyncAction extends Action{
     };
 }
 
+const decompose = (audioBuffer: AudioBuffer) => {
+    const buffers: Float32Array[] = [];
+    for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
+        buffers.push(audioBuffer.getChannelData(i));
+    }
+    return buffers;
+};
+
 function* renderTask({ payload }: RenderBgAsyncAction) {
     const { renderer, task } = payload;
-    const buffer = yield* renderer.render(task, (v: number) => {
-        console.log(v);
+    const buffer: AudioBuffer = yield* renderer.render(task, (v: number) => {
         task.state = v;
     });
+    yield put({ type: `worker/encode/${ACTION_ENCODE}`, payload: { buffer: decompose(buffer), options: task.options }});
+    const encodeAction = yield take(ACTION_ENCODE_SUCCESS);
     yield put({
         type: `render/${ACTION_RENDER_SUCCESS}`,
         payload: {
             id: task.id,
-            buffer
+            buffer: encodeAction.payload
         }
     });
     removeTask(task.id);

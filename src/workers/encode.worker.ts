@@ -47,7 +47,7 @@ const encode = (channelData: Float32Array[]) => {
                 chunks.push(chunk);
             } else {
                 ctx.postMessage({
-                    type: 'render/ACTION_ENCODE_ERROR',
+                    type: 'ACTION_ENCODE_ERROR',
                     payload: 'Can not encode buffer to mp3 frame'
                 });
             }
@@ -59,7 +59,7 @@ const close = () => {
     if (encoder) {
         const chunk = encoder.flush();
         if (chunk.length > 0) { chunks.push(chunk) }
-        ctx.postMessage({ type: 'render/ACTION_ENCODE_SUCCESS', payload: chunks });
+        ctx.postMessage({ type: 'ACTION_ENCODE_SUCCESS', payload: chunks });
         clearBuffer();
     }
 };
