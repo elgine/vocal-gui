@@ -175,11 +175,12 @@ const Overlay = ({ className, children, controlled, showOutline, ...others }: Re
 };
 
 export interface IntroContextProps{
+    target: string;
     running: boolean;
     next: Function | null;
 }
 
-export const IntroContext = React.createContext<IntroContextProps>({ running: false, next: null });
+export const IntroContext = React.createContext<IntroContextProps>({ target: 'undefined', running: false, next: null });
 
 export interface IntroStep{
     title?: string;
@@ -435,7 +436,7 @@ export default ({
                     </div>
                 </Fade>
             </Portal>
-            <IntroContext.Provider value={{ running: openTooltip, next: step.controlled ? onClickNext : null }}>
+            <IntroContext.Provider value={{ target: step.target, running: openTooltip, next: step.controlled ? onClickNext : null }}>
                 {
                     children
                 }

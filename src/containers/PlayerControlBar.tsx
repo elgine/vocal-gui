@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
     Toolbar
 } from '@material-ui/core';
@@ -10,9 +10,10 @@ import ToggleButton from '../components/ToggleButton';
 import PlayerControls from './PlayerControls';
 import PlayerVolume from './PlayerVolume';
 import PlayerCurrentTimeInput from './PlayerCurrentTimeInput';
+import { IntroContext } from '../components/Intro';
 
 export interface PlayerControlBarProps extends Omit<ToolbarProps, 'onVolumeChange'>{
-    showEffectPanel?: boolean;
+    showEffectPanel: boolean;
     onToggleEffectPanel: (v: boolean) => void;
 }
 
@@ -22,6 +23,12 @@ export default React.memo(({
     ...others
 }: PlayerControlBarProps) => {
     const lang = useContext(LangContext);
+    const intro = useContext(IntroContext);
+    useEffect(() => {
+        if (intro.running && intro.target === '#effect-panel-collapse-button') {
+            onToggleEffectPanel(false);
+        }
+    }, [intro.running, intro.target]);
     return (
         <Toolbar {...others}>
             <PlayerVolume />

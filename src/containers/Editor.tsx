@@ -62,16 +62,6 @@ const useStyles = makeStyles((theme: Theme) => {
             }),
             paddingRight: EFFECT_DRAWER_WIDTH
         },
-        effectPanel: {
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            height: '100%',
-            overflowX: 'hidden',
-            overflowY: 'auto',
-            boxSizing: 'border-box',
-            width: EFFECT_DRAWER_WIDTH
-        },
         playerControls: {
             height: `${PLAYER_CONTROLS_HEIGHT}px`
         },
@@ -89,6 +79,41 @@ const mapStateToProps = ({ present }: RootState) => {
     };
 };
 
+const useSlideEffectPanelStyles = makeStyles({
+    root: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        height: '100%',
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        boxSizing: 'border-box',
+        width: EFFECT_DRAWER_WIDTH
+    }
+});
+
+interface SlideEffectPanelProps{
+    open?: boolean;
+    onClose?: Function;
+}
+
+const SlideEffectPanel = ({ open, onClose }: SlideEffectPanelProps) => {
+    const classes = useSlideEffectPanelStyles();
+    const intro = useContext(IntroContext);
+    const onAnimationCompleted = () => {
+        if (open) {
+            intro.next && intro.next();
+        }
+    };
+    return (
+        <Slide direction="left" in={open} onEntered={onAnimationCompleted} onExited={onAnimationCompleted}>
+            <Paper id="effect-panel" className={classes.root}>
+                <EffectPanel />
+            </Paper>
+        </Slide>
+    );
+};
+
 export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
     const { initializing } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
@@ -99,7 +124,6 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
     const onToggleEffectPanel = (v: boolean) => {
         setOpenEffectPanel(v);
     };
-
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {
             dispatch.hotkeys[ACTION_CALL_HOTKEY]({
@@ -117,11 +141,6 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
             window.removeEventListener('keydown', onKeyDown);
         };
     }, []);
-
-    const intro = useContext(IntroContext);
-    const onAnimationCompleted = () => {
-        intro.next && intro.next();
-    };
     return (
         <div className={clsx(
             classes.root,
@@ -130,11 +149,7 @@ export default ({ className, ...others }: React.HTMLAttributes<{}>) => {
             <Guide open={openIntro} onClose={() => setOpenIntro(false)}>
                 <ControlBar className={classes.controlBar} />
                 <div className={clsx(classes.content, openEffectPanel && matches ? classes.contentShifted : '')}>
-                    <Slide direction="left" in={openEffectPanel} onEntered={onAnimationCompleted} onExited={onAnimationCompleted}>
-                        <Paper id="effect-panel" className={classes.effectPanel}>
-                            <EffectPanel />
-                        </Paper>
-                    </Slide>
+                    <SlideEffectPanel open={openEffectPanel} onClose={() => setOpenEffectPanel(false)} />
                     <TimelinePanel />
                     <HelpButton open={!openEffectPanel}
                         color="secondary"
