@@ -1,16 +1,18 @@
-import { AnyAction, Dispatch } from 'redux';
+import { AnyAction, Dispatch, MiddlewareAPI } from 'redux';
 /**
  * Worker middleware, handle those actions with
  * type like `WORKER/${workerName}/${workerCMD}`
  * @param {Dictionary<Worker>} workers worker hashtable
  */
 export default (workers: Dictionary<Worker>) => {
-    return (store: any) => {
+    return (store: MiddlewareAPI) => {
+        /* eslint-disable guard-for-in */
+        for (let k in workers) {
+            workers[k].onmessage = (e: MessageEvent) => {
+                store.dispatch(e.data);
+            };
+        }
         return (next: Dispatch<AnyAction>) => {
-            /* eslint-disable guard-for-in */
-            for (let k in workers) {
-                workers[k].addEventListener('message', (e: MessageEvent) => next(e.data));
-            }
             return (action: AnyAction) => {
                 let { type, payload } = action;
                 let actionType = String(type);

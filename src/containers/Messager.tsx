@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Snackbar, SnackbarContent, IconButton } from '@material-ui/core';
 import { SnackbarContentProps } from '@material-ui/core/SnackbarContent';
 import { ACTION_HIDE_MESSAGE } from '../store/models/message/type';

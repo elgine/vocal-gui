@@ -1,4 +1,4 @@
-import EncodeWorker from 'worker-loader!./encode.worker.ts';
+import EncodeWorker from './encode.worker';
 
 export default {
     encode: new EncodeWorker()

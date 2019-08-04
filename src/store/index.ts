@@ -1,5 +1,4 @@
 import { init, RematchRootState } from '@rematch/core';
-import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
 import createWorkerMiddleware from './middlewares/workerMiddleware';
 import workers from '../workers';
@@ -16,7 +15,7 @@ const worker = createWorkerMiddleware(workers);
 const store = init({
     models,
     redux: {
-        middlewares: [worker, saga, thunk]
+        middlewares: [worker, saga]
     },
     plugins
 });

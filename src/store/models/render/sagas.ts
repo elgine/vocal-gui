@@ -51,7 +51,16 @@ function* renderTask({ payload }: RenderBgAsyncAction) {
     const buffer: AudioBuffer = yield* renderer.render(task, (v: number) => {
         task.state = v;
     });
-    yield put({ type: `worker/encode/${ACTION_ENCODE}`, payload: { buffer: decompose(buffer), options: task.options }});
+    yield put({
+        type: `worker/encode/${ACTION_ENCODE}`, payload: {
+            buffer: decompose(buffer),
+            options: {
+                sampleRate: buffer.sampleRate,
+                bitRate: task.options.bitRate,
+                channels: buffer.numberOfChannels
+            }
+        }
+    });
     const encodeAction = yield take(ACTION_ENCODE_SUCCESS);
     yield put({
         type: `render/${ACTION_RENDER_SUCCESS}`,

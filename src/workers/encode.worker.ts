@@ -29,9 +29,11 @@ const init = (config?: EncodeConfig) => {
         encoder = new lamejs.Mp3Encoder(c.channels, c.sampleRate, c.bitRate);
     }
     clearBuffer();
+    console.log('Init encoder');
 };
 
 const encode = (channelData: Float32Array[]) => {
+    console.log('Begin encoding');
     if (encoder && channelData.length > 0 && channelData[0].length > 0) {
         const len = channelData[0].length;
         const stereo = channelData.length > 1;
@@ -46,6 +48,7 @@ const encode = (channelData: Float32Array[]) => {
             if (chunk.length > 0) {
                 chunks.push(chunk);
             } else {
+                console.log('Occur encode error');
                 ctx.postMessage({
                     type: 'ACTION_ENCODE_ERROR',
                     payload: 'Can not encode buffer to mp3 frame'
@@ -56,6 +59,7 @@ const encode = (channelData: Float32Array[]) => {
 };
 
 const close = () => {
+    console.log('Close encode');
     if (encoder) {
         const chunk = encoder.flush();
         if (chunk.length > 0) { chunks.push(chunk) }
@@ -64,27 +68,15 @@ const close = () => {
     }
 };
 
-ctx.addEventListener('message', (e) => {
-    const action = e.data;
-    if (!action.type) return;
+ctx.onmessage = (e: MessageEvent) => {
+    const action = { ...e.data };
     const { type, payload } = action;
-    if (type.toLowerCase() === 'encode/ACTION_ENCODE') {
+    if (type === 'encode/ACTION_ENCODE') {
         const { options, buffer } = payload;
         init(options);
         encode(buffer);
         close();
     }
-    // switch (type.toLowerCase()) {
-    //     case 'encode/ACTION_ENCODE_INIT': {
-    //         init(payload);
-    //         break;
-    //     }
-    //     case 'encode/ACTION_ENCODE': {
-    //         encode(payload);
-    //         break;
-    //     }
-    //     case 'encode/ACTION_ENCODE_CLOSE': {
-    //         close();
-    //     }
-    // }
-});
+};
+
+export default null as any;
