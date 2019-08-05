@@ -5,7 +5,6 @@ import {
 } from '@material-ui/core';
 import { LangContext, getLang } from '../lang';
 import DirectorySelector from '../components/DirectorySelector';
-import { FormValidationContext } from '../components/FormValidation';
 
 export interface ExportSettingsPanelProps{
     bitRate: number;

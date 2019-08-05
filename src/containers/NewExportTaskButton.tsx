@@ -5,7 +5,7 @@ import ExportSettingsPanel from './ExportSettingsPanel';
 import { useDispatch } from 'react-redux';
 import { ACTION_RENDER } from '../store/models/render/types';
 import { RematchDispatch } from '@rematch/core';
-import { FormValidation } from '../components/FormValidation';
+import { createForm, FormShape } from 'rc-form';
 
 export interface NewExportTaskButtonProps{
     Component: React.ComponentType<any>;
@@ -16,25 +16,27 @@ export interface NewExportTaskButtonProps{
 interface ExportSettingsDialogProps{
     open?: boolean;
     onClose?: () => void;
-    isValid?: boolean;
+    form: FormShape;
 }
 
-const ExportSettingsDialog = ({ open, onClose, isValid }: ExportSettingsDialogProps) => {
+const ExportSettingsDialog = ({ open, onClose, form }: ExportSettingsDialogProps) => {
     const lang = useContext(LangContext);
     const dispatch = useDispatch<RematchDispatch>();
     const onRender = dispatch.render[ACTION_RENDER];
     const [title, setTitle] = useState('');
     const [bitRate, setBitRate] = useState(128);
     const [format, setFormat] = useState<ExportFormat>('MP3');
-    const onAddTask = () => {
-        if (isValid) {
-            onRender({
-                title,
-                bitRate,
-                format
-            });
-            onClose && onClose();
-        }
+    const onSubmit = () => {
+        form.validateFields((errors, values) => {
+            if (!errors) {
+                onRender({
+                    title,
+                    bitRate,
+                    format
+                });
+                onClose && onClose();
+            }
+        });
     };
     return (
         <Dialog fullWidth maxWidth="xs" open={open || false} onClose={onClose}>
@@ -56,7 +58,7 @@ const ExportSettingsDialog = ({ open, onClose, isValid }: ExportSettingsDialogPr
                         getLang('CANCEL', lang)
                     }
                 </Button>
-                <Button color="primary" onClick={onAddTask}>
+                <Button color="primary" onClick={onSubmit}>
                     {
                         getLang('EXPORT', lang)
                     }
@@ -66,7 +68,7 @@ const ExportSettingsDialog = ({ open, onClose, isValid }: ExportSettingsDialogPr
     );
 };
 
-const ValidatedExportSettingsDialog = FormValidation(ExportSettingsDialog);
+const ValidatedExportSettingsDialog = createForm()(ExportSettingsDialog);
 
 export default React.forwardRef(({ Component, ComponentProps, onClose }: NewExportTaskButtonProps, ref: React.Ref<any>) => {
     const [showExportDialog, setShowExportDialog] = useState(false);
