@@ -1,5 +1,32 @@
 import { createEffect, getAllDurationApplyEffect, getDelayApplyEffect } from '../processor/effects/factory';
 import Effect from '../processor/effects/effect';
+import { ID3WriterSupportFrames } from 'browser-id3-writer';
+
+export type RenderTaskLevelNormal = 0;
+export type RenderTaskLevelHigh = 1;
+export type RenderTaskLevel = RenderTaskLevelNormal | RenderTaskLevelHigh;
+
+export type RenderTaskStateWaiting = 0;
+export type RenderTaskStateComplete = 1;
+export type RenderTaskStateStopped = -2;
+export type RenderTaskStateFailed = -1;
+export type RenderTaskState = RenderTaskStateWaiting |
+RenderTaskStateComplete |
+RenderTaskStateStopped |
+RenderTaskStateFailed;
+
+export interface RenderTask{
+    id: string;
+    title: string;
+    source: AudioBuffer;
+    level: number;
+    state: number;
+    taskCreatedTime: number;
+    effectType: number;
+    effectOptions: any;
+    clipRegion: number[];
+    exportParams: ExportParams;
+}
 
 export default class Renderer {
 
@@ -18,11 +45,7 @@ export default class Renderer {
         );
 
         if (!this._effect || this._effect.type !== task.effectType) {
-            let e = yield createEffect(task.effectType, this._offlineAudioCtx);
-            if (!e) {
-                throw new Error(`No specific effect, ${task.effectType}`);
-            }
-            this._effect = e;
+            this._effect = yield createEffect(task.effectType, this._offlineAudioCtx);
         }
         this._effect.set(task.effectOptions);
         let input = this._offlineAudioCtx.createBufferSource();

@@ -3,6 +3,8 @@ type AnyOf<T> = {
     [K in keyof T]?: T[K];
 };
 
+type ValueType<T extends keyof V, V> = V[T];
+
 type TypedArray = Int8Array | Uint8Array |
 Int16Array | Uint16Array |
 Int32Array | Uint32Array |
@@ -11,8 +13,7 @@ Float32Array | Float64Array;
 
 type ExportFormatMP3 = 'MP3';
 type ExportFormatWAV = 'WAV';
-type ExportFormatM4A = 'M4A';
-type ExportFormat = ExportFormatMP3 | ExportFormatWAV | ExportFormatM4A;
+type ExportFormat = ExportFormatMP3 | ExportFormatWAV;
 
 type MessageTypeSuccess = 'SUCCESS';
 type MessageTypeError = 'ERROR';
@@ -25,12 +26,19 @@ interface Message{
     msg: string;
 }
 
+interface Window{
+    ELECTRON: boolean;
+    DEV: boolean;
+}
+
 type SourceTypeLocal = 'LOCAL';
 type SourceTypeUrl = 'URL';
 type SourceTypeMic = 'MIC';
 type SourceType = SourceTypeLocal | SourceTypeUrl | SourceTypeMic;
 
 interface ExportParams{
+    title: string;
+    path?: string;
     bitRate: number;
     format: ExportFormat;
 }
@@ -67,30 +75,4 @@ interface EffectItem{
     id: string;
     title: string;
     thumb: string;
-}
-
-type RenderTaskLevelNormal = 0;
-type RenderTaskLevelHigh = 1;
-type RenderTaskLevel = RenderTaskLevelNormal | RenderTaskLevelHigh;
-
-type RenderTaskStateWaiting = 0;
-type RenderTaskStateComplete = 1;
-type RenderTaskStateStopped = -2;
-type RenderTaskStateFailed = -1;
-type RenderTaskState = RenderTaskStateWaiting |
-RenderTaskStateComplete |
-RenderTaskStateStopped |
-RenderTaskStateFailed;
-
-interface RenderTask{
-    id: string;
-    title: string;
-    source?: AudioBuffer;
-    level: number;
-    state: number;
-    taskCreatedTime: number;
-    effectType: number;
-    effectOptions: any;
-    clipRegion: number[];
-    options: ExportParams;
 }

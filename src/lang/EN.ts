@@ -128,6 +128,10 @@ export default {
     MINIMIZE: 'Minimize',
     MAXIMIZE: 'Maximize',
     RESTORE: 'Restore',
+    EXPORT_FILE_NAME: 'Export filename',
+    CHOOSE_EXPORT_DIRECTORY: 'Choose export directory',
+    CHOOSE_DIRECTORY: 'Choose directory',
+    BROWSE: 'Browse',
 
     AUDIO_FILE: 'Audio file',
     STOP_ALL: 'Stop all',

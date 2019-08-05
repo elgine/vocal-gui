@@ -59,6 +59,9 @@ export const createEffect = (type: EffectType, ctx: BaseAudioContext, ...args: a
             break;
         case EffectType.TELEPHONE: effect = new Telephone(ctx); break;
         case EffectType.MEGAPHONE: effect = new Megaphone(ctx); break;
+        default:
+            effect = new Effect(ctx);
+            break;
     }
     return effect;
 };

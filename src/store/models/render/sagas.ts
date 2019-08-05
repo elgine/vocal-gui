@@ -10,7 +10,11 @@ import {
     ACTION_RENDER_PROGRESS,
     ACTION_STOP_RENDERING,
 } from './types';
-import Renderer from '../../../services/renderer';
+import { ACTION_SHOW_MESSAGE } from '../message/type';
+import Renderer, { RenderTask } from '../../../services/renderer';
+import ID3Writer from '../../../services/ID3TagWriter';
+import downloader from '../../../services/downloader';
+import WAVHeaderWriter from '../../../services/WAVHeaderWriter';
 
 const RENDER_BG_ASYNC = 'RENDER_BG_ASYNC';
 const MAX_CONCURRENCY = 3;
@@ -46,30 +50,61 @@ const decompose = (audioBuffer: AudioBuffer) => {
     return buffers;
 };
 
-function* renderTask({ payload }: RenderBgAsyncAction) {
-    const { renderer, task } = payload;
-    const buffer: AudioBuffer = yield* renderer.render(task, (v: number) => {
-        task.state = v;
-    });
+function* encodeMP3(buffer: AudioBuffer, bitRate: number) {
     yield put({
         type: `worker/encode/${ACTION_ENCODE}`, payload: {
             buffer: decompose(buffer),
             options: {
                 sampleRate: buffer.sampleRate,
-                bitRate: task.options.bitRate,
+                bitRate: bitRate,
                 channels: buffer.numberOfChannels
             }
         }
     });
-    const encodeAction = yield take(ACTION_ENCODE_SUCCESS);
-    yield put({
-        type: `render/${ACTION_RENDER_SUCCESS}`,
-        payload: {
-            id: task.id,
-            buffer: encodeAction.payload
-        }
-    });
-    removeTask(task.id);
+    const { payload } = yield take(ACTION_ENCODE_SUCCESS);
+    return new Blob(payload, { type: 'audio/mp3' });
+}
+
+function* encodeWAV(buffer: AudioBuffer) {
+    const result = yield call(WAVHeaderWriter, buffer);
+    return new Blob([new Int8Array(result)], { type: 'audio/wav' });
+}
+
+function* encode(buffer: AudioBuffer, { bitRate, format }: {format: ExportFormat; bitRate: number}) {
+    if (format === 'MP3') {
+        return yield call(encodeMP3, buffer, bitRate);
+    } else {
+        return yield call(encodeWAV, buffer);
+    }
+}
+
+function* renderTask({ payload }: RenderBgAsyncAction) {
+    const { renderer, task } = payload;
+    try {
+        const buffer: AudioBuffer = yield* renderer.render(task, (v: number) => {
+            task.state = v;
+        });
+        const exportParams = task.exportParams;
+        const absPath = `${exportParams.path || ''}\\${exportParams.title}.${exportParams.format.toLowerCase()}`;
+        const blob = yield encode(buffer, exportParams);
+        yield call(downloader, blob, absPath);
+        yield put({
+            type: `render/${ACTION_RENDER_SUCCESS}`,
+            payload: {
+                id: task.id
+            }
+        });
+    } catch (e) {
+        yield put({
+            type: `message/${ACTION_SHOW_MESSAGE}`,
+            payload: {
+                msgType: 'ERROR',
+                msg: e.message
+            }
+        });
+    } finally {
+        removeTask(task.id);
+    }
 }
 
 const cancelSelectorCreator = (id?: string) => {

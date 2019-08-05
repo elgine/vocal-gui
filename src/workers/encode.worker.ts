@@ -58,6 +58,18 @@ const encode = (channelData: Float32Array[]) => {
     }
 };
 
+const compose = (chunks: Int8Array[]) => {
+    const count = chunks.length;
+    if (count <= 0) return null;
+    const chunkSize = chunks[0].length;
+    const total = count * chunkSize;
+    let newBuffer = new Int8Array(total);
+    chunks.forEach((chunk, i) => {
+        newBuffer.set(chunk, i * chunkSize);
+    });
+    return newBuffer.buffer;
+};
+
 const close = () => {
     console.log('Close encode');
     if (encoder) {

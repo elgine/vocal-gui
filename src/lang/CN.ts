@@ -127,6 +127,10 @@ export default {
     MINIMIZE: '最小化',
     MAXIMIZE: '最大化',
     RESTORE: '还原',
+    EXPORT_FILE_NAME: '导出文件名',
+    CHOOSE_EXPORT_DIRECTORY: '选择输出目录',
+    CHOOSE_DIRECTORY: '选择文件目录',
+    BROWSE: '浏览',
 
     AUDIO_FILE: '音频文件',
     STOP_ALL: '暂停全部',

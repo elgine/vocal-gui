@@ -18,6 +18,7 @@ import {
 import { RootState } from '../../index';
 import uuid from 'uuid/v4';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
+import { RenderTask } from '../../../services/renderer';
 
 const initialState: RendererState = {
     rendering: true,
@@ -93,6 +94,7 @@ export default {
             [ACTION_RENDER](payload: ExportParams, { present }: RootState) {
                 batch(() => {
                     const { editor } = present;
+                    if (!editor.source) return;
                     const newTask: RenderTask = {
                         id: uuid(),
                         title: editor.title,
@@ -103,7 +105,7 @@ export default {
                         effectType: editor.effectType,
                         effectOptions: editor.effectOptions,
                         clipRegion: editor.clipRegion,
-                        options: payload
+                        exportParams: payload
                     };
                     dispatch.render[REDUCER_ADD_RENDER_TASK](newTask);
                     dispatch.render[REDUCER_SET_RENDERING](true);

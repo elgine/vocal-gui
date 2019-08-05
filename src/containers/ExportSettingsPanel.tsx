@@ -1,28 +1,55 @@
 import React, { useContext } from 'react';
 import {
     FormControl, FormLabel, FormControlLabel, Radio, RadioGroup,
-    Select, MenuItem
+    Select, MenuItem, TextField
 } from '@material-ui/core';
 import { LangContext, getLang } from '../lang';
+import DirectorySelector from '../components/DirectorySelector';
+import { FormValidationContext } from '../components/FormValidation';
 
 export interface ExportSettingsPanelProps{
     bitRate: number;
     format: ExportFormat;
+    title: string;
+    path?: string;
+    onPathChange?: (v: string) => void;
+    onTitleChange: (v: string) => void;
     onBitRateChange: (v: number) => void;
     onFormatChange: (v: ExportFormat) => void;
 }
 
-export default ({ bitRate, format, onBitRateChange, onFormatChange }: ExportSettingsPanelProps) => {
+export default ({
+    bitRate, format, title, path,
+    onPathChange, onTitleChange, onBitRateChange, onFormatChange
+}: ExportSettingsPanelProps) => {
     const lang = useContext(LangContext);
-    const br = bitRate || 128;
-    const f = format || 'MP3';
     return (
         <React.Fragment>
             <FormControl fullWidth margin="normal" component="fieldset">
                 <FormLabel component="legend">
+                    {
+                        getLang('EXPORT_FILE_NAME', lang)
+                    }
+                </FormLabel>
+                <TextField required fullWidth value={title} onChange={(e) => onTitleChange(e.target.value)} />
+            </FormControl>
+            {
+                window.ELECTRON ? (
+                    <FormControl fullWidth margin="normal" component="fieldset">
+                        <FormLabel component="legend">
+                            {
+                                getLang('CHOOSE_EXPORT_DIRECTORY', lang)
+                            }
+                        </FormLabel>
+                        <DirectorySelector value={path} onChange={onPathChange} />
+                    </FormControl>
+                ) : undefined
+            }
+            <FormControl fullWidth margin="normal" component="fieldset">
+                <FormLabel component="legend">
                     {getLang('BIT_RATE', lang)}
                 </FormLabel>
-                <Select value={br} onChange={(e) => onBitRateChange(e.target.value as number)} required fullWidth>
+                <Select value={bitRate} onChange={(e) => onBitRateChange(e.target.value as number)} required fullWidth>
                     <MenuItem value={64}>64</MenuItem>
                     <MenuItem value={96}>96</MenuItem>
                     <MenuItem value={128}>128</MenuItem>
@@ -34,7 +61,7 @@ export default ({ bitRate, format, onBitRateChange, onFormatChange }: ExportSett
                 <FormLabel component="legend">
                     {getLang('EXPORT_FORMAT', lang)}
                 </FormLabel>
-                <RadioGroup value={f} onChange={(e, v) => onFormatChange(v as ExportFormat)} row>
+                <RadioGroup value={format} onChange={(e, v) => onFormatChange(v as ExportFormat)} row>
                     <FormControlLabel
                         control={<Radio color="primary" value="WAV" />}
                         label="WAV"
@@ -42,10 +69,6 @@ export default ({ bitRate, format, onBitRateChange, onFormatChange }: ExportSett
                     <FormControlLabel
                         control={<Radio color="primary" value="MP3" />}
                         label="MP3"
-                    />
-                    <FormControlLabel
-                        control={<Radio color="primary" value="M4A" />}
-                        label="M4A"
                     />
                 </RadioGroup>
             </FormControl>
