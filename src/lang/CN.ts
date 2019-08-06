@@ -91,6 +91,7 @@ export default {
     EFFECT: '效果',
     EXPORT_LIST: '导出任务列表',
     EXPORT: '导出',
+    EDIT: '编辑',
     EXPORT_SUCCESS: '导出成功',
     EXPORT_FAILED: '导出失败',
     NEW_EXPORT_TASK: '新建导出任务',

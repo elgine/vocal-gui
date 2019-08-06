@@ -18,7 +18,7 @@ RenderTaskStateFailed;
 export interface RenderTask{
     id: string;
     title: string;
-    source: AudioBuffer;
+    source?: AudioBuffer;
     level: number;
     state: number;
     taskCreatedTime: number;
@@ -30,55 +30,62 @@ export interface RenderTask{
 
 export default class Renderer {
 
-    private _offlineAudioCtx!: OfflineAudioContext;
-    private _effect!: Effect;
     private _rendering: boolean = false;
+    private _offlineAudioCtx!: OfflineAudioContext;
 
     * render(task: Pick<RenderTask, 'clipRegion' | 'source' | 'effectOptions' | 'effectType'>, onProcess?: (v: number) => void) {
         const { source, clipRegion, effectOptions, effectType } = task;
         if (!source) return;
         this._rendering = true;
-        this._offlineAudioCtx = new OfflineAudioContext(
-            source.numberOfChannels,
-            getAllDurationApplyEffect(effectType, effectOptions, source.duration) * source!.sampleRate,
-            source.sampleRate
-        );
+        const { duration, sampleRate, numberOfChannels } = source;
+        let offlineCtx = this._offlineAudioCtx = new OfflineAudioContext({
+            numberOfChannels,
+            length: getAllDurationApplyEffect(effectType, effectOptions, duration) * sampleRate,
+            sampleRate
+        });
 
-        if (!this._effect || this._effect.type !== task.effectType) {
-            this._effect = yield createEffect(task.effectType, this._offlineAudioCtx);
-        }
-        this._effect.set(task.effectOptions);
-        let input = this._offlineAudioCtx.createBufferSource();
-        input.buffer = source;
+        // Build graph
+        let sourceNode = offlineCtx.createBufferSource();
+        sourceNode.buffer = source;
 
         let progressProcessor = this._offlineAudioCtx.createScriptProcessor(1024);
-        const onProgressProcess = () => {
-            let processed = 0;
-            const total = source.length;
-            return (e: AudioProcessingEvent) => {
-                processed += e.inputBuffer.length;
-                onProcess && onProcess(processed / total);
-            };
+        let processed = 0;
+        const total = source.length;
+        progressProcessor.onaudioprocess = (e: AudioProcessingEvent) => {
+            processed += e.inputBuffer.length;
+            onProcess && onProcess(Math.round((processed / total * 100)) * 0.01);
+            for (let i = 0; i < e.inputBuffer.numberOfChannels; i++) {
+                e.outputBuffer.copyToChannel(e.inputBuffer.getChannelData(i), i);
+            }
         };
-        progressProcessor.onaudioprocess = onProgressProcess();
-        input.connect(progressProcessor);
 
-        progressProcessor.connect(this._effect.input);
-        this._effect.output.connect(this._offlineAudioCtx.destination);
-        input.start();
+        let effect = createEffect(effectType, offlineCtx, duration);
+        effect!.set(effectOptions);
 
-        let buffer: AudioBuffer = yield this._offlineAudioCtx.startRendering();
-        // Clip region
-        let delay = getDelayApplyEffect(effectType, effectOptions, buffer!.duration);
+        sourceNode.connect(progressProcessor);
+        progressProcessor.connect(effect!.input);
+
+        effect!.output.connect(offlineCtx.destination);
+        sourceNode.start();
+
+        let buffer = yield offlineCtx.startRendering();
+
+        // Release graph
+        sourceNode.stop();
+        sourceNode.disconnect();
+        effect!.output.disconnect();
+
+        let delay = getDelayApplyEffect(
+            effectType,
+            effectOptions,
+            duration
+        );
+
         let s = clipRegion[0] * 0.001 + delay;
         let e = clipRegion[1] * 0.001 + delay;
         let sb = s * buffer.sampleRate;
         let se = e * buffer.sampleRate;
-        let final = this._offlineAudioCtx.createBuffer(
-            buffer.numberOfChannels,
-            (e - s) * buffer.sampleRate,
-            buffer.sampleRate
-        );
+        let final = offlineCtx.createBuffer(numberOfChannels, se - sb, buffer.sampleRate);
         for (let i = 0; i < buffer.numberOfChannels; i++) {
             final.copyToChannel(buffer.getChannelData(i).subarray(sb, se), i);
         }

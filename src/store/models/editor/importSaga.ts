@@ -1,4 +1,5 @@
 import { fork, take, put, call, cancel, takeEvery } from 'redux-saga/effects';
+import uuid from 'uuid/v4';
 import { SagaMiddleware } from 'redux-saga';
 import {
     ACTION_LOAD_FROM_EXTERNAL,
@@ -10,13 +11,13 @@ import { loadFromLocal, loadFromUrl } from '../../../utils/loader';
 import { Action } from 'redux';
 
 interface LoadFromExternalAction extends Action<string>{
-    payload: string | File;
+    payload: string | File | Blob;
 }
 
 function* doImportFromExternal({ payload }: LoadFromExternalAction) {
     try {
-        const name = payload instanceof File ? payload.name : payload;
-        const buf = payload instanceof File ? yield call(loadFromLocal, payload) : yield call(loadFromUrl, payload);
+        const name = payload instanceof File ? payload.name : (payload instanceof Blob ? uuid() : payload);
+        const buf = typeof payload === 'string' ? yield call(loadFromUrl, payload) : yield call(loadFromLocal, payload);
         yield put({
             type: `editor/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: {
                 buffer: buf,

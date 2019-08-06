@@ -1,12 +1,20 @@
 import { batch } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
-import { MessageState, REDUCER_SET_MESSAGE, ACTION_SHOW_MESSAGE, ACTION_HIDE_MESSAGE, REDUCER_SET_SHOW } from './type';
+import {
+    MessageState,
+    REDUCER_SET_MESSAGE,
+    REDUCER_RESET_MESSAGE_CONTENT,
+    REDUCER_SET_SHOW,
+    ACTION_SHOW_MESSAGE,
+    ACTION_HIDE_MESSAGE
+} from './type';
 import { EMPTY_STRING } from '../../../constant';
 
 const initialState: MessageState = {
     msg: EMPTY_STRING,
     msgType: 'INFO',
     showMsg: false,
+    showConfirm: false
 };
 
 export default {
@@ -15,10 +23,21 @@ export default {
         [REDUCER_SET_MESSAGE](state: MessageState, payload: Message) {
             state.msgType = payload.msgType;
             state.msg = payload.msg;
+            state.showConfirm = payload.showConfirm || false;
+            state.confirmAction = payload.confirmAction;
+            state.confirmLabel = payload.confirmLabel;
+            state.confirmParams = payload.confirmParams;
             return state;
         },
         [REDUCER_SET_SHOW](state: MessageState, payload: boolean) {
             state.showMsg = payload;
+            return state;
+        },
+        [REDUCER_RESET_MESSAGE_CONTENT](state: MessageState) {
+            state.showConfirm = false;
+            state.confirmAction = undefined;
+            state.confirmLabel = undefined;
+            state.confirmParams = undefined;
             return state;
         }
     },
@@ -30,7 +49,10 @@ export default {
             });
         },
         [ACTION_HIDE_MESSAGE](payload: any) {
-            dispatch.message[REDUCER_SET_SHOW](false);
+            batch(() => {
+                dispatch.message[REDUCER_SET_SHOW](false);
+                dispatch.message[REDUCER_RESET_MESSAGE_CONTENT]();
+            });
         }
     })
 };

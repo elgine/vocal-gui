@@ -14,6 +14,7 @@ import {
 } from './types';
 import Renderer, { RenderTask } from '../../../services/renderer';
 import WAVHeaderWriter from '../../../services/WAVHeaderWriter';
+import ID3TagWriter from '../../../services/ID3TagWriter';
 import downloader from '../../../services/downloader';
 
 const RENDER_BG_ASYNC = 'RENDER_BG_ASYNC';
@@ -62,7 +63,10 @@ function* encodeMP3(buffer: AudioBuffer, bitRate: number) {
         }
     });
     const { payload } = yield take(ACTION_ENCODE_SUCCESS);
-    return new Blob(payload, { type: 'audio/mp3' });
+    const arrayBuffer = yield call(ID3TagWriter, payload, {
+        TLEN: buffer.duration * 1000
+    });
+    return new Blob([new Int8Array(arrayBuffer)], { type: 'audio/mp3' });
 }
 
 function* encodeWAV(buffer: AudioBuffer) {

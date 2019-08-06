@@ -12,21 +12,34 @@ const ctx: Worker = self as any;
 const CHUNK_SIZE = 1152;
 
 let chunks: Int8Array[] = [];
+let chunkSize = 0;
 let leftChunk = new Float32Array(CHUNK_SIZE);
 let rightChunk = new Float32Array(CHUNK_SIZE);
 let encoder: lamejs.Mp3Encoder;
-let lastConfig: {channels: number; sampleRate};
+let lastConfig: {channels: number; sampleRate: number; bitRate: number};
 
 const clearBuffer = () => {
     chunks = [];
+    chunkSize = 0;
 };
 
 const isConfigEquals = (c1: EncodeConfig, c2: EncodeConfig) => eq(c1, c2);
+
+const push = (chunk: Int8Array) => {
+    const count = chunk.length;
+    if (count > 0) {
+        chunks.push(chunk);
+        chunkSize += count;
+        return count;
+    }
+    return 0;
+};
 
 const init = (config?: EncodeConfig) => {
     const c = merge({ channels: 1, sampleRate: 44100, bitRate: 128 }, config);
     if (!encoder || (lastConfig && (!isConfigEquals(c, lastConfig)))) {
         encoder = new lamejs.Mp3Encoder(c.channels, c.sampleRate, c.bitRate);
+        lastConfig = c;
     }
     clearBuffer();
     console.log('Init encoder');
@@ -45,9 +58,7 @@ const encode = (channelData: Float32Array[]) => {
                 }
             }
             const chunk = encoder.encodeBuffer(leftChunk, stereo ? rightChunk : undefined);
-            if (chunk.length > 0) {
-                chunks.push(chunk);
-            } else {
+            if (push(chunk) <= 0) {
                 console.log('Occur encode error');
                 ctx.postMessage({
                     type: 'ACTION_ENCODE_ERROR',
@@ -61,11 +72,11 @@ const encode = (channelData: Float32Array[]) => {
 const compose = (chunks: Int8Array[]) => {
     const count = chunks.length;
     if (count <= 0) return null;
-    const chunkSize = chunks[0].length;
-    const total = count * chunkSize;
-    let newBuffer = new Int8Array(total);
+    let newBuffer = new Int8Array(chunkSize);
+    let offset = 0;
     chunks.forEach((chunk, i) => {
-        newBuffer.set(chunk, i * chunkSize);
+        newBuffer.set(chunk, offset);
+        offset += chunk.length;
     });
     return newBuffer.buffer;
 };
@@ -73,9 +84,8 @@ const compose = (chunks: Int8Array[]) => {
 const close = () => {
     console.log('Close encode');
     if (encoder) {
-        const chunk = encoder.flush();
-        if (chunk.length > 0) { chunks.push(chunk) }
-        ctx.postMessage({ type: 'ACTION_ENCODE_SUCCESS', payload: chunks });
+        push(encoder.flush());
+        ctx.postMessage({ type: 'ACTION_ENCODE_SUCCESS', payload: compose(chunks) });
         clearBuffer();
     }
 };

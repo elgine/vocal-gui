@@ -22,6 +22,10 @@ type MessageTypeWarning = 'WARNING';
 type MessageType = MessageTypeSuccess | MessageTypeError | MessageTypeInfo | MessageTypeWarning;
 
 interface Message{
+    showConfirm?: boolean;
+    confirmLabel?: string;
+    confirmAction?: string;
+    confirmParams?: any;
     msgType: MessageType;
     msg: string;
 }

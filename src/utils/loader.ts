@@ -1,6 +1,6 @@
 import { getAudioBufferFromFile, getAudioBufferFromUrl } from './getAudioBuffer';
 
-export const loadFromLocal = (v: File) => {
+export const loadFromLocal = (v: Blob | File) => {
     return getAudioBufferFromFile(v);
 };
 

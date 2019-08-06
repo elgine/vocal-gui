@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { Snackbar, SnackbarContent, IconButton } from '@material-ui/core';
+import React, { useContext } from 'react';
+import { Snackbar, SnackbarContent, IconButton, Button } from '@material-ui/core';
 import { SnackbarContentProps } from '@material-ui/core/SnackbarContent';
 import { ACTION_HIDE_MESSAGE } from '../store/models/message/type';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -48,7 +48,11 @@ const variantIcon = {
     INFO: InfoIcon,
 };
 
-interface SnackbarContentWrapperProps extends SnackbarContentProps {
+interface SnackbarContentWrapperProps extends Omit<SnackbarContentProps, 'message'> {
+    message?: string;
+    showConfirm?: boolean;
+    confirmLabel?: string;
+    onConfirm?: () => void;
     variant?: MessageType;
     onClose?: () => void;
 }
@@ -56,8 +60,18 @@ interface SnackbarContentWrapperProps extends SnackbarContentProps {
 const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
     const lang = useContext(LangContext);
     const classes = useSnackbarContentStyles();
-    const { className, message, onClose, variant, ...other } = props;
+    const { className, message, onClose, variant, showConfirm, confirmLabel, onConfirm, ...other } = props;
     const Icon = variantIcon[variant || 'INFO'];
+
+    let actions: React.ReactNode[] = [];
+    if (showConfirm) {
+        actions.push(<Button size="small" key="confirm" onClick={onConfirm}>
+            {confirmLabel ? (getLang(confirmLabel, lang) || confirmLabel) : confirmLabel}
+        </Button>);
+    }
+    actions.push(<IconButton size="small" key="close" aria-label="Close" color="inherit" onClick={onClose}>
+        <CloseIcon className={classes.icon} />
+    </IconButton>);
     return (
         <SnackbarContent
             className={clsx(classes[variant || 'INFO'], className)}
@@ -65,16 +79,10 @@ const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
             message={
                 <span id="client-snackbar" className={classes.message}>
                     <Icon className={clsx(classes.icon, classes.iconVariant)} />
-                    {typeof message === 'string' ? (
-                        getLang(message, lang) || message
-                    ) : message}
+                    {message ? getLang(message, lang) : message}
                 </span>
             }
-            action={[
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={onClose}>
-                    <CloseIcon className={classes.icon} />
-                </IconButton>,
-            ]}
+            action={actions}
             {...other}
         />
     );
@@ -91,10 +99,14 @@ const mapStateToProps = ({ present }: RootState) => {
 };
 
 export default React.memo(({ messageAutoHideDuraiton }: MessagerProps) => {
-    const { showMsg, msgType, msg } = useSelector(mapStateToProps, shallowEqual);
+    const { showMsg, msgType, showConfirm, confirmLabel, confirmParams, confirmAction, msg } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
+    const hideMessage = dispatch.message[ACTION_HIDE_MESSAGE];
+    const onConfirm = showConfirm ? () => {
+        dispatch({ type: confirmAction, payload: confirmParams });
+    } : undefined;
     const onMessageClose = () => {
-        dispatch.message[ACTION_HIDE_MESSAGE]({ type: '' });
+        hideMessage({ type: '' });
     };
     return (
         <Snackbar autoHideDuration={messageAutoHideDuraiton || 6000}
@@ -104,6 +116,9 @@ export default React.memo(({ messageAutoHideDuraiton }: MessagerProps) => {
                 onClose={onMessageClose}
                 variant={msgType}
                 message={msg}
+                showConfirm={showConfirm}
+                confirmLabel={confirmLabel}
+                onConfirm={onConfirm}
             />
         </Snackbar>
     );

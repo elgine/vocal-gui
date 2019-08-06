@@ -92,6 +92,7 @@ export default {
     EFFECT: 'Effect',
     EXPORT_LIST: 'Export task list',
     EXPORT: 'Export',
+    EDIT: 'Edit',
     EXPORT_SUCCESS: 'Export succeed',
     EXPORT_FAILED: 'Export failed',
     NEW_EXPORT_TASK: 'New export task',

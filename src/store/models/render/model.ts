@@ -16,6 +16,7 @@ import {
     ACTION_RENDER_PROGRESS,
     ACTION_RENDER_FAILED
 } from './types';
+import { ACTION_LOAD_SOURCE } from '../editor/types';
 import { RootState } from '../../index';
 import uuid from 'uuid/v4';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
@@ -89,23 +90,33 @@ export default {
                     if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.render[REDUCER_SET_RENDERING](false);
                     }
-                    dispatch.message[ACTION_SHOW_MESSAGE]({ msgType: 'ERROR', msg: 'EXPORT_FAILED' });
+                    dispatch.message[ACTION_SHOW_MESSAGE]({
+                        msgType: 'ERROR',
+                        msg: 'EXPORT_FAILED'
+                    });
                 });
             },
             [ACTION_RENDER_SUCCESS]({ id, blob }: {id: string; blob: Blob}, { present }: RootState) {
                 const task = present.render.tasks[id];
                 if (!task) return;
-                // const exportParams = task.exportParams;
-                // const absPath = path.resolve(exportParams.path || '', `${exportParams.title}.${exportParams.format.toLowerCase()}`);
-                // downloader(blob, absPath);
                 batch(() => {
                     dispatch.render[REDUCER_SET_TASKS_STATE]({
-                        [id]: { state: 1 },
+                        [id]: { state: 1, source: undefined },
                     });
                     if (existsFreeRenderTask(present.render.tasks)) {
                         dispatch.render[REDUCER_SET_RENDERING](false);
                     }
-                    dispatch.message[ACTION_SHOW_MESSAGE]({ msgType: 'SUCCESS', msg: 'EXPORT_SUCCESS' });
+                    dispatch.message[ACTION_SHOW_MESSAGE]({
+                        msgType: 'SUCCESS',
+                        msg: 'EXPORT_SUCCESS',
+                        showConfirm: true,
+                        confirmLabel: 'EDIT',
+                        confirmAction: `editor/${ACTION_LOAD_SOURCE}`,
+                        confirmParams: {
+                            type: 'FILE',
+                            value: blob
+                        }
+                    });
                 });
             },
             [ACTION_RENDER](payload: ExportParams, { present }: RootState) {
