@@ -6,7 +6,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from '@material-ui/icons/Close';
-import { amber, green } from '@material-ui/core/colors';
+import { amber, teal } from '@material-ui/core/colors';
 import WarningIcon from '@material-ui/icons/Warning';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -17,16 +17,16 @@ import { LangContext, getLang } from '../lang';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
     SUCCESS: {
-        backgroundColor: green[600],
+        backgroundColor: teal[200],
     },
     ERROR: {
-        backgroundColor: theme.palette.error.dark,
+        backgroundColor: theme.palette.error[theme.palette.type],
     },
     INFO: {
-        backgroundColor: theme.palette.primary.main,
+        backgroundColor: theme.palette.primary[theme.palette.type],
     },
     WARNING: {
-        backgroundColor: amber[700],
+        backgroundColor: amber[200],
     },
     icon: {
         fontSize: 20,
@@ -65,7 +65,7 @@ const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
 
     let actions: React.ReactNode[] = [];
     if (showConfirm) {
-        actions.push(<Button size="small" key="confirm" onClick={onConfirm}>
+        actions.push(<Button size="small" color="inherit" key="confirm" onClick={onConfirm}>
             {confirmLabel ? (getLang(confirmLabel, lang) || confirmLabel) : confirmLabel}
         </Button>);
     }
