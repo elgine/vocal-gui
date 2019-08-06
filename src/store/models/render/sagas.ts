@@ -1,4 +1,5 @@
 import { Action } from 'redux';
+import path from 'path-browserify';
 import { channel, Channel, SagaMiddleware } from 'redux-saga';
 import { put, fork, call, take, join, race, cancel, delay } from 'redux-saga/effects';
 import {
@@ -13,6 +14,7 @@ import {
 } from './types';
 import Renderer, { RenderTask } from '../../../services/renderer';
 import WAVHeaderWriter from '../../../services/WAVHeaderWriter';
+import downloader from '../../../services/downloader';
 
 const RENDER_BG_ASYNC = 'RENDER_BG_ASYNC';
 const MAX_CONCURRENCY = 3;
@@ -84,6 +86,8 @@ function* renderTask({ payload }: RenderBgAsyncAction) {
         });
         const exportParams = task.exportParams;
         const blob = yield encode(buffer, exportParams);
+        const absPath = path.resolve(exportParams.path || '', `${exportParams.title}.${exportParams.format.toLowerCase()}`);
+        yield call(downloader, blob, absPath);
         yield put({
             type: `render/${ACTION_RENDER_SUCCESS}`,
             payload: {

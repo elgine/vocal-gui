@@ -17,6 +17,7 @@ export default (
         } else {
             const filename = path.substring(path.lastIndexOf('/') + 1);
             download(filename, blob);
+            resolve();
         }
     });
 };

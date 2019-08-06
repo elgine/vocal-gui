@@ -1,5 +1,4 @@
 import { batch } from 'react-redux';
-import path from 'path-browserify';
 import {
     RendererState,
     REDUCER_SET_TASKS_STATE,
@@ -21,7 +20,6 @@ import { RootState } from '../../index';
 import uuid from 'uuid/v4';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
 import { RenderTask } from '../../../services/renderer';
-import downloader from '../../../services/downloader';
 
 const initialState: RendererState = {
     rendering: true,
@@ -97,9 +95,9 @@ export default {
             [ACTION_RENDER_SUCCESS]({ id, blob }: {id: string; blob: Blob}, { present }: RootState) {
                 const task = present.render.tasks[id];
                 if (!task) return;
-                const exportParams = task.exportParams;
-                const absPath = path.resolve(exportParams.path || '', `${exportParams.title}.${exportParams.format.toLowerCase()}`);
-                downloader(blob, absPath);
+                // const exportParams = task.exportParams;
+                // const absPath = path.resolve(exportParams.path || '', `${exportParams.title}.${exportParams.format.toLowerCase()}`);
+                // downloader(blob, absPath);
                 batch(() => {
                     dispatch.render[REDUCER_SET_TASKS_STATE]({
                         [id]: { state: 1 },
