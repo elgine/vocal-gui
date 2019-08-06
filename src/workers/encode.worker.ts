@@ -1,5 +1,6 @@
 import lamejs from 'lamejs';
 import  { merge, eq } from 'lodash';
+import float32ToInt16 from '../utils/float32ToInt16';
 
 interface EncodeConfig{
     channels?: number;
@@ -13,8 +14,8 @@ const CHUNK_SIZE = 1152;
 
 let chunks: Int8Array[] = [];
 let chunkSize = 0;
-let leftChunk = new Float32Array(CHUNK_SIZE);
-let rightChunk = new Float32Array(CHUNK_SIZE);
+let leftChunk = new Int16Array(CHUNK_SIZE);
+let rightChunk = new Int16Array(CHUNK_SIZE);
 let encoder: lamejs.Mp3Encoder;
 let lastConfig: {channels: number; sampleRate: number; bitRate: number};
 
@@ -52,9 +53,9 @@ const encode = (channelData: Float32Array[]) => {
         const stereo = channelData.length > 1;
         for (let i = 0; i < len; i += CHUNK_SIZE) {
             for (let j = 0; j < CHUNK_SIZE; j++) {
-                leftChunk[j] = channelData[0][i + j];
+                leftChunk[j] = float32ToInt16(channelData[0][i + j]);
                 if (stereo) {
-                    rightChunk[j] = channelData[1][i + j];
+                    rightChunk[j] = float32ToInt16(channelData[1][i + j]);
                 }
             }
             const chunk = encoder.encodeBuffer(leftChunk, stereo ? rightChunk : undefined);
