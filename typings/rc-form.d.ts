@@ -13,6 +13,20 @@ declare module 'rc-form'{
     class Field {
         constructor(fields: any);
     }
+    interface FieldOptions{
+        valuePropName?: string;
+        getValueProps?: (val: any) => any;
+        getValueFromEvent?: (e: any) => any;
+        initialValue?: any;
+        normalize?: any;
+        trigger?: string;
+        validateTrigger?: string[];
+        rules?: any[];
+        validateFirst?: boolean;
+        validate?: any[];
+        hidden?: boolean;
+        preserve?: boolean;
+    }
     interface FormShape{
         getFieldsValue: (names?: string[]) => void;
         getFieldValue: (name: string) => void;
@@ -20,7 +34,7 @@ declare module 'rc-form'{
         setFieldsValue: (obj: any) => void;
         setFields: (obj: any) => void;
         setFieldsInitialValue: (obj: any) => void;
-        getFieldDecorator: () => void;
+        getFieldDecorator: (name: string, option?: FieldOptions) => (node: React.ReactNode) => React.ReactNode;
         getFieldProps: (name: string, option?: any) => void;
         getFieldsError: (names: string[]) => Dictionary<string[]>;
         getFieldError: (name: string) => string[];

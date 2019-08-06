@@ -20,7 +20,7 @@ function* doImportFromExternal({ payload }: LoadFromExternalAction) {
         yield put({
             type: `editor/${ACTION_LOAD_SOURCE_SUCCESS}`, payload: {
                 buffer: buf,
-                title: name.substring(name.lastIndexOf('/'))
+                title: name.substring(name.lastIndexOf('/'), name.lastIndexOf('.'))
             }
         });
     } catch (e) {

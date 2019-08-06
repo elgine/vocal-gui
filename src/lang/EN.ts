@@ -93,6 +93,7 @@ export default {
     EXPORT_LIST: 'Export task list',
     EXPORT: 'Export',
     EXPORT_SUCCESS: 'Export succeed',
+    EXPORT_FAILED: 'Export failed',
     NEW_EXPORT_TASK: 'New export task',
     NO_EXPORT_TASK: 'No export tasks',
     EXPORT_FORMAT: 'Export format',
@@ -132,6 +133,11 @@ export default {
     CHOOSE_EXPORT_DIRECTORY: 'Choose export directory',
     CHOOSE_DIRECTORY: 'Choose directory',
     BROWSE: 'Browse',
+
+    EXPORT_TITLE_REQUIRED: 'Please input export filename',
+    EXPORT_PATH_REQUIRED: 'Please set export path',
+    EXPORT_BIT_RATE_REQUIRED: 'Please choose bitrate',
+    EXPORT_FORMAT_REQUIRED: 'Please choose export format',
 
     AUDIO_FILE: 'Audio file',
     STOP_ALL: 'Stop all',

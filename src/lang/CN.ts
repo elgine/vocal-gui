@@ -92,6 +92,7 @@ export default {
     EXPORT_LIST: '导出任务列表',
     EXPORT: '导出',
     EXPORT_SUCCESS: '导出成功',
+    EXPORT_FAILED: '导出失败',
     NEW_EXPORT_TASK: '新建导出任务',
     NO_EXPORT_TASK: '无导出任务',
     EXPORT_FORMAT: '导出格式',
@@ -131,6 +132,11 @@ export default {
     CHOOSE_EXPORT_DIRECTORY: '选择输出目录',
     CHOOSE_DIRECTORY: '选择文件目录',
     BROWSE: '浏览',
+
+    EXPORT_TITLE_REQUIRED: '请输入导出文件名',
+    EXPORT_PATH_REQUIRED: '请设置导出目录',
+    EXPORT_BIT_RATE_REQUIRED: '请选择比特率',
+    EXPORT_FORMAT_REQUIRED: '请选择导出格式',
 
     AUDIO_FILE: '音频文件',
     STOP_ALL: '暂停全部',

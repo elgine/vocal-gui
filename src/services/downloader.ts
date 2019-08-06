@@ -15,7 +15,7 @@ export default (
                 resolve(result);
             });
         } else {
-            const filename = path.substring(path.lastIndexOf('\\'));
+            const filename = path.substring(path.lastIndexOf('/') + 1);
             download(filename, blob);
         }
     });

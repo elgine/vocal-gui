@@ -1,4 +1,5 @@
 import { batch } from 'react-redux';
+import path from 'path-browserify';
 import {
     RendererState,
     REDUCER_SET_TASKS_STATE,
@@ -13,12 +14,14 @@ import {
     ACTION_RENDER_SUCCESS,
     ACTION_STOP_RENDERING,
     ACTION_STOP_RENDERING_ALL,
-    ACTION_RENDER_PROGRESS
+    ACTION_RENDER_PROGRESS,
+    ACTION_RENDER_FAILED
 } from './types';
 import { RootState } from '../../index';
 import uuid from 'uuid/v4';
 import { ACTION_SHOW_MESSAGE } from '../message/type';
 import { RenderTask } from '../../../services/renderer';
+import downloader from '../../../services/downloader';
 
 const initialState: RendererState = {
     rendering: true,
@@ -80,7 +83,23 @@ export default {
             [ACTION_RENDER_PROGRESS](payload: Dictionary<{state: number}>) {
                 dispatch.render[REDUCER_SET_TASKS_STATE](payload);
             },
-            [ACTION_RENDER_SUCCESS]({ id }: {id: string; buffer: AudioBuffer}, { present }: RootState) {
+            [ACTION_RENDER_FAILED]({ id, error }: {id: string; error: Error}, { present }: RootState) {
+                batch(() => {
+                    dispatch.render[REDUCER_SET_TASKS_STATE]({
+                        [id]: { state: -1 },
+                    });
+                    if (existsFreeRenderTask(present.render.tasks)) {
+                        dispatch.render[REDUCER_SET_RENDERING](false);
+                    }
+                    dispatch.message[ACTION_SHOW_MESSAGE]({ msgType: 'ERROR', msg: 'EXPORT_FAILED' });
+                });
+            },
+            [ACTION_RENDER_SUCCESS]({ id, blob }: {id: string; blob: Blob}, { present }: RootState) {
+                const task = present.render.tasks[id];
+                if (!task) return;
+                const exportParams = task.exportParams;
+                const absPath = path.resolve(exportParams.path || '', `${exportParams.title}.${exportParams.format.toLowerCase()}`);
+                downloader(blob, absPath);
                 batch(() => {
                     dispatch.render[REDUCER_SET_TASKS_STATE]({
                         [id]: { state: 1 },

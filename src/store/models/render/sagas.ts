@@ -9,11 +9,9 @@ import {
     ACTION_ENCODE_SUCCESS,
     ACTION_RENDER_PROGRESS,
     ACTION_STOP_RENDERING,
+    ACTION_RENDER_FAILED,
 } from './types';
-import { ACTION_SHOW_MESSAGE } from '../message/type';
 import Renderer, { RenderTask } from '../../../services/renderer';
-import ID3Writer from '../../../services/ID3TagWriter';
-import downloader from '../../../services/downloader';
 import WAVHeaderWriter from '../../../services/WAVHeaderWriter';
 
 const RENDER_BG_ASYNC = 'RENDER_BG_ASYNC';
@@ -85,21 +83,20 @@ function* renderTask({ payload }: RenderBgAsyncAction) {
             task.state = v;
         });
         const exportParams = task.exportParams;
-        const absPath = `${exportParams.path || ''}\\${exportParams.title}.${exportParams.format.toLowerCase()}`;
         const blob = yield encode(buffer, exportParams);
-        yield call(downloader, blob, absPath);
         yield put({
             type: `render/${ACTION_RENDER_SUCCESS}`,
             payload: {
-                id: task.id
+                id: task.id,
+                blob
             }
         });
     } catch (e) {
         yield put({
-            type: `message/${ACTION_SHOW_MESSAGE}`,
+            type: `render/${ACTION_RENDER_FAILED}`,
             payload: {
-                msgType: 'ERROR',
-                msg: e.message
+                id: task.id,
+                error: e
             }
         });
     } finally {
