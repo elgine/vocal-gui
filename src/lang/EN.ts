@@ -135,6 +135,8 @@ export default {
     CHOOSE_DIRECTORY: 'Choose directory',
     BROWSE: 'Browse',
 
+    THROW_AND_RELOAD: 'Throw current workspace and reload?',
+
     EXPORT_TITLE_REQUIRED: 'Please input export filename',
     EXPORT_PATH_REQUIRED: 'Please set export path',
     EXPORT_BIT_RATE_REQUIRED: 'Please choose bitrate',

@@ -1,12 +1,21 @@
 import React, { useContext } from 'react';
+import { RematchDispatch } from '@rematch/core';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Toolbar, Theme, Button, Typography } from '@material-ui/core';
 import Placeholder from '../components/Placeholder';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles  } from '@material-ui/styles';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import clsx from 'clsx';
-import { contrast } from '../utils/color';
+import { shade } from '../utils/color';
 import { getLang, LangContext } from '../lang';
-import { SettingsOutlined } from '@material-ui/icons';
+import { RootState } from '../store';
+
+const Logo = (props: React.ImgHTMLAttributes<{}>) => {
+    const logoSrc = `logo/logo.png`;
+    return (
+        <img src={logoSrc} {...props} />
+    );
+};
 
 const MinimizeIcon = ({ style, size, ...others }: React.SVGAttributes<{}> & {size?: number | string}) => {
     const combinedStyle: React.CSSProperties = {
@@ -77,19 +86,39 @@ const useStyles = makeStyles((theme: Theme) => {
             position: 'absolute',
             width: '100%',
             boxSizing: 'border-box',
-            padding: `0 ${theme.spacing(1) * 0.5}px 0 ${theme.spacing(2)}px`,
             zIndex: 1,
-            backgroundColor: contrast(theme.palette.text.primary)
+            backgroundColor: theme.palette.background.paper
+        },
+        title: {
+            padding: `${theme.spacing(1)}px`,
         },
         windowBtn: {
             minWidth: '46px',
-            height: '100%'
+            height: '100%',
+            borderRadius: 0
+        },
+        closeBtn: {
+            '&:hover': {
+                backgroundColor: theme.palette.error[theme.palette.type],
+                color: theme.palette.error.contrastText
+            },
+            '&:active': {
+                backgroundColor: shade(theme.palette.error[theme.palette.type], -0.12)
+            }
         }
     };
 });
 
+const mapStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.window
+    };
+};
+
 export default ({ title, height, className, style, ...others }: TitleBarProps) => {
     const lang = useContext(LangContext);
+    const { state } = useSelector(mapStateToProps, shallowEqual);
+    const dispatch = useDispatch<RematchDispatch>();
     const classes = useStyles();
     const h = height || 32;
     const isDesktop = true;
@@ -98,28 +127,44 @@ export default ({ title, height, className, style, ...others }: TitleBarProps) =
         minHeight: `${h}px`,
         ...style
     };
+
+    const onMinimize = () => dispatch({ type: 'electron/minimize' });
+    const onMaximizeRestore = () => {
+        if (state === 'maximize') {
+            dispatch({ type: 'electron/restore' });
+        } else {
+            dispatch({ type: 'electron/maximize' });
+        }
+    };
+    const onClose = () => dispatch({ type: 'electron/close' });
+
+    const dragRegionStyle: any = {
+        WebkitUserSelect: 'none',
+        WebkitAppRegion: 'drag'
+    };
     return (
-        <Toolbar variant="dense" className={clsx(classes.root, className)} style={combinedStyle} {...others}>
-            <Typography variant="h6">
-                {title || 'Vocal'}
+        <Toolbar variant="dense" disableGutters className={clsx(classes.root, className)} style={combinedStyle} {...others}
+            onDoubleClick={onMaximizeRestore}>
+            <Logo height="100%" />
+            <Typography className={classes.title} color="textPrimary" variant="caption">
+                {title || 'VOCAL'}
             </Typography>
-            <Placeholder />
-            <Button className={classes.windowBtn}>
-                <SettingsOutlined fontSize="small" />
-            </Button>
+            <Placeholder style={dragRegionStyle} />
             {
                 isDesktop ? (
                     <React.Fragment>
                         <Button className={classes.windowBtn} title={getLang('MINIMIZE', lang)}
-                            disableRipple disableFocusRipple>
+                            disableRipple disableFocusRipple onClick={onMinimize}>
                             <MinimizeIcon size={ICON_SIZE} />
                         </Button>
                         <Button className={classes.windowBtn} title={getLang('MAXIMIZE', lang)}
-                            disableRipple disableFocusRipple>
-                            <MaximizeIcon size={ICON_SIZE} />
+                            disableRipple disableFocusRipple onClick={onMaximizeRestore}>
+                            {
+                                state === 'normal' ? <MaximizeIcon size={ICON_SIZE} /> : <RestoreIcon size={ICON_SIZE} />
+                            }
                         </Button>
-                        <Button className={classes.windowBtn} title={getLang('CLOSE', lang)}
-                            disableRipple disableFocusRipple>
+                        <Button className={clsx(classes.windowBtn, classes.closeBtn)} title={getLang('CLOSE', lang)}
+                            disableRipple disableFocusRipple onClick={onClose}>
                             <CloseIcon size={ICON_SIZE} />
                         </Button>
                     </React.Fragment>

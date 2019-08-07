@@ -92,7 +92,8 @@ export default {
                     }
                     dispatch.message[ACTION_SHOW_MESSAGE]({
                         msgType: 'ERROR',
-                        msg: 'EXPORT_FAILED'
+                        msg: 'EXPORT_FAILED',
+                        native: present.window.state === 'minimize'
                     });
                 });
             },

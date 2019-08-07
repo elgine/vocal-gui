@@ -15,6 +15,7 @@ import {
     ACTION_SKIP_PREVIOUS,
     ACTION_SKIP_NEXT,
     ACTION_LOAD_SOURCE,
+    ACTION_CONFIRM_LOAD_SOURCE,
     ACTION_LOAD_SOURCE_SUCCESS,
     ACTION_CANCEL_LOAD_SORUCE,
     REDUCER_SET_TITLE,
@@ -50,6 +51,7 @@ import { getEffectOptions, isEffectNeedBuffering } from '../../../processor/effe
 import { ACTION_SHOW_MESSAGE } from '../message/type';
 import Player from '../../../services/player';
 import AudioCache from '../../../processor/audioCache';
+import { getLang } from '../../../lang';
 
 const initialState: EditorState = {
     title: UNDEFINED_STRING,
@@ -299,7 +301,7 @@ const editorModel: ModelConfig<EditorState> = {
             [ACTION_CANCEL_LOAD_SORUCE]() {
                 dispatch.editor[REDUCER_SET_LOADING](false);
             },
-            [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}) {
+            [ACTION_CONFIRM_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}){
                 if (!payload.value) return;
                 if (payload.type === 'MIC') {
                     dispatch.editor[ACTION_LOAD_SOURCE_SUCCESS]({
@@ -308,6 +310,11 @@ const editorModel: ModelConfig<EditorState> = {
                     });
                 } else {
                     dispatch.editor[ACTION_LOAD_FROM_EXTERNAL](payload.value);
+                }
+            },
+            [ACTION_LOAD_SOURCE](payload: {type: SourceType; value?: string | File | AudioBuffer}, {present}: RootState) {
+                if(!present.editor.source || window.confirm(getLang('THROW_AND_RELOAD', present.locale.lang))){
+                    dispatch.editor[ACTION_CONFIRM_LOAD_SOURCE](payload);
                 }
             },
             [ACTION_LOAD_SOURCE_SUCCESS]({ buffer, title }: {buffer: AudioBuffer; title: string}) {

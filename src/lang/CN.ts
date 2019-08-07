@@ -134,6 +134,8 @@ export default {
     CHOOSE_DIRECTORY: '选择文件目录',
     BROWSE: '浏览',
 
+    THROW_AND_RELOAD: '丢弃当前已工作内容并重新加载?',
+
     EXPORT_TITLE_REQUIRED: '请输入导出文件名',
     EXPORT_PATH_REQUIRED: '请设置导出目录',
     EXPORT_BIT_RATE_REQUIRED: '请选择比特率',

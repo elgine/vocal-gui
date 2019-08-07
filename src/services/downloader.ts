@@ -5,7 +5,7 @@ export default (
     path: string
 ) => {
     return new Promise((resolve, reject) => {
-        if (window.ELECTRON) {
+        if (window.__ELECTRON__) {
             const fs = require('fs');
             fs.writeFile(path, blob, (err: Error|null, result: any) => {
                 if (err) {

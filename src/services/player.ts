@@ -9,11 +9,11 @@ export default class Player {
 
     private _dispatch: Dispatch;
     private _ticker: Ticker = new Ticker();
-    // 播放器是否正在播放
+    // whether is playing
     private _playing: boolean = false;
-    // 真实的播放时间进度，以源数据时长作为参照
+    // Actual play time in source duration unit
     private _actualTime: number = 0;
-    // 中断时间戳，用于记录切换效果的当前时间
+    // Suspend time
     private _suspendTime: number = 0;
 
     private _audioCtx!: AudioContext;

@@ -22,6 +22,7 @@ type MessageTypeWarning = 'WARNING';
 type MessageType = MessageTypeSuccess | MessageTypeError | MessageTypeInfo | MessageTypeWarning;
 
 interface Message{
+    native?: boolean;
     showConfirm?: boolean;
     confirmLabel?: string;
     confirmAction?: string;
@@ -31,8 +32,8 @@ interface Message{
 }
 
 interface Window{
-    ELECTRON: boolean;
-    DEV: boolean;
+    __ELECTRON__: boolean;
+    __DEV__: boolean;
 }
 
 type SourceTypeLocal = 'LOCAL';

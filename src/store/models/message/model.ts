@@ -14,7 +14,8 @@ const initialState: MessageState = {
     msg: EMPTY_STRING,
     msgType: 'INFO',
     showMsg: false,
-    showConfirm: false
+    showConfirm: false,
+    native: false
 };
 
 export default {
@@ -23,6 +24,7 @@ export default {
         [REDUCER_SET_MESSAGE](state: MessageState, payload: Message) {
             state.msgType = payload.msgType;
             state.msg = payload.msg;
+            state.native = payload.native || false;
             state.showConfirm = payload.showConfirm || false;
             state.confirmAction = payload.confirmAction;
             state.confirmLabel = payload.confirmLabel;
@@ -38,6 +40,7 @@ export default {
             state.confirmAction = undefined;
             state.confirmLabel = undefined;
             state.confirmParams = undefined;
+            state.native = false;
             return state;
         }
     },

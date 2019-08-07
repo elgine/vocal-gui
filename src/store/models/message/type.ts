@@ -13,4 +13,5 @@ export interface MessageState{
     confirmLabel?: string;
     confirmAction?: string;
     confirmParams?: any;
+    native: boolean;
 }

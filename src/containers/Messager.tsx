@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Snackbar, SnackbarContent, IconButton, Button } from '@material-ui/core';
 import { SnackbarContentProps } from '@material-ui/core/SnackbarContent';
 import { ACTION_HIDE_MESSAGE } from '../store/models/message/type';
@@ -49,11 +49,11 @@ const variantIcon = {
 };
 
 interface SnackbarContentWrapperProps extends Omit<SnackbarContentProps, 'message'> {
+    variant?: MessageType;
     message?: string;
     showConfirm?: boolean;
     confirmLabel?: string;
     onConfirm?: () => void;
-    variant?: MessageType;
     onClose?: () => void;
 }
 
@@ -72,6 +72,11 @@ const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
     actions.push(<IconButton size="small" key="close" aria-label="Close" color="inherit" onClick={onClose}>
         <CloseIcon className={classes.icon} />
     </IconButton>);
+
+    useEffect(() => {
+
+    }, []);
+
     return (
         <SnackbarContent
             className={clsx(classes[variant || 'INFO'], className)}

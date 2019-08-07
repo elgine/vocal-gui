@@ -1,6 +1,7 @@
 import { init, RematchRootState } from '@rematch/core';
 import createSagaMiddleware from 'redux-saga';
 import createWorkerMiddleware from './middlewares/workerMiddleware';
+import electronMiddleware from './middlewares/electronMiddleware';
 import workers from '../workers';
 import models from './models';
 import plugins from './plugins';
@@ -12,10 +13,15 @@ import renderSaga from './models/render/sagas';
 const saga = createSagaMiddleware();
 const worker = createWorkerMiddleware(workers);
 
+const middlewares = [worker, saga];
+if (window.__ELECTRON__) {
+    middlewares.push(electronMiddleware);
+}
+
 const store = init({
     models,
     redux: {
-        middlewares: [worker, saga]
+        middlewares
     },
     plugins
 });
@@ -27,5 +33,7 @@ renderSaga(saga);
 
 export type Models = typeof models;
 export type RootState = StateWithHistory<RematchRootState<Models>>;
+
+store.dispatch({ type: 'electron/NOTIFICATION', payload: { message: 'Hello, this is vocal' }});
 
 export default store;

@@ -1,18 +1,18 @@
 {
-  "name": "vocaloid-gui",
+  "name": "vocal",
   "version": "0.0.1-alpha",
   "description": "Vocaloid-gui is a simple voice changer",
   "main": "src/main/index.js",
   "scripts": {
     "test": "jest",
     "test:watch": "npm test -- --watch",
-    "start": "electron .",
-    "dev:desktop": "cross-env NODE_ENV=dev webpack-dev-server --entry ./example/recorder.ts --config ./build/webpack.config.base.js",
+    "dev:main": "cross-env NODE_ENV=dev electron .",
+    "dev:renderer": "cross-env NODE_ENV=dev PLATFORM=electron webpack-dev-server --entry ./src/index.tsx --config ./build/webpack.config.base.js",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --entry ./src/index.tsx --config ./build/webpack.config.base.js",
     "build": "cross-env NODE_ENV=production webpack --config ./build/webpack.config.base.js",
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./build/webpack.config.electron.renderer.js",
     "build:main": "cross-env NODE_ENV=production webpack --config ./build/webpack.config.electron.main.js",
-    "pack": "electron-packager . vocaloid-gui --win --out ../vocaloid-gui --arch=x64 --app-version=0.0.1 --electron-version=5.0.0"
+    "pack": "electron-packager . vocal --win --out ../vocal --arch=x64 --app-version=0.0.1 --electron-version=5.0.0"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/elgine/vocaloid-gui#readme",
   "dependencies": {
+    "@babel/runtime": "^7.5.5",
     "@material-ui/core": "^4.2.0",
     "@material-ui/icons": "^4.2.1",
     "@rematch/core": "^1.1.0",
@@ -72,13 +73,13 @@
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/helper-replace-supers": "^7.3.4",
-    "@babel/node": "^7.2.2", 
+    "@babel/node": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/plugin-transform-regenerator": "^7.4.3",
-    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.5.5",
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-react": "^7.0.0",

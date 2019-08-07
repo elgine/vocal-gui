@@ -103,7 +103,7 @@ const ExportSettingsDialog = React.forwardRef(({ open, onClose, form }: ExportSe
                     }
                 </FormControl>
                 {
-                    window.ELECTRON ? (
+                    window.__ELECTRON__ ? (
                         <FormControl fullWidth margin="normal" component="fieldset" error={isFieldError('path')}>
                             <FormLabel component="legend">
                                 {
