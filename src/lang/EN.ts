@@ -121,6 +121,7 @@ export default {
     UNMUTED: 'Unmuted',
     SETTINGS: 'Settings',
     TOGGLE: 'Start/Stop',
+    LANGUAGE: 'Language',
     HELP: 'Help',
     START: 'Start',
     STOP: 'Stop',

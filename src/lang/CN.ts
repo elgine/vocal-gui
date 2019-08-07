@@ -113,6 +113,7 @@ export default {
     LOAD_SOURCE_FAILED: '加载源失败',
     ZOOM_IN_TIMELINE: '放大时间轴',
     ZOOM_OUT_TIMELINE: '缩小时间轴',
+    LANGUAGE: '语言',
     GUIDE: '引导',
     REPEAT: '循环播放',
     NO_REPEAT: '不循环播放',

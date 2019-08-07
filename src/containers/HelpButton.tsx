@@ -18,7 +18,7 @@ import {
     Zoom
 } from '@material-ui/core';
 import { getLang, LangContext } from '../lang';
-import { Keyboard, Comment, Help } from '@material-ui/icons';
+import { Keyboard, Comment, Help, Language } from '@material-ui/icons';
 import { MenuItemProps } from '@material-ui/core/MenuItem';
 import { useSelector } from 'react-redux';
 import { FabProps } from '@material-ui/core/Fab';
@@ -110,6 +110,19 @@ const HotkeyMenuItem = ({ onClick, onClose, ...others }: Omit<MenuItemProps, 'bu
     );
 };
 
+const LocaleMenuItem = () => {
+    const lang = useContext(LangContext);
+    return (
+        <MenuItem>
+            <Language />
+            &nbsp;
+            {
+                getLang('LANGUAGE', lang)
+            }
+        </MenuItem>
+    );
+};
+
 export interface HelpButtonProps extends Omit<FabProps, 'onClick'>{
     open?: boolean;
     onOpenIntro?: () => void;
@@ -147,6 +160,7 @@ export default ({ open, onOpenIntro, ...others }: HelpButtonProps) => {
                     }
                 </MenuItem>
                 <HotkeyMenuItem onClose={onClose} />
+                <LocaleMenuItem />
             </Menu>
         </React.Fragment>
     );

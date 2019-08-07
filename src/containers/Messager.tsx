@@ -73,10 +73,6 @@ const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
         <CloseIcon className={classes.icon} />
     </IconButton>);
 
-    useEffect(() => {
-
-    }, []);
-
     return (
         <SnackbarContent
             className={clsx(classes[variant || 'INFO'], className)}

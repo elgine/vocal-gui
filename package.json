@@ -13,9 +13,7 @@
     "build": "cross-env NODE_ENV=production webpack --entry ./src/index.tsx --config ./build/webpack.config.base.js",
     "build:renderer": "cross-env NODE_ENV=production PLATFORM=electron webpack --entry ./src/index.tsx --config ./build/webpack.config.base.js",
     "build:main": "cross-env NODE_ENV=production webpack --config ./build/webpack.config.electron.main.js",
-    "pack:packager": "electron-packager ./dist/electron vocal --win --asar --out ./dist/vocal --arch=x64 --app-version=0.0.1-alpha",
-    "pack:builder": "electron-builder --dir",
-    "dist": "electron-builder"
+    "pack": "cd ./dist/electron && electron-packager ./ vocal --platform=darwin --asar --out ../vocal --arch=x64 --app-version=0.0.1-alpha --overwrite"
   },
   "repository": {
     "type": "git",
@@ -103,9 +101,8 @@
     "copy-webpack-plugin": "^5.0.2",
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.1",
-    "electron": "^5.0.8",
-    "electron-packager": "^13.1.1",
-    "electron-builder": "^21.2.0",
+    "electron": "^6.0.1",
+    "electron-packager": "^14.0.4",
     "eslint": "^5.16.0",
     "eslint-config-alloy": "^2.0.0-alpha.2",
     "eslint-plugin-react": "^7.12.4",
