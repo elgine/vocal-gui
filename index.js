@@ -1,6 +1,6 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron');
-const { isDev } = require('../../build/util');
-const config = require('../../build/config');
+const { isDev } = require('./build/util');
+const config = require('./build/config');
 const path = require('path');
 
 let win;
@@ -43,7 +43,7 @@ const createWindow = () => {
         width: 800,
         height: 600,
         frame: false,
-        icon: path.resolve(__dirname, '../../static/logo/favicon.png'),
+        icon: isDev() ? path.resolve(__dirname, './static/logo/favicon.png') : './renderer/logo/favicon.png',
         webPreferences: {
             defaultFontFamily: {
                 standard: 'Roboto'
@@ -54,13 +54,13 @@ const createWindow = () => {
         }
     });
 
-    if (isDev) {
+    win.webContents.openDevTools();
+
+    if (isDev()) {
         win.loadURL(`http://localhost:${config.devServer.port}/index.html`);
     } else {
-        win.loadFile('index.html');
+        win.loadFile('./renderer/index.html');
     }
-
-    win.webContents.openDevTools();
     win.webContents.on('did-finish-load', bindHandlers);
 };
 

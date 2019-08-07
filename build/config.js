@@ -6,8 +6,7 @@ module.exports = {
         port: 80,
         contentBase: path.resolve(__dirname, '../static')
     },
-    staticDir: path.resolve(__dirname, '../static'),
-    outputDir: path.resolve(__dirname, '../dist/common'),
-    electronRendererDir: path.resolve(__dirname, '../dist/electron/renderer'),
-    electronMainDir: path.resolve(__dirname, '../dist/electron/main')
+    webOutputDir: path.resolve(__dirname, '../dist/web'),
+    electronRendererOutputDir: path.resolve(__dirname, '../dist/electron/renderer'),
+    electronMainOutputDir: path.resolve(__dirname, '../dist/electron')
 };

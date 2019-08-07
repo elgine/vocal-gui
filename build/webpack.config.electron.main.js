@@ -3,10 +3,10 @@ const config = require('./config');
 const { getWebpackMode } = require('./util');
 
 module.exports = {
-    entry: path.resolve(__dirname, '../src/main/index.js'),
+    entry: path.resolve(__dirname, '../index.js'),
     output: {
-        path: config.electronMainDir,
-        filename: '[name].[hash].js'
+        path: config.electronMainOutputDir,
+        filename: 'index.js'
     },
     mode: getWebpackMode(),
     target: 'electron-main'

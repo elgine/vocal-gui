@@ -3,12 +3,15 @@ const path = require('path');
 const merge = require('webpack-merge');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const config = require('./config');
 const { getWebpackMode, isDev, isElectron } = require('./util');
 const htmlTemplate = require('./htmlTemplate');
 
 let env;
+
+const outputDir = isElectron() ? config.electronRendererOutputDir : config.webOutputDir;
 
 const plugins = [
     new webpack.optimize.OccurrenceOrderPlugin()
@@ -53,6 +56,15 @@ if (isDev()) {
         ]
     };
 } else {
+    const moveDirs = [
+        { from: config.devServer.contentBase, to: outputDir }
+    ];
+    if (isElectron()) {
+        moveDirs.push({
+            from: path.resolve(__dirname, '../package.json'),
+            to: path.resolve(outputDir, '../package.json')
+        });
+    }
     env = {
         module: {
             rules: [
@@ -75,6 +87,7 @@ if (isDev()) {
             ]
         },
         plugins: [
+            new CopyPlugin(moveDirs),
             new ExtractTextPlugin({
                 filename: 'css/index.css'
             }),
@@ -92,9 +105,9 @@ if (isDev()) {
 const base = {
     entry: path.resolve(__dirname, '../src/ui/index.tsx'),
     output: {
-        path: config.outputDir,
+        path: outputDir,
         filename: 'index.[hash].js',
-        publicPath: '/',
+        publicPath: isElectron() ? './' : '/',
         chunkFilename: '[name].[hash].js',
         globalObject: 'this'
     },
@@ -102,10 +115,7 @@ const base = {
     mode: getWebpackMode(),
     externals: ['fs', 'path'],
     resolve: {
-        extensions: ['.tsx', '.ts', '.less', '.css', '.mjs', '.js', '.json'],
-        alias: {
-            'react-joyride': path.resolve(__dirname, '../src/third-party/react-joyride/index.js')
-        }
+        extensions: ['.tsx', '.ts', '.less', '.css', '.mjs', '.js', '.json']
     },
     module: {
         rules: [
@@ -115,7 +125,7 @@ const base = {
                     {
                         loader: 'worker-loader',
                         options: {
-                            publicPath: 'workers/',
+                            publicPath: './workers/',
                             inline: true
                         }
                     },
@@ -133,7 +143,7 @@ const base = {
                 options: {
                     limit: 5000,
                     name: '[name].[ext]',
-                    outputPath: 'image/'
+                    outputPath: './image/'
                 }
             },
             {
@@ -142,7 +152,7 @@ const base = {
                 options: {
                     limit: 10000,
                     name: '[name].[ext]',
-                    outputPath: 'media/'
+                    outputPath: './media/'
                 }
             },
             {
@@ -151,7 +161,7 @@ const base = {
                 options: {
                     limit: 10000,
                     name: '[name].[ext]',
-                    outputPath: 'font/'
+                    outputPath: './font/'
                 }
             }
         ]
@@ -163,7 +173,7 @@ const base = {
                 vendor1: {
                     name: 'vendor1',
                     chunks: 'all',
-                    test: /[\\/]node_modules[\\/](react|react-dom|antd|redux|react-redux|redux-saga|mdi-react|lodash)[\\/]/,
+                    test: /[\\/]node_modules[\\/](react|react-dom|@material-ui|redux|react-redux|redux-saga|@rematch|lodash)[\\/]/,
                     maxAsyncRequests: 5,
                     priority: 10,
                     enforce: true
