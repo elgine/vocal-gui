@@ -11,6 +11,17 @@ export enum Lang{
     CN
 }
 
+export const languages = [
+    {
+        label: 'LANGUAGE_EN',
+        value: Lang.EN
+    },
+    {
+        label: 'LANGUAGE_CN',
+        value: Lang.CN
+    }
+];
+
 export const LangContext = React.createContext<Lang>(Lang.CN);
 
 export const getLang = (key: string, lang: Lang) => {

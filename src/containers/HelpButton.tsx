@@ -17,12 +17,14 @@ import {
     Fab,
     Zoom
 } from '@material-ui/core';
-import { getLang, LangContext } from '../lang';
+import { RematchDispatch } from '@rematch/core';
+import { getLang, languages, LangContext } from '../lang';
 import { Keyboard, Comment, Help, Language } from '@material-ui/icons';
 import { MenuItemProps } from '@material-ui/core/MenuItem';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { FabProps } from '@material-ui/core/Fab';
 import { RootState } from '../store';
+import { ACTION_SWITCH_LANG } from '../store/models/locale/types';
 
 const HotkeyMenuItem = ({ onClick, onClose, ...others }: Omit<MenuItemProps, 'button'> & {onClose?: () => void}) => {
     const lang = useContext(LangContext);
@@ -110,16 +112,46 @@ const HotkeyMenuItem = ({ onClick, onClose, ...others }: Omit<MenuItemProps, 'bu
     );
 };
 
+const mapStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
+
 const LocaleMenuItem = () => {
-    const lang = useContext(LangContext);
+    const langCtx = useContext(LangContext);
+    const { lang } = useSelector(mapStateToProps, shallowEqual);
+    const dispatch = useDispatch<RematchDispatch>();
+    const onLangChange = dispatch.locale[ACTION_SWITCH_LANG];
+    const [openLocaleDialog, setOpenLocaleDialog] = useState(false);
     return (
-        <MenuItem>
-            <Language />
-            &nbsp;
-            {
-                getLang('LANGUAGE', lang)
-            }
-        </MenuItem>
+        <React.Fragment>
+            <MenuItem onClick={() => setOpenLocaleDialog(true)}>
+                <Language />
+                &nbsp;
+                {
+                    getLang('LANGUAGE', langCtx)
+                }
+            </MenuItem>
+            <Dialog open={openLocaleDialog} onClose={() => setOpenLocaleDialog(false)}>
+                <DialogTitle>
+                    {
+                        getLang('SWITCH_LANGUAGE', langCtx)
+                    }
+                </DialogTitle>
+                <List>
+                    {
+                        languages.map(({ label, value }) => (
+                            <ListItem selected={value === lang} button key={value} onClick={() => onLangChange(value)}>
+                                {
+                                    getLang(label, langCtx)
+                                }
+                            </ListItem>
+                        ))
+                    }
+                </List>
+            </Dialog>
+        </React.Fragment>
     );
 };
 
