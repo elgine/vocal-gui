@@ -1,5 +1,5 @@
-import React, { useContext, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {
     Toolbar, IconButton, Tooltip
 } from '@material-ui/core';
@@ -8,17 +8,23 @@ import {
     Undo, Redo
 } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
-import { getLang, LangContext } from '../lang';
+import { getLang } from '../lang';
 import ClipRegionControls from './ClipRegionControls';
 import ZoomControls from './ZoomControls';
 import { ACTION_UNDO, ACTION_REDO } from '../store/models/history/types';
 import { RematchDispatch } from '@rematch/core';
-import { Models } from '../store';
+import { Models, RootState } from '../store';
 import ImportButton from './ImportButton';
 import ExportButton from './ExportButton';
 
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
+
 export default React.memo(({ ...others }: ToolbarProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onUndo = useCallback(() => dispatch({ type: ACTION_UNDO }), []);
     const onRedo = useCallback(() => dispatch({ type: ACTION_REDO }), []);
@@ -26,7 +32,7 @@ export default React.memo(({ ...others }: ToolbarProps) => {
         <Toolbar {...others}>
             <ImportButton />
             <ExportButton />
-            <Tooltip title={getLang('UNDO', lang)}>
+            {/* <Tooltip title={getLang('UNDO', lang)}>
                 <IconButton onClick={onUndo}>
                     <Undo />
                 </IconButton>
@@ -35,7 +41,7 @@ export default React.memo(({ ...others }: ToolbarProps) => {
                 <IconButton onClick={onRedo}>
                     <Redo />
                 </IconButton>
-            </Tooltip>
+            </Tooltip> */}
             <Placeholder textAlign="center">
                 <ClipRegionControls />
             </Placeholder>

@@ -1,14 +1,22 @@
-import React, { useState, useCallback, useRef, useEffect, useContext } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { Box, Typography, Dialog, DialogActions, CircularProgress, Button } from '@material-ui/core';
 import { DialogProps } from '@material-ui/core/Dialog';
 import { withTheme, Theme } from '@material-ui/core/styles';
 import {  Close, Done } from '@material-ui/icons';
 import RecorderWaveform from '../components/RecorderWaveform';
-import { getLang, LangContext } from '../lang';
+import { getLang } from '../lang';
 import { toTimeString } from '../utils/time';
 import Placeholder from '../components/Placeholder';
 import PlayButton from '../components/PlayButton';
 import Recorder from '../services/recorder';
+import { RootState } from '../store';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 enum RecorderState{
     UNINITED,
@@ -28,7 +36,7 @@ export default React.memo(withTheme(({
 }: RecordPanelProps & {theme: Theme}) => {
     const recorder = Recorder.instance();
     const [state, setState] = useState(RecorderState.UNINITED);
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const [hasBegan, setHasBegan] = useState(false);
     const durationRef = useRef<number>(0);
     const durationDOMRef = useRef<HTMLElement>(null);

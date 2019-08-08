@@ -53,11 +53,9 @@ const createWindow = () => {
             nodeIntegration: true
         }
     });
-
-    win.webContents.openDevTools();
-
     if (isDev()) {
         win.loadURL(`http://localhost:${config.devServer.port}/index.html`);
+        win.webContents.openDevTools();
     } else {
         win.loadFile('./renderer/index.html');
     }

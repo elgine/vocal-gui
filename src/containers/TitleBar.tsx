@@ -7,7 +7,7 @@ import { makeStyles  } from '@material-ui/styles';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import clsx from 'clsx';
 import { shade } from '../utils/color';
-import { getLang, LangContext } from '../lang';
+import { getLang } from '../lang';
 import { RootState } from '../store';
 
 const Logo = (props: React.ImgHTMLAttributes<{}>) => {
@@ -111,13 +111,13 @@ const useStyles = makeStyles((theme: Theme) => {
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        ...present.window
+        ...present.window,
+        ...present.locale
     };
 };
 
 export default ({ title, height, className, style, ...others }: TitleBarProps) => {
-    const lang = useContext(LangContext);
-    const { state } = useSelector(mapStateToProps, shallowEqual);
+    const { state, lang } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
     const classes = useStyles();
     const h = height || 32;
@@ -140,7 +140,8 @@ export default ({ title, height, className, style, ...others }: TitleBarProps) =
 
     const dragRegionStyle: any = {
         WebkitUserSelect: 'none',
-        WebkitAppRegion: 'drag'
+        WebkitAppRegion: 'drag',
+        height: '100%'
     };
     return (
         <Toolbar variant="dense" disableGutters className={clsx(classes.root, className)} style={combinedStyle} {...others}

@@ -1,8 +1,16 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { Grid, Slider, Input } from '@material-ui/core';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
 import { SLIDER_STEP_COUNT } from '../constant';
 import keycode from 'keycode';
+import { RootState } from '../store';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 export interface EffectPropertyDescriptor{
     min: number;
@@ -89,7 +97,7 @@ const PropertyField = ({ label, min, max, value, onChange }: PropertyFieldProps)
 };
 
 export default ({ value, onChange, descriptor }: EffectPropertyPaneProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const descriptorArr = Object.values(descriptor);
     const onPropertyChange = (key: string) => {
         return (v: number) => {

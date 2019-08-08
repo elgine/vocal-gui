@@ -1,13 +1,21 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import Intro, { IntroStep, IntroProps } from '../components/Intro';
-import { getLang, LangContext } from '../lang';
+import { useSelector, shallowEqual } from 'react-redux';
+import { getLang } from '../lang';
+import { RootState } from '../store';
 
 export interface GuideProps extends Omit<IntroProps, 'steps' | 'locale'>{
 
 }
 
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
+
 export default (props: GuideProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const steps: IntroStep[] = useMemo(() => ([
         {
             title: getLang('TIME_SCALE', lang),

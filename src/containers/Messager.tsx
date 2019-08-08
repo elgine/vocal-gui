@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Snackbar, SnackbarContent, IconButton, Button } from '@material-ui/core';
 import { SnackbarContentProps } from '@material-ui/core/SnackbarContent';
 import { ACTION_HIDE_MESSAGE } from '../store/models/message/type';
@@ -13,7 +13,7 @@ import clsx from 'clsx';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import { RootState, Models } from '../store';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
 
 const useSnackbarContentStyles = makeStyles(theme => ({
     SUCCESS: {
@@ -57,8 +57,12 @@ interface SnackbarContentWrapperProps extends Omit<SnackbarContentProps, 'messag
     onClose?: () => void;
 }
 
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return { ...present.locale };
+};
+
 const SnackbarContentWrapper = (props: SnackbarContentWrapperProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const classes = useSnackbarContentStyles();
     const { className, message, onClose, variant, showConfirm, confirmLabel, onConfirm, ...other } = props;
     const Icon = variantIcon[variant || 'INFO'];

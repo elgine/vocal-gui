@@ -4,7 +4,7 @@ import NewExportTaskButton from './NewExportTaskButton';
 import { useSelector, shallowEqual } from 'react-redux';
 import { RootState } from '../store';
 import { SaveAlt, QueueMusic } from '@material-ui/icons';
-import { getLang, LangContext } from '../lang';
+import { getLang } from '../lang';
 import ExportListButton from './ExportListButton';
 
 const ExportIcon = () => {
@@ -18,14 +18,14 @@ const ExportIcon = () => {
 const mapStateToProps = ({ present }: RootState) => {
     return {
         disabledExport: present.editor.source === undefined,
-        taskCount: Object.values(present.render.tasks).filter((t) => t.state >= 0 && t.state < 1).length
+        taskCount: Object.values(present.render.tasks).filter((t) => t.state >= 0 && t.state < 1).length,
+        lang: present.locale.lang
     };
 };
 
 export default React.forwardRef((props, ref: React.Ref<any>) => {
-    const lang = useContext(LangContext);
     const buttonRef = useRef<HTMLButtonElement>(null);
-    const { disabledExport, taskCount } = useSelector(mapStateToProps, shallowEqual);
+    const { disabledExport, taskCount, lang } = useSelector(mapStateToProps, shallowEqual);
     const [openMenu, setOpenMenu] = useState(false);
     const onMenuItemClose = () => setOpenMenu(false);
     return (

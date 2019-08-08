@@ -10,7 +10,7 @@ import { Tooltip, IconButton } from '@material-ui/core';
 import { SkipPrevious, SkipNext } from '@material-ui/icons';
 import PlayButton from '../components/PlayButton';
 import RepeatButton from '../components/RepeatButton';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
 import { RematchDispatch } from '@rematch/core';
 import { RootState, Models } from '../store';
 
@@ -19,13 +19,13 @@ const mapStateToProps = ({ present }: RootState) => {
         disabled: present.editor.source === undefined,
         playing: present.editor.playing,
         repeat: present.editor.repeat,
-        buffering: present.editor.buffering
+        buffering: present.editor.buffering,
+        lang: present.locale.lang
     };
 };
 
 export default React.memo(() => {
-    const lang = useContext(LangContext);
-    const { playing, buffering, repeat, disabled } = useSelector(mapStateToProps, shallowEqual);
+    const { lang, playing, buffering, repeat, disabled } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onSkipPrevious = dispatch.editor[ACTION_SKIP_PREVIOUS];
     const onSkipNext = dispatch.editor[ACTION_SKIP_NEXT];

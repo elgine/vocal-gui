@@ -1,9 +1,17 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { IconButton, Tooltip, CircularProgress, Theme } from '@material-ui/core';
 import { IconButtonProps } from '@material-ui/core/IconButton';
 import { PlayArrow, Stop } from '@material-ui/icons';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
 import { makeStyles } from '@material-ui/styles';
+import { RootState } from '../store';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 export interface PlayButtonProps extends Omit<IconButtonProps, 'onChange' | 'value'>{
     value?: boolean;
@@ -31,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) => {
 
 export default ({ value, loading, onChange, ...others }: PlayButtonProps) => {
     const classes = useStyles();
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const onClick = (e: React.MouseEvent) => {
         onChange && onChange(!value);
     };

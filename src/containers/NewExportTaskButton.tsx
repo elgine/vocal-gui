@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { LangContext, getLang } from '../lang';
+import React, { useState } from 'react';
+import { getLang } from '../lang';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     Button, FormControl, FormLabel, TextField, Select,
@@ -47,12 +47,19 @@ const FlatRadioGroup = React.forwardRef(({ onChange, ...others }: Omit<RadioGrou
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        title: present.editor.title
+        title: present.editor.title,
+        lang: present.locale.lang
+    };
+};
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
     };
 };
 
 const ExportSettingsDialog = React.forwardRef(({ open, onClose, form }: ExportSettingsDialogProps, ref: React.Ref<{}>) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const { title } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
     const onRender = dispatch.render[ACTION_RENDER];

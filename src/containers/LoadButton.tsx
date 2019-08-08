@@ -1,4 +1,5 @@
 import React, { useContext, useRef, useState } from 'react';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import {
     Button, Menu, MenuItem, TextField,
     Dialog, DialogActions, DialogContentText, DialogContent, DialogTitle,
@@ -7,12 +8,12 @@ import {
 import { DialogProps } from '@material-ui/core/Dialog';
 import { MenuProps } from '@material-ui/core/Menu';
 import { CloudUpload, Link, Mic } from '@material-ui/icons';
-import { getLang, LangContext } from '../lang';
+import { getLang } from '../lang';
 import { SUPPORT_MIME } from '../constant';
 import RecordPanel from './RecordPanel';
-import { useDispatch } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import { ACTION_LOAD_SOURCE } from '../store/models/editor/types';
+import { RootState } from '../store';
 
 export interface UploadedProps extends Omit<React.HtmlHTMLAttributes<{}>, 'onChange'>{
     accept?: string;
@@ -35,8 +36,14 @@ export interface LoadMethodPanelProps extends MenuProps{
     onLoadSource?: (v: {type: SourceType; value?: string | File | AudioBuffer}) => void;
 }
 
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
+
 export const LoadMethodPanel = ({ onLoadSource, ...others }: LoadMethodPanelProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const [url, setUrl] = useState('');
     const [showUrlDialog, setShowUrlDialog] = useState(false);
     const [showMicDialog, setShowMicDialog] = useState(false);
@@ -98,7 +105,7 @@ export interface UrlDialogProps extends Omit<DialogProps, 'onClose'>{
 }
 
 export const UrlDialog = ({ url, onUrlChange, onConfirm, onClose, ...others }: UrlDialogProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const [error, setError] = useState(false);
     const onUrlInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;

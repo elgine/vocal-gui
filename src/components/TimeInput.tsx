@@ -1,10 +1,18 @@
-import React, { useState, useRef, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { Chip, Box, Grow, TextField, Popper, Paper, InputAdornment } from '@material-ui/core';
 import { ChipProps } from '@material-ui/core/Chip';
 import { ArrowRightAlt } from '@material-ui/icons';
 import { toTimeString } from '../utils/time';
-import { getLang, LangContext } from '../lang';
+import { getLang } from '../lang';
 import keycode from 'keycode';
+import { RootState } from '../store';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 export interface TimeInputProps<T = number|number[], V = string | string[]> extends Omit<ChipProps, 'onChange' | 'placeholder'>{
     disabled?: boolean;
@@ -27,7 +35,7 @@ const toSec = (v?: number) => {
 
 function TimeInput<T = number | number[], V = string | string[]>({ disabled, value, placeholder, label, onChange, onClick, ...others }: TimeInputProps<T, V>) {
     const valList = useMemo(() => (Array.isArray(value) ? value : [value]), [value]);
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const placeholderList =  Array.isArray(placeholder) ? placeholder : [placeholder];
     const [showEditPane, setShowEditPane] = useState(false);
     const onChipClick = disabled ? undefined : (e: React.MouseEvent<HTMLDivElement>) => {

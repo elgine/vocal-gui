@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import keycode from 'keycode';
 import {
     Tooltip,
@@ -15,10 +15,12 @@ import {
     Button,
     DialogActions,
     Fab,
-    Zoom
+    Zoom,
+    Popover,
+    Paper
 } from '@material-ui/core';
 import { RematchDispatch } from '@rematch/core';
-import { getLang, languages, LangContext } from '../lang';
+import { getLang, Lang, languages } from '../lang';
 import { Keyboard, Comment, Help, Language } from '@material-ui/icons';
 import { MenuItemProps } from '@material-ui/core/MenuItem';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
@@ -26,8 +28,14 @@ import { FabProps } from '@material-ui/core/Fab';
 import { RootState } from '../store';
 import { ACTION_SWITCH_LANG } from '../store/models/locale/types';
 
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
+
 const HotkeyMenuItem = ({ onClick, onClose, ...others }: Omit<MenuItemProps, 'button'> & {onClose?: () => void}) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const mapStateToProps = useCallback(({ present }: RootState) => {
         const { actionHotkeyMap, hotkeyActionMap } = present.hotkeys;
         return Object.values(actionHotkeyMap).map((hid) => hotkeyActionMap[hid]);
@@ -118,39 +126,51 @@ const mapStateToProps = ({ present }: RootState) => {
     };
 };
 
-const LocaleMenuItem = () => {
-    const langCtx = useContext(LangContext);
+const LocaleMenuItem = ({ onClick, onClose, ...others }: Omit<MenuItemProps, 'button'> & {onClose?: () => void}) => {
+    const rootRef = useRef<HTMLLIElement>(null);
     const { lang } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
     const onLangChange = dispatch.locale[ACTION_SWITCH_LANG];
     const [openLocaleDialog, setOpenLocaleDialog] = useState(false);
+    const onMenuItemClick = (e: React.MouseEvent<HTMLLIElement>) => {
+        setOpenLocaleDialog(true);
+        onClick && onClick(e);
+    };
+    const onPopoverClose = () => {
+        setOpenLocaleDialog(false);
+        onClose && onClose();
+    };
+    const onSwitchLang = (v: Lang) => {
+        return () => {
+            onLangChange(v);
+            onPopoverClose();
+        };
+    };
     return (
         <React.Fragment>
-            <MenuItem onClick={() => setOpenLocaleDialog(true)}>
+            <MenuItem ref={rootRef} onClick={onMenuItemClick} {...others}>
                 <Language />
                 &nbsp;
                 {
-                    getLang('LANGUAGE', langCtx)
+                    getLang('LANGUAGE', lang)
                 }
             </MenuItem>
-            <Dialog open={openLocaleDialog} onClose={() => setOpenLocaleDialog(false)}>
-                <DialogTitle>
-                    {
-                        getLang('SWITCH_LANGUAGE', langCtx)
-                    }
-                </DialogTitle>
-                <List>
-                    {
-                        languages.map(({ label, value }) => (
-                            <ListItem selected={value === lang} button key={value} onClick={() => onLangChange(value)}>
-                                {
-                                    getLang(label, langCtx)
-                                }
-                            </ListItem>
-                        ))
-                    }
-                </List>
-            </Dialog>
+            <Popover anchorOrigin={{ horizontal: 'left', vertical: 'top' }} transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                disablePortal={true} onClose={onPopoverClose} open={openLocaleDialog} anchorEl={rootRef.current}>
+                <Paper>
+                    <List>
+                        {
+                            languages.map(({ label, value }) => (
+                                <ListItem selected={value === lang} button key={value} onClick={onSwitchLang(value)}>
+                                    {
+                                        getLang(label, lang)
+                                    }
+                                </ListItem>
+                            ))
+                        }
+                    </List>
+                </Paper>
+            </Popover>
         </React.Fragment>
     );
 };
@@ -161,7 +181,7 @@ export interface HelpButtonProps extends Omit<FabProps, 'onClick'>{
 }
 
 export default ({ open, onOpenIntro, ...others }: HelpButtonProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const [openHelpMenu, setOpenHelpMenu] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const onClickIntroMenuItem = () => {
@@ -192,7 +212,7 @@ export default ({ open, onOpenIntro, ...others }: HelpButtonProps) => {
                     }
                 </MenuItem>
                 <HotkeyMenuItem onClose={onClose} />
-                <LocaleMenuItem />
+                <LocaleMenuItem onClose={onClose} />
             </Menu>
         </React.Fragment>
     );

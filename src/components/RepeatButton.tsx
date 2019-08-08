@@ -1,8 +1,16 @@
-import React, { useContext } from 'react';
+import React from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { ButtonProps } from '@material-ui/core/Button';
 import { Repeat, RepeatOne } from '@material-ui/icons';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
+import { RootState } from '../store';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 export interface RepeatButtonProps extends Omit<ButtonProps, 'onChange' | 'value'>{
     value?: boolean;
@@ -10,7 +18,7 @@ export interface RepeatButtonProps extends Omit<ButtonProps, 'onChange' | 'value
 }
 
 export default ({ value, onChange }: RepeatButtonProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const onClick = (e: React.MouseEvent) => {
         onChange && onChange(!value);
     };

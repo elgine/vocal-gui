@@ -1,7 +1,15 @@
-import React, { useContext, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
+import { RootState } from '../store';
 import { TextField, Toolbar, Button } from '@material-ui/core';
 import Placeholder from './Placeholder';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 export interface DirectorySelectorProps{
     value?: string;
@@ -9,8 +17,8 @@ export interface DirectorySelectorProps{
 }
 
 export default ({ value, onChange }: DirectorySelectorProps) => {
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const inputRef = useRef<HTMLInputElement>(null);
-    const lang = useContext(LangContext);
     const onBrowseClick = () => {
         if (inputRef.current) {
             inputRef.current.click();

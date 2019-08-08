@@ -2,15 +2,23 @@ import React, { useContext, useEffect } from 'react';
 import {
     Toolbar
 } from '@material-ui/core';
+import { useSelector, shallowEqual } from 'react-redux';
 import { ToolbarProps } from '@material-ui/core/Toolbar';
 import Placeholder from '../components/Placeholder';
 import { Tune } from '@material-ui/icons';
-import { getLang, LangContext } from '../lang';
+import { getLang } from '../lang';
 import ToggleButton from '../components/ToggleButton';
 import PlayerControls from './PlayerControls';
 import PlayerVolume from './PlayerVolume';
 import PlayerCurrentTimeInput from './PlayerCurrentTimeInput';
 import { IntroContext } from '../components/Intro';
+import { RootState } from '../store';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 export interface PlayerControlBarProps extends Omit<ToolbarProps, 'onVolumeChange'>{
     showEffectPanel: boolean;
@@ -22,7 +30,7 @@ export default React.memo(({
     onToggleEffectPanel,
     ...others
 }: PlayerControlBarProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const intro = useContext(IntroContext);
     useEffect(() => {
         if (intro.running && intro.target === '#effect-panel-collapse-button') {

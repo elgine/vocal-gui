@@ -1,7 +1,15 @@
 import React, { useState, useContext } from 'react';
-import { Dialog, DialogTitle, Divider } from '@material-ui/core';
-import { getLang, LangContext } from '../lang';
+import { useSelector, shallowEqual } from 'react-redux';
+import { Dialog, DialogTitle } from '@material-ui/core';
+import { getLang } from '../lang';
+import { RootState } from '../store';
 import ExportList from './ExportList';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 export interface ExportListButtonProps{
     Component: React.ComponentType;
@@ -10,7 +18,7 @@ export interface ExportListButtonProps{
 }
 
 export default ({ Component, ComponentProps, onClose }: ExportListButtonProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const [openDialog, setOpenDialog] = useState(false);
     const onClick = (e: React.MouseEvent) => {
         setOpenDialog(true);

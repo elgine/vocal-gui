@@ -1,14 +1,20 @@
-import React, { useContext, useRef, useState } from 'react';
-import { IconButton, Menu, MenuItem, Tooltip, ListItemIcon, Typography } from '@material-ui/core';
-import { LibraryMusicOutlined, MusicVideo, SaveAlt, QueueMusic } from '@material-ui/icons';
-import { LangContext, getLang } from '../lang';
+import React from 'react';
+import { IconButton, Tooltip } from '@material-ui/core';
+import { LibraryMusicOutlined } from '@material-ui/icons';
+import { getLang } from '../lang';
 import LoadButton from './LoadButton';
 import { useSelector, shallowEqual } from 'react-redux';
 import { RootState } from '../store';
 import { IconButtonProps } from '@material-ui/core/IconButton';
 
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
+
 const LoadButtonWrappedTooltip = React.forwardRef((props: IconButtonProps, ref: React.Ref<any>) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     return (
         <Tooltip title={getLang('LOAD_SOURCE', lang)}>
             <IconButton ref={ref} {...props}>

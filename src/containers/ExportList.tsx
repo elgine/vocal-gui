@@ -1,16 +1,23 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import { RootState, Models } from '../store';
 import { List, ListItem, ListItemIcon, Checkbox, ListItemText, ListItemSecondaryAction, Typography, IconButton, Menu, MenuItem, Divider, Toolbar, Tooltip, Button, Box } from '@material-ui/core';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
 import { MoreVert, PlayArrow, Stop, Cancel } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
 import { ACTION_STOP_RENDERING, ACTION_CANCEL_RENDERING_ALL, ACTION_CANCEL_RENDERING, ACTION_STOP_RENDERING_ALL, ACTION_RESUME_RENDERING } from '../store/models/render/types';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        ...present.render
+        ...present.render,
+        ...present.locale
+    };
+};
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
     };
 };
 
@@ -29,7 +36,7 @@ interface ActionButtonProps{
 }
 
 const ActionButton = ({ id, disabledCancel, disabledStop, onCancel, onStop }: ActionButtonProps) => {
-    const lang =  useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [openMenu, setOpenMenu] = useState(false);
     const onClickStop = () => {
@@ -69,7 +76,7 @@ const ActionButton = ({ id, disabledCancel, disabledStop, onCancel, onStop }: Ac
 };
 
 const TaskState = ({ state }: {state: number}) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const color = state === -1 ? 'error' : (
         state === 1 ? 'primary' : 'inherit'
     );
@@ -130,8 +137,7 @@ const Task = ({ id, state, selected, title, onSelected, onCancel, onStop }: Task
 };
 
 export default () => {
-    const lang = useContext(LangContext);
-    const { tasks } = useSelector(mapStateToProps);
+    const { tasks, lang } = useSelector(mapStateToProps);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onResumeRendering = dispatch.render[ACTION_RESUME_RENDERING];
     const onStopRendering = dispatch.render[ACTION_STOP_RENDERING];

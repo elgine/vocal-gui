@@ -5,7 +5,7 @@ import { GridProps } from '@material-ui/core/Grid';
 import { AudiotrackTwoTone, FilterList }  from '@material-ui/icons';
 import { Theme, makeStyles } from '@material-ui/core/styles';
 import { EFFECTS, EFFECT_LANG_MAP, EffectType, EFFECT_CATEGORY_MAP, EFFECT_CATEGORIES } from '../processor/effectType';
-import { getLang, LangContext } from '../lang';
+import { getLang } from '../lang';
 import { fade } from '../utils/color';
 import clsx from 'clsx';
 import Placeholder from '../components/Placeholder';
@@ -60,7 +60,8 @@ const EffectItem = ({ selected, title, className, ...others }: EffectItemProps) 
 const mapStateToProps = ({ present }: RootState) => {
     return {
         effectType: present.editor.effectType,
-        effectOptions: present.editor.effectOptions
+        effectOptions: present.editor.effectOptions,
+        lang: present.locale.lang
     };
 };
 
@@ -117,14 +118,13 @@ const Pane = ({ header, children, className, style, height, ...others }: PanePro
 
 export default React.memo(() => {
     const filterBtnRef = useRef<HTMLButtonElement>(null);
-    const { effectType, effectOptions } = useSelector(mapStateToProps, shallowEqual);
+    const { effectType, effectOptions, lang } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onEffectChange = dispatch.editor[ACTION_SWITCH_EFFECT];
     const onEffectOptionsChange = dispatch.editor[ACTION_EFFECT_OPTIONS_CHANGE];
     const [showFilterList, setShowFilterList] = useState(false);
     const [effectCategory, setEffectCategory] = useState(EMPTY_STRING);
     const [currentEffectsVM, setCurrentEffectsVM] = useState<EffectType[]>([]);
-    const lang = useContext(LangContext);
     const descriptor = useMemo(() => getEffectDescriptor(effectType), [effectType]);
     const onCategoryitemClick = (v: string) => {
         if (effectCategory === v) return;

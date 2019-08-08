@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { Box, Slider, IconButton, Tooltip } from '@material-ui/core';
 import { ZoomIn, ZoomOut } from '@material-ui/icons';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
 import { ZOOM_MINIMUM, ZOOM_MAXIMUM, SLIDER_STEP_COUNT } from '../constant';
 import { ACTION_ZOOM_IN, ACTION_ZOOM_OUT, ACTION_ZOOM } from '../store/models/editor/types';
 import { RematchDispatch } from '@rematch/core';
@@ -10,14 +10,14 @@ import { RootState, Models } from '../store';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        zoom: present.editor.zoom
+        zoom: present.editor.zoom,
+        lang: present.locale.lang
     };
 };
 
 export default React.memo(() => {
-    const lang = useContext(LangContext);
     const dispatch = useDispatch<RematchDispatch<Models>>();
-    const { zoom } = useSelector(mapStateToProps, shallowEqual);
+    const { zoom, lang } = useSelector(mapStateToProps, shallowEqual);
     const onZoomIn = dispatch.editor[ACTION_ZOOM_IN];
     const onZoomOut = dispatch.editor[ACTION_ZOOM_OUT];
     const onZoom = dispatch.editor[ACTION_ZOOM];

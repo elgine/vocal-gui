@@ -11,7 +11,7 @@ import clsx from 'clsx';
 import LoadButton from './LoadButton';
 import useMovement from '../hooks/useMovement';
 import Pointer from '../components/Pointer';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
 import { fade, contrast } from '../utils/color';
 import ClipRegion from '../components/ClipRegion';
 import SourceInfo from './SourceInfo';
@@ -25,9 +25,10 @@ const TIME_SCALE_OTHER_PROPS = {
 };
 
 const mapStateToProps = ({ present }: RootState) => {
-    const { editor } = present;
+    const { editor, locale } = present;
     return {
-        ...editor
+        ...editor,
+        ...locale
     };
 };
 
@@ -82,13 +83,12 @@ export default withTheme(({
     theme, className, timeScaleHeight, waveHeight,
     ...others
 }: TimelinePanelProps & {theme: Theme}) => {
-    const { loading, buffering, clipRegion, currentTime, source, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps, shallowEqual);
+    const { loading, lang, clipRegion, currentTime, source, pixelsPerMSec, timeUnits, duration } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch<Models>>();
     const onSeek = dispatch.editor[ACTION_SEEK];
     const onClipRegionChange = dispatch.editor[ACTION_CLIP_REGION_CHANGE];
     const onCancelLoadSource = dispatch.editor[ACTION_CANCEL_LOAD_SORUCE];
     const primary = theme.palette.primary[theme.palette.type];
-    const lang = useContext(LangContext);
     const tsh = timeScaleHeight || 40;
     const wh = waveHeight || 128;
     const showRegion = clipRegion[0] !== clipRegion[1];

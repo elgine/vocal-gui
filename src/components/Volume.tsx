@@ -1,9 +1,17 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { useSelector, shallowEqual } from 'react-redux';
 import { IconButton, Box, Slider, Tooltip } from '@material-ui/core';
 import { BoxProps } from '@material-ui/core/Box';
 import { VolumeDown, VolumeMute, VolumeOff, VolumeUp } from '@material-ui/icons';
-import { LangContext, getLang } from '../lang';
+import { getLang } from '../lang';
 import { VOLUME_MINIMUM, VOLUME_MAXIMUM, SLIDER_STEP_COUNT } from '../constant';
+import { RootState } from '../store';
+
+const mapLocaleStateToProps = ({ present }: RootState) => {
+    return {
+        ...present.locale
+    };
+};
 
 export interface VolumeProps extends Omit<BoxProps, 'onChange'>{
     value?: number;
@@ -11,7 +19,7 @@ export interface VolumeProps extends Omit<BoxProps, 'onChange'>{
 }
 
 export default React.memo(({ value, onChange }: VolumeProps) => {
-    const lang = useContext(LangContext);
+    const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const v = value || 0;
     const [lastValue, setLastValue] = useState(0);
     const onValChange = (e: React.ChangeEvent<{}>, v: number | number[]) => {

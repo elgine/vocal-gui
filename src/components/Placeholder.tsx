@@ -4,6 +4,6 @@ import { BoxProps } from '@material-ui/core/Box';
 
 export default ({ style, ...others }: BoxProps) => {
     return (
-        <Box style={{ flex: 1, height: '100%', ...style }} {...others} />
+        <Box style={{ flex: 1, ...style }} {...others} />
     );
 };
