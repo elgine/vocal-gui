@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { RematchDispatch } from '@rematch/core';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual, batch } from 'react-redux';
 import { Toolbar, Theme, Button, Typography } from '@material-ui/core';
 import Placeholder from '../components/Placeholder';
 import { makeStyles  } from '@material-ui/styles';
@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import { shade } from '../utils/color';
 import { getLang } from '../lang';
 import { RootState } from '../store';
+import { ACTION_WINDOW_STATE_CHANGE } from '../store/models/window/types';
 
 const Logo = (props: React.ImgHTMLAttributes<{}>) => {
     const logoSrc = `logo/logo.png`;
@@ -130,11 +131,7 @@ export default ({ title, height, className, style, ...others }: TitleBarProps) =
 
     const onMinimize = () => dispatch({ type: 'electron/minimize' });
     const onMaximizeRestore = () => {
-        if (state === 'maximize') {
-            dispatch({ type: 'electron/restore' });
-        } else {
-            dispatch({ type: 'electron/maximize' });
-        }
+        dispatch({ type: 'electron/maximizeOrRestore' });
     };
     const onClose = () => dispatch({ type: 'electron/close' });
 
@@ -144,8 +141,7 @@ export default ({ title, height, className, style, ...others }: TitleBarProps) =
         height: '100%'
     };
     return (
-        <Toolbar variant="dense" disableGutters className={clsx(classes.root, className)} style={combinedStyle} {...others}
-            onDoubleClick={onMaximizeRestore}>
+        <Toolbar variant="dense" disableGutters className={clsx(classes.root, className)} style={combinedStyle} {...others}>
             <Logo height="100%" />
             <Typography className={classes.title} color="textPrimary" variant="caption">
                 {title || 'VOCAL'}

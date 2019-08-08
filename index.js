@@ -17,11 +17,14 @@ const bindHandlers = () => {
             case 'minimize':
                 win && win.minimize();
                 break;
-            case 'maximize':
-                win && win.maximize();
-                break;
-            case 'restore':
-                win && win.restore();
+            case 'maximizeOrRestore':
+                if (win) {
+                    if (win.isMaximized()) {
+                        win.restore();
+                    } else {
+                        win.maximize();
+                    }
+                }
                 break;
             case 'close':
                 win && win.close();
@@ -40,9 +43,12 @@ const bindHandlers = () => {
 const createWindow = () => {
     Menu.setApplicationMenu(null);
     win = new BrowserWindow({
+        minWidth: 640,
+        minHeight: 480,
         width: 800,
         height: 600,
         frame: false,
+        backgroundColor: '#121212',
         icon: isDev() ? path.resolve(__dirname, './static/logo/favicon.png') : './renderer/logo/favicon.png',
         webPreferences: {
             defaultFontFamily: {

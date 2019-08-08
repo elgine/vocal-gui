@@ -107,8 +107,8 @@ const base = {
     output: {
         path: outputDir,
         filename: 'index.[hash].js',
-        publicPath: isElectron() ? './' : '/',
-        chunkFilename: '[name].[hash].js',
+        publicPath: isElectron() && !isDev() ? './' : '/',
+        chunkFilename: isDev() ? '[name].[hash].js' : '[name].js',
         globalObject: 'this'
     },
     target: isElectron() ? 'electron-renderer' : 'web',
