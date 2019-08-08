@@ -62,7 +62,7 @@ if (isDev()) {
     if (isElectron()) {
         moveDirs.push({
             from: path.resolve(__dirname, '../package.json'),
-            to: path.resolve(outputDir, '../package.json')
+            to: path.resolve(config.electronOutputDir, './package.json')
         });
     }
     env = {
