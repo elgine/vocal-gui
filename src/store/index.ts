@@ -34,6 +34,4 @@ renderSaga(saga);
 export type Models = typeof models;
 export type RootState = StateWithHistory<RematchRootState<Models>>;
 
-store.dispatch({ type: 'electron/NOTIFICATION', payload: { message: 'Hello, this is vocal' }});
-
 export default store;
