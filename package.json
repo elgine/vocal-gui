@@ -4,7 +4,7 @@
   "description": "Vocaloid-gui is a simple voice changer",
   "main": "./index.js",
   "scripts": {
-    "start": "electron .",
+    "start": "npm run dev:main & npm run dev:renderer",
     "dev:main": "cross-env NODE_ENV=dev electron .",
     "dev:renderer": "cross-env NODE_ENV=dev PLATFORM=electron webpack-dev-server --entry ./src/index.tsx --config ./build/webpack.config.base.js",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --entry ./src/index.tsx --config ./build/webpack.config.base.js",
