@@ -32,13 +32,14 @@ export default [
                 combineReducers: (reducers: Dictionary<Reducer>) => {
                     const rootReducer = (immerCombineReducers || combineReducers)(reducers);
                     return undoable(rootReducer, buildHistoryOptions(({ type }: Action<string>) => {
-                        return [
-                            `editor/${ACTION_LOAD_SOURCE_SUCCESS}`,
-                            `editor/${ACTION_SWITCH_EFFECT}`,
-                            `editor/${ACTION_EFFECT_OPTIONS_CHANGE}`,
-                            `editor/${ACTION_ZOOM}`,
-                            `editor/${ACTION_CLIP_REGION_CHANGE}`
-                        ].indexOf(type) > -1;
+                        // return [
+                        //     `editor/${ACTION_LOAD_SOURCE_SUCCESS}`,
+                        //     `editor/${ACTION_SWITCH_EFFECT}`,
+                        //     `editor/${ACTION_EFFECT_OPTIONS_CHANGE}`,
+                        //     `editor/${ACTION_ZOOM}`,
+                        //     `editor/${ACTION_CLIP_REGION_CHANGE}`
+                        // ].indexOf(type) > -1;
+                        return false;
                     }));
                 }
             }
