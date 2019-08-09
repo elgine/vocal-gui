@@ -16,6 +16,21 @@ export const CANVAS_MAX_WIDTH = 8192;
 export const SUPPORT_AUDIO_EXTS = ['ogg', 'mp3', 'wav', 'webm'];
 export const SUPPORT_MIME = SUPPORT_AUDIO_EXTS.map((ext) => `audio/${ext}`).join(', ');
 
+export const DEFAULT_OUTPUT_FORMAT = 'MP3';
+export const SUPPORT_OUTPUT_FORMATS = [
+    'WAV',
+    'MP3'
+];
+
+export const DEFAULT_BITRATE = 128;
+export const SUPPORT_BITRATES = [
+    64,
+    96,
+    128,
+    196,
+    320
+];
+
 export const ZOOM_MINIMUM = 0;
 export const ZOOM_MAXIMUM = 2;
 

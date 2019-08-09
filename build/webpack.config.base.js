@@ -113,7 +113,7 @@ const base = {
     },
     target: isElectron() ? 'electron-renderer' : 'web',
     mode: getWebpackMode(),
-    externals: ['fs', 'path'],
+    externals: isElectron() ? [] : ['fs', 'path'],
     resolve: {
         extensions: ['.tsx', '.ts', '.less', '.css', '.mjs', '.js', '.json']
     },

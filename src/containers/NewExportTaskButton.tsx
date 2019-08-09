@@ -14,6 +14,7 @@ import { SelectProps } from '@material-ui/core/Select';
 import { TextFieldProps } from '@material-ui/core/TextField';
 import { RadioGroupProps } from '@material-ui/core/RadioGroup';
 import { RootState } from '../store';
+import { DEFAULT_BITRATE, SUPPORT_BITRATES, SUPPORT_OUTPUT_FORMATS, DEFAULT_OUTPUT_FORMAT } from '../constant';
 
 export interface NewExportTaskButtonProps{
     Component: React.ComponentType<any>;
@@ -128,7 +129,7 @@ const ExportSettingsDialog = React.forwardRef(({ open, onClose, form }: ExportSe
                                 })(<DirectorySelector />)
                             }
                             {
-                                isFieldError ? (
+                                isFieldError('path') ? (
                                     <FormHelperText>
                                         {
                                             getFieldErrorWrapped('path')
@@ -145,7 +146,7 @@ const ExportSettingsDialog = React.forwardRef(({ open, onClose, form }: ExportSe
                     </FormLabel>
                     {
                         getFieldDecorator('bitRate', {
-                            initialValue: 64,
+                            initialValue: DEFAULT_BITRATE,
                             rules: [
                                 {
                                     required: true,
@@ -153,11 +154,11 @@ const ExportSettingsDialog = React.forwardRef(({ open, onClose, form }: ExportSe
                                 },
                             ]
                         })(<FlatSelect required fullWidth>
-                            <MenuItem value={64}>64</MenuItem>
-                            <MenuItem value={96}>96</MenuItem>
-                            <MenuItem value={128}>128</MenuItem>
-                            <MenuItem value={192}>192</MenuItem>
-                            <MenuItem value={320}>320</MenuItem>
+                            {
+                                SUPPORT_BITRATES.map((v) => (
+                                    <MenuItem key={v} value={v}>{v}</MenuItem>
+                                ))
+                            }
                         </FlatSelect>)
                     }
                     {
@@ -176,7 +177,7 @@ const ExportSettingsDialog = React.forwardRef(({ open, onClose, form }: ExportSe
                     </FormLabel>
                     {
                         getFieldDecorator('format', {
-                            initialValue: 'MP3',
+                            initialValue: DEFAULT_OUTPUT_FORMAT,
                             rules: [
                                 {
                                     required: true,
@@ -184,14 +185,14 @@ const ExportSettingsDialog = React.forwardRef(({ open, onClose, form }: ExportSe
                                 }
                             ]
                         })(<FlatRadioGroup row>
-                            <FormControlLabel
-                                control={<Radio color="primary" value="WAV" />}
-                                label="WAV"
-                            />
-                            <FormControlLabel
-                                control={<Radio color="primary" value="MP3" />}
-                                label="MP3"
-                            />
+                            {
+                                SUPPORT_OUTPUT_FORMATS.map((v) => (
+                                    <FormControlLabel key={v}
+                                        control={<Radio color="primary" value={v} />}
+                                        label={v}
+                                    />
+                                ))
+                            }
                         </FlatRadioGroup>)
                     }
                     {

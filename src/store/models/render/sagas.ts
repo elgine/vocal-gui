@@ -1,7 +1,6 @@
 import { Action } from 'redux';
-import path from 'path-browserify';
 import { channel, Channel, SagaMiddleware } from 'redux-saga';
-import { put, fork, call, take, join, race, cancel, delay } from 'redux-saga/effects';
+import { put, fork, call, take, join, race, cancel, delay, actionChannel } from 'redux-saga/effects';
 import {
     ACTION_RENDER,
     ACTION_RENDER_SUCCESS,
@@ -18,6 +17,7 @@ import ID3TagWriter from '../../../services/ID3TagWriter';
 import downloader from '../../../services/downloader';
 
 const RENDER_BG_ASYNC = 'RENDER_BG_ASYNC';
+const ENCODE_MP3_BG_ASYNC = 'ENCODE_MP3_BG_ASYNC';
 const MAX_CONCURRENCY = 3;
 const tasks: Dictionary<RenderTask> = {};
 
@@ -51,9 +51,10 @@ const decompose = (audioBuffer: AudioBuffer) => {
     return buffers;
 };
 
-function* encodeMP3(buffer: AudioBuffer, bitRate: number) {
+function* encodeMP3(id: string, buffer: AudioBuffer, bitRate: number) {
     yield put({
         type: `worker/encode/${ACTION_ENCODE}`, payload: {
+            id,
             buffer: decompose(buffer),
             options: {
                 sampleRate: buffer.sampleRate,
@@ -74,9 +75,9 @@ function* encodeWAV(buffer: AudioBuffer) {
     return new Blob([new Int8Array(result)], { type: 'audio/wav' });
 }
 
-function* encode(buffer: AudioBuffer, { bitRate, format }: {format: ExportFormat; bitRate: number}) {
+function* encode(id: string, buffer: AudioBuffer, { bitRate, format }: {format: ExportFormat; bitRate: number}) {
     if (format === 'MP3') {
-        return yield call(encodeMP3, buffer, bitRate);
+        return yield call(encodeMP3, id, buffer, bitRate);
     } else {
         return yield call(encodeWAV, buffer);
     }
@@ -89,8 +90,9 @@ function* renderTask({ payload }: RenderBgAsyncAction) {
             task.state = v;
         });
         const exportParams = task.exportParams;
-        const blob = yield encode(buffer, exportParams);
-        const absPath = path.resolve(exportParams.path || '', `${exportParams.title}.${exportParams.format.toLowerCase()}`);
+        const blob = yield encode(task.id, buffer, exportParams);
+
+        const absPath = (window.__ELECTRON__ ? exportParams.path : '') + `\\${exportParams.title}.${exportParams.format.toLowerCase()}`;
         yield call(downloader, blob, absPath);
         yield put({
             type: `render/${ACTION_RENDER_SUCCESS}`,
@@ -131,6 +133,13 @@ function* popRenderTask(chan: Channel<RenderTask>) {
             yield cancel(bgThread);
             removeTask(task.id);
         }
+    }
+}
+
+function* encodeMP3Saga() {
+    const chan = yield actionChannel(ENCODE_MP3_BG_ASYNC);
+    while (true) {
+        const { payload } = yield take(chan);
     }
 }
 

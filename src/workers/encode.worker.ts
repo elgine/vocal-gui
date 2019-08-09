@@ -12,6 +12,7 @@ const ctx: Worker = self as any;
 
 const CHUNK_SIZE = 1152;
 
+let taskId = '';
 let chunks: Int8Array[] = [];
 let chunkSize = 0;
 let leftChunk = new Int16Array(CHUNK_SIZE);
@@ -58,14 +59,8 @@ const encode = (channelData: Float32Array[]) => {
                     rightChunk[j] = float32ToInt16(channelData[1][i + j]);
                 }
             }
-            const chunk = encoder.encodeBuffer(leftChunk, stereo ? rightChunk : undefined);
-            if (push(chunk) <= 0) {
-                console.log('Occur encode error');
-                ctx.postMessage({
-                    type: 'ACTION_ENCODE_ERROR',
-                    payload: 'Can not encode buffer to mp3 frame'
-                });
-            }
+            push(encoder.encodeBuffer(leftChunk, stereo ? rightChunk : undefined));
+            ctx.postMessage({ type: 'render/ACTION_ENCODE_PROGRESS', payload: { id: taskId, progress: i / len }});
         }
     }
 };
@@ -95,7 +90,8 @@ ctx.onmessage = (e: MessageEvent) => {
     const action = { ...e.data };
     const { type, payload } = action;
     if (type === 'encode/ACTION_ENCODE') {
-        const { options, buffer } = payload;
+        const { options, buffer, id } = payload;
+        taskId = id;
         init(options);
         encode(buffer);
         close();

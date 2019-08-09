@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { RootState } from '../store';
-import { TextField, Toolbar, Button } from '@material-ui/core';
+import { TextField, Toolbar, Button, Typography } from '@material-ui/core';
 import Placeholder from './Placeholder';
 import { getLang } from '../lang';
 
@@ -16,7 +16,7 @@ export interface DirectorySelectorProps{
     onChange?: (v: string) => void;
 }
 
-export default ({ value, onChange }: DirectorySelectorProps) => {
+export default React.forwardRef(({ value, onChange }: DirectorySelectorProps, ref: React.Ref<{}>) => {
     const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const inputRef = useRef<HTMLInputElement>(null);
     const onBrowseClick = () => {
@@ -27,7 +27,7 @@ export default ({ value, onChange }: DirectorySelectorProps) => {
     const onPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
         const file = e.target.files[0];
-        onChange && onChange(file.path);
+        onChange && onChange((file as any).path);
     };
     useEffect(() => {
         if (inputRef.current) {
@@ -37,9 +37,11 @@ export default ({ value, onChange }: DirectorySelectorProps) => {
         }
     }, []);
     return (
-        <Toolbar style={{ width: '100%' }} variant="dense" disableGutters>
-            <Placeholder>
-                <TextField value={value} fullWidth disabled placeholder={getLang('CHOOSE_DIRECTORY', lang)} />
+        <Toolbar ref={ref} style={{ width: '100%' }} variant="dense" disableGutters>
+            <Placeholder color="text.hint">
+                <Typography variant="body1" color="inherit">
+                    {value || getLang('CHOOSE_DIRECTORY', lang)}
+                </Typography>
             </Placeholder>
             <Button variant="contained" onClick={onBrowseClick}>
                 {
@@ -49,4 +51,4 @@ export default ({ value, onChange }: DirectorySelectorProps) => {
             <input hidden type="file" ref={inputRef} onChange={onPathChange} />
         </Toolbar>
     );
-};
+});

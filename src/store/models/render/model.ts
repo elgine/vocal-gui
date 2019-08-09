@@ -79,6 +79,9 @@ export default {
     },
     effects: (dispatch: any) => {
         return {
+            ACTION_ENCODE_PROGRESS(payload: number) {
+
+            },
             [ACTION_RENDER_PROGRESS](payload: Dictionary<{state: number}>) {
                 dispatch.render[REDUCER_SET_TASKS_STATE](payload);
             },
