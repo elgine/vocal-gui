@@ -6,7 +6,7 @@ import {
     MenuItem, RadioGroup, FormControlLabel, Radio, FormHelperText
 } from '@material-ui/core';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { ACTION_RENDER } from '../store/models/render/types';
+import { ACTION_OUTPUT } from '../store/models/output/types';
 import { RematchDispatch } from '@rematch/core';
 import { createForm, FormShape } from 'rc-form';
 import DirectorySelector from '../components/DirectorySelector';
@@ -63,11 +63,11 @@ const ExportSettingsDialog = React.forwardRef(({ open, onClose, form }: ExportSe
     const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const { title } = useSelector(mapStateToProps, shallowEqual);
     const dispatch = useDispatch<RematchDispatch>();
-    const onRender = dispatch.render[ACTION_RENDER];
+    const onOutput = dispatch.output[ACTION_OUTPUT];
     const onSubmit = () => {
         form.validateFields((errors, values) => {
             if (!errors) {
-                onRender(values);
+                onOutput(values);
                 onClose && onClose();
             }
         });

@@ -1,39 +1,12 @@
 import { createEffect, getAllDurationApplyEffect, getDelayApplyEffect } from '../processor/effects/factory';
-import Effect from '../processor/effects/effect';
-import { ID3WriterSupportFrames } from 'browser-id3-writer';
-
-export type RenderTaskLevelNormal = 0;
-export type RenderTaskLevelHigh = 1;
-export type RenderTaskLevel = RenderTaskLevelNormal | RenderTaskLevelHigh;
-
-export type RenderTaskStateWaiting = 0;
-export type RenderTaskStateComplete = 1;
-export type RenderTaskStateStopped = -2;
-export type RenderTaskStateFailed = -1;
-export type RenderTaskState = RenderTaskStateWaiting |
-RenderTaskStateComplete |
-RenderTaskStateStopped |
-RenderTaskStateFailed;
-
-export interface RenderTask{
-    id: string;
-    title: string;
-    source?: AudioBuffer;
-    level: number;
-    state: number;
-    taskCreatedTime: number;
-    effectType: number;
-    effectOptions: any;
-    clipRegion: number[];
-    exportParams: ExportParams;
-}
+import { EffectType } from '../processor/effectType';
 
 export default class Renderer {
 
     private _rendering: boolean = false;
     private _offlineAudioCtx!: OfflineAudioContext;
 
-    * render(task: Pick<RenderTask, 'clipRegion' | 'source' | 'effectOptions' | 'effectType'>, onProcess?: (v: number) => void) {
+    * render(task: {source?: AudioBuffer; clipRegion: number[]; effectOptions: any; effectType: EffectType}, onProcess?: (v: number) => void) {
         const { source, clipRegion, effectOptions, effectType } = task;
         if (!source) return;
         this._rendering = true;

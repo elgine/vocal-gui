@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { IconButton, Menu, MenuItem, ListItemIcon, Typography, Tooltip, Badge } from '@material-ui/core';
 import NewExportTaskButton from './NewExportTaskButton';
 import { useSelector, shallowEqual } from 'react-redux';
@@ -18,7 +18,7 @@ const ExportIcon = () => {
 const mapStateToProps = ({ present }: RootState) => {
     return {
         disabledExport: present.editor.source === undefined,
-        taskCount: Object.values(present.render.tasks).filter((t) => t.state >= 0 && t.state < 1).length,
+        taskCount: Object.values(present.output.tasks).filter((t) => t.state >= 0 && t.state < 3).length,
         lang: present.locale.lang
     };
 };

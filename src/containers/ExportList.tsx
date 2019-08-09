@@ -1,16 +1,27 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { RematchDispatch } from '@rematch/core';
 import { RootState, Models } from '../store';
-import { List, ListItem, ListItemIcon, Checkbox, ListItemText, ListItemSecondaryAction, Typography, IconButton, Menu, MenuItem, Divider, Toolbar, Tooltip, Button, Box } from '@material-ui/core';
+import {
+    List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction,
+    Checkbox,  Typography, IconButton,
+    Menu, MenuItem, Divider, Toolbar, Tooltip,
+    Button, Box, Badge
+} from '@material-ui/core';
 import { getLang } from '../lang';
 import { MoreVert, PlayArrow, Stop, Cancel } from '@material-ui/icons';
 import Placeholder from '../components/Placeholder';
-import { ACTION_STOP_RENDERING, ACTION_CANCEL_RENDERING_ALL, ACTION_CANCEL_RENDERING, ACTION_STOP_RENDERING_ALL, ACTION_RESUME_RENDERING } from '../store/models/render/types';
+import {
+    ACTION_STOP_OUTPUT,
+    ACTION_CANCEL_OUTPUT_ALL,
+    ACTION_CANCEL_OUTPUT,
+    ACTION_STOP_OUTPUT_ALL,
+    ACTION_RESUME_OUTPUT
+} from '../store/models/output/types';
 
 const mapStateToProps = ({ present }: RootState) => {
     return {
-        ...present.render,
+        ...present.output,
         ...present.locale
     };
 };
@@ -78,20 +89,22 @@ const ActionButton = ({ id, disabledCancel, disabledStop, onCancel, onStop }: Ac
 const TaskState = ({ state }: {state: number}) => {
     const { lang } = useSelector(mapLocaleStateToProps, shallowEqual);
     const color = state === -1 ? 'error' : (
-        state === 1 ? 'primary' : 'inherit'
+        state === 3 ? 'primary' : 'inherit'
     );
     return (
-        <Typography variant="button" color={color}>
-            {
-                state === 0 ? getLang('WAITING', lang) : (
-                    state === -1 ? getLang('FAILED', lang) : (
-                        state === -2 ? getLang('STOPPED', lang) : (
-                            state === 1 ? getLang('SUCCESS', lang) : `${Number(state) * 100} %`
+        <Badge badgeContent={state > 0 && state < 3 ? (~~state + 1) : undefined} color="secondary">
+            <Typography variant="button" color={color}>
+                {
+                    state === 0 ? getLang('WAITING', lang) : (
+                        state === -1 ? getLang('FAILED', lang) : (
+                            state === -2 ? getLang('STOPPED', lang) : (
+                                state === 3 ? getLang('SUCCESS', lang) : `${(Number(state - ~~state) * 100).toFixed(2)} %`
+                            )
                         )
                     )
-                )
-            }
-        </Typography>
+                }
+            </Typography>
+        </Badge>
     );
 };
 
@@ -127,7 +140,7 @@ const Task = ({ id, state, selected, title, onSelected, onCancel, onStop }: Task
             <ListItemSecondaryAction>
                 <TaskState state={state} />
                 <ActionButton id={id}
-                    disabledStop={state >= 1 || state < 0}
+                    disabledStop={state >= 3 || state < 0}
                     onStop={onStop}
                     onCancel={onCancel}
                 />
@@ -139,28 +152,28 @@ const Task = ({ id, state, selected, title, onSelected, onCancel, onStop }: Task
 export default () => {
     const { tasks, lang } = useSelector(mapStateToProps);
     const dispatch = useDispatch<RematchDispatch<Models>>();
-    const onResumeRendering = dispatch.render[ACTION_RESUME_RENDERING];
-    const onStopRendering = dispatch.render[ACTION_STOP_RENDERING];
-    const onStopAll = dispatch.render[ACTION_STOP_RENDERING_ALL];
-    const onCancelRendering = dispatch.render[ACTION_CANCEL_RENDERING];
-    const onCancelAll = dispatch.render[ACTION_CANCEL_RENDERING_ALL];
+    const onResumeOutput = dispatch.output[ACTION_RESUME_OUTPUT];
+    const onStopOutput = dispatch.output[ACTION_STOP_OUTPUT];
+    const onStopAll = dispatch.output[ACTION_STOP_OUTPUT_ALL];
+    const onCancelOutput = dispatch.output[ACTION_CANCEL_OUTPUT];
+    const onCancelAll = dispatch.output[ACTION_CANCEL_OUTPUT_ALL];
     const [selectedTaskIds, setSelectedTaskIds] = useState({});
     const onResume = () => {
-        onResumeRendering(selectedTaskIds);
+        onResumeOutput(selectedTaskIds);
     };
     const onStop = () => {
-        onStopRendering(selectedTaskIds);
+        onStopOutput(selectedTaskIds);
     };
     const onCancel = () => {
-        onCancelRendering(selectedTaskIds);
+        onCancelOutput(selectedTaskIds);
     };
     const onTaskStop = (v: string) => {
-        onStopRendering({
+        onStopOutput({
             [v]: v
         });
     };
     const onTaskCancel = (v: string) => {
-        onCancelRendering({
+        onCancelOutput({
             [v]: v
         });
     };
@@ -208,7 +221,7 @@ export default () => {
                     <Box py={2} textAlign="center">
                         <Typography variant="subtitle2" paragraph>
                             {
-                                getLang('NO_EXPORT_TASK', lang)
+                                getLang('NO_OUTPUT_TASK', lang)
                             }
                         </Typography>
                     </Box>

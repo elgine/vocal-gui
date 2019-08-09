@@ -12,7 +12,7 @@ const ctx: Worker = self as any;
 
 const CHUNK_SIZE = 1152;
 
-let taskId = '';
+let running = false;
 let chunks: Int8Array[] = [];
 let chunkSize = 0;
 let leftChunk = new Int16Array(CHUNK_SIZE);
@@ -44,24 +44,36 @@ const init = (config?: EncodeConfig) => {
         lastConfig = c;
     }
     clearBuffer();
-    console.log('Init encoder');
+    // console.log('Init encoder');
 };
 
 const encode = (channelData: Float32Array[]) => {
-    console.log('Begin encoding');
+    // console.log('Begin encoding');
+    running = true;
     if (encoder && channelData.length > 0 && channelData[0].length > 0) {
         const len = channelData[0].length;
         const stereo = channelData.length > 1;
-        for (let i = 0; i < len; i += CHUNK_SIZE) {
+        let offset = 0;
+        const encodeChunk = () => {
+            if (offset >= len) {
+                close();
+                return;
+            }
             for (let j = 0; j < CHUNK_SIZE; j++) {
-                leftChunk[j] = float32ToInt16(channelData[0][i + j]);
+                if (!running) return;
+                leftChunk[j] = float32ToInt16(channelData[0][offset + j]);
                 if (stereo) {
-                    rightChunk[j] = float32ToInt16(channelData[1][i + j]);
+                    rightChunk[j] = float32ToInt16(channelData[1][offset + j]);
                 }
             }
+            if (!running) return;
             push(encoder.encodeBuffer(leftChunk, stereo ? rightChunk : undefined));
-            ctx.postMessage({ type: 'render/ACTION_ENCODE_PROGRESS', payload: { id: taskId, progress: i / len }});
-        }
+
+            offset += CHUNK_SIZE;
+            ctx.postMessage({ type: 'ACTION_ENCODE_PROGRESS', payload: offset / len });
+            setTimeout(encodeChunk, 10);
+        };
+        encodeChunk();
     }
 };
 
@@ -78,7 +90,7 @@ const compose = (chunks: Int8Array[]) => {
 };
 
 const close = () => {
-    console.log('Close encode');
+    // console.log('Close encode');
     if (encoder) {
         push(encoder.flush());
         ctx.postMessage({ type: 'ACTION_ENCODE_SUCCESS', payload: compose(chunks) });
@@ -86,15 +98,20 @@ const close = () => {
     }
 };
 
+const cancel = () => {
+    running = false;
+    clearBuffer();
+};
+
 ctx.onmessage = (e: MessageEvent) => {
     const action = { ...e.data };
     const { type, payload } = action;
     if (type === 'encode/ACTION_ENCODE') {
-        const { options, buffer, id } = payload;
-        taskId = id;
+        const { options, buffer } = payload;
         init(options);
         encode(buffer);
-        close();
+    } else if (type === 'encode/ACTION_CANCEL_ENCODE') {
+        cancel();
     }
 };
 

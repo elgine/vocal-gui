@@ -41,7 +41,7 @@ type SourceTypeUrl = 'URL';
 type SourceTypeMic = 'MIC';
 type SourceType = SourceTypeLocal | SourceTypeUrl | SourceTypeMic;
 
-interface ExportParams{
+interface OutputParams{
     title: string;
     path?: string;
     bitRate: number;

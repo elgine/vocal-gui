@@ -13,7 +13,6 @@ export const getAudioBufferFromUrl = (url: string): Promise<AudioBuffer> => {
                 ctx.decodeAudioData(arrayBuffer, resolve, reject);
             };
             req.onerror = (e) => {
-                console.log(e);
                 reject(handleRequestError(req));
             };
             req.responseType = 'arraybuffer';
