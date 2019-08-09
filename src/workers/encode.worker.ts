@@ -94,8 +94,8 @@ const close = () => {
     if (encoder) {
         push(encoder.flush());
         ctx.postMessage({ type: 'ACTION_ENCODE_SUCCESS', payload: compose(chunks) });
-        clearBuffer();
     }
+    cancel();
 };
 
 const cancel = () => {
