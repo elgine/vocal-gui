@@ -59,7 +59,7 @@
     "jsmediatags": "^3.9.1",
     "keycode": "^2.2.0",
     "lamejs": "^1.2.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "path-browserify": "^1.0.0",
     "rc-form": "^2.4.8",
     "react": "^16.8.6",
