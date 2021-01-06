@@ -47,7 +47,7 @@
     "@types/react-router-dom": "^4.3.3",
     "@types/react-transition-group": "^2.9.2",
     "@types/uuid": "^3.4.4",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "browser-id3-writer": "^4.1.0",
     "color": "^3.1.2",
     "electron": "^6.0.1",
